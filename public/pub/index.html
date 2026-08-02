@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Skype est de retour. Et il n'a rien oublié.</title>
+<meta name="description" content="La messagerie, les appels vidéo et le petit « blop » que vous connaissez par cœur. Skype revient — avec tout ce que vous aimiez, et tout ce qui vous manquait." />
+<meta name="theme-color" content="#00AFF0" />
+<meta property="og:title" content="Skype est de retour. Et il n'a rien oublié." />
+<meta property="og:description" content="Rappelez-vous : un pseudo, un bouton vert, et la voix de vos proches. Ça remarche." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%2300AFF0'/%3E%3Ctext x='16' y='23' font-family='Segoe UI,Arial' font-size='19' font-weight='700' fill='white' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E" />
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --blue: #00AFF0;
+    --blue-dark: #0078A8;
+    --blue-deep: #003C55;
+    --ink: #0F1C24;
+    --ink-soft: #47606E;
+    --paper: #ffffff;
+    --mist: #F2FAFE;
+    --line: rgba(0, 60, 85, .12);
+    --green: #6BB700;
+    --radius: 18px;
+    --font: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Roboto, Arial, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: var(--font);
+    color: var(--ink);
+    background: var(--paper);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3 { line-height: 1.1; margin: 0; letter-spacing: -0.025em; font-weight: 700; }
+  p { margin: 0; }
+  img, svg { display: block; max-width: 100%; }
+  a { color: inherit; }
+
+  .wrap { width: min(1140px, 92vw); margin-inline: auto; }
+  .center { text-align: center; }
+
+  /* ── Boutons ─────────────────────────────────────────────────────── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 15px 32px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    font-size: 1.02rem; font-weight: 700;
+    text-decoration: none; cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    white-space: nowrap;
+  }
+  .btn--primary {
+    background: var(--blue); color: #fff;
+    box-shadow: 0 10px 30px rgba(0, 175, 240, .38);
+  }
+  .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0, 175, 240, .5); }
+  .btn--ghost { border-color: rgba(255, 255, 255, .5); color: #fff; }
+  .btn--ghost:hover { background: rgba(255, 255, 255, .14); }
+  .btn--dark { background: var(--ink); color: #fff; }
+  .btn--dark:hover { transform: translateY(-2px); }
+
+  /* ── En-tête ─────────────────────────────────────────────────────── */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(14px);
+    background: rgba(255, 255, 255, .82);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { display: flex; align-items: center; gap: 14px; padding: 14px 0; }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 1.35rem; font-weight: 300; letter-spacing: -.02em; text-decoration: none; }
+  .logo__mark {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+    color: #fff; display: grid; place-items: center;
+    font-weight: 700; font-size: 18px;
+  }
+  .nav__links { display: flex; gap: 26px; margin-left: auto; font-size: .94rem; font-weight: 600; }
+  .nav__links a { text-decoration: none; color: var(--ink-soft); transition: color .15s; }
+  .nav__links a:hover { color: var(--blue); }
+  @media (max-width: 860px) { .nav__links { display: none; } }
+
+  /* ── Héros ───────────────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    padding: 92px 0 100px;
+    background:
+      radial-gradient(1000px 520px at 12% -8%, rgba(0, 175, 240, .30), transparent 62%),
+      radial-gradient(800px 460px at 105% 12%, rgba(0, 175, 240, .18), transparent 60%),
+      linear-gradient(180deg, #fff 0%, var(--mist) 100%);
+    overflow: hidden;
+  }
+  .hero__grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
+  @media (max-width: 940px) { .hero__grid { grid-template-columns: 1fr; gap: 42px; } }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 7px 16px; border-radius: 999px;
+    background: rgba(0, 175, 240, .12);
+    color: var(--blue-dark);
+    font-size: .82rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .09em;
+    margin-bottom: 22px;
+  }
+  .eyebrow__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: blink 2s infinite; }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+  .hero h1 { font-size: clamp(2.6rem, 6vw, 4.4rem); }
+  .hero h1 em { font-style: normal; color: var(--blue); }
+  .hero__lead { font-size: clamp(1.05rem, 2vw, 1.3rem); color: var(--ink-soft); margin-top: 22px; max-width: 34ch; }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
+  .hero__note { margin-top: 18px; font-size: .87rem; color: var(--ink-soft); }
+
+  /* Maquette de l'application */
+  .mock {
+    border-radius: var(--radius);
+    background: #fff;
+    box-shadow: 0 32px 80px rgba(0, 60, 85, .24), 0 4px 12px rgba(0, 60, 85, .08);
+    overflow: hidden;
+    transform: perspective(1600px) rotateY(-7deg) rotateX(2deg);
+    transition: transform .5s ease;
+  }
+  .mock:hover { transform: perspective(1600px) rotateY(-2deg) rotateX(0); }
+  .mock__bar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; background: #F5F5F5; border-bottom: 1px solid var(--line); }
+  .mock__dot { width: 11px; height: 11px; border-radius: 50%; }
+  .mock__body { display: grid; grid-template-columns: 96px 1fr; height: 356px; }
+  .mock__side { background: #FAFAFA; border-right: 1px solid var(--line); padding: 12px 8px; display: flex; flex-direction: column; gap: 9px; }
+  .mock__contact { display: flex; align-items: center; gap: 7px; }
+  .mock__ava { width: 26px; height: 26px; border-radius: 50%; flex: none; }
+  .mock__lines { flex: 1; display: block; }
+  .mock__line { display: block; height: 5px; border-radius: 3px; background: rgba(0, 60, 85, .13); margin-bottom: 4px; }
+  .mock__chat { padding: 16px; display: flex; flex-direction: column; gap: 9px; background: #fff; overflow: hidden; }
+  .bubble {
+    max-width: 74%; padding: 9px 14px; border-radius: 16px; font-size: .84rem;
+    animation: rise .6s backwards;
+  }
+  .bubble--in { background: #F0F0F0; border-bottom-left-radius: 4px; align-self: flex-start; }
+  .bubble--out { background: #E1F2FB; border-bottom-right-radius: 4px; align-self: flex-end; }
+  .bubble:nth-child(1) { animation-delay: .25s; }
+  .bubble:nth-child(2) { animation-delay: .55s; }
+  .bubble:nth-child(3) { animation-delay: .85s; }
+  .bubble:nth-child(4) { animation-delay: 1.15s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .mock__typing { display: flex; gap: 4px; align-self: flex-start; padding: 11px 14px; background: #F0F0F0; border-radius: 16px; border-bottom-left-radius: 4px; }
+  .mock__typing i { width: 6px; height: 6px; border-radius: 50%; background: #9AA; animation: bounce 1.3s infinite; }
+  .mock__typing i:nth-child(2) { animation-delay: .18s; }
+  .mock__typing i:nth-child(3) { animation-delay: .36s; }
+  @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: .4; } 30% { transform: translateY(-5px); opacity: 1; } }
+
+  /* ── Bandeau chiffres ────────────────────────────────────────────── */
+  .stats { background: var(--ink); color: #fff; padding: 46px 0; }
+  .stats__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; text-align: center; }
+  @media (max-width: 760px) { .stats__grid { grid-template-columns: repeat(2, 1fr); gap: 30px; } }
+  .stat__num { font-size: clamp(1.9rem, 4vw, 2.7rem); font-weight: 700; color: var(--blue); letter-spacing: -.03em; }
+  .stat__label { font-size: .85rem; opacity: .72; margin-top: 4px; }
+
+  /* ── Sections ────────────────────────────────────────────────────── */
+  section { padding: 96px 0; }
+  .section__head { max-width: 640px; margin: 0 auto 58px; text-align: center; }
+  .section__head h2 { font-size: clamp(2rem, 4.4vw, 3rem); }
+  .section__head p { color: var(--ink-soft); font-size: 1.08rem; margin-top: 18px; }
+  .tint { background: var(--mist); }
+
+  /* ── Manifeste ───────────────────────────────────────────────────── */
+  .manifesto { background: linear-gradient(135deg, var(--blue-deep), #00546F 55%, var(--blue-dark)); color: #fff; }
+  .manifesto h2 { font-size: clamp(2rem, 4.6vw, 3.1rem); max-width: 18ch; margin-inline: auto; }
+  .manifesto__text { max-width: 620px; margin: 26px auto 0; font-size: 1.12rem; opacity: .92; }
+  .manifesto__text strong { color: #9FE4FF; }
+  .quote-marks { font-size: 4rem; line-height: 1; opacity: .3; }
+
+  /* ── Fonctionnalités ─────────────────────────────────────────────── */
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  @media (max-width: 960px) { .features { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 620px) { .features { grid-template-columns: 1fr; } }
+
+  .feature {
+    padding: 30px 26px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #fff;
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s;
+  }
+  .feature:hover { transform: translateY(-5px); box-shadow: 0 18px 44px rgba(0, 60, 85, .13); border-color: rgba(0, 175, 240, .38); }
+  .feature__icon {
+    width: 48px; height: 48px; border-radius: 13px;
+    background: rgba(0, 175, 240, .12); color: var(--blue-dark);
+    display: grid; place-items: center; font-size: 24px;
+    margin-bottom: 16px;
+  }
+  .feature h3 { font-size: 1.12rem; margin-bottom: 8px; }
+  .feature p { color: var(--ink-soft); font-size: .95rem; }
+
+  /* ── Nostalgie ───────────────────────────────────────────────────── */
+  .nostalgia__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  @media (max-width: 900px) { .nostalgia__grid { grid-template-columns: 1fr; gap: 40px; } }
+  .nostalgia h2 { font-size: clamp(1.9rem, 4vw, 2.7rem); }
+  .checklist { margin-top: 26px; display: grid; gap: 15px; }
+  .checklist li { display: flex; gap: 13px; align-items: flex-start; list-style: none; }
+  .checklist .tick {
+    flex: none; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--green); color: #fff;
+    display: grid; place-items: center; font-size: 13px; font-weight: 700;
+    margin-top: 2px;
+  }
+  .checklist strong { display: block; }
+  .checklist span { color: var(--ink-soft); font-size: .93rem; }
+
+  .sound-card {
+    padding: 34px; border-radius: var(--radius);
+    background: linear-gradient(150deg, #fff, var(--mist));
+    border: 1px solid var(--line);
+    box-shadow: 0 18px 50px rgba(0, 60, 85, .1);
+    text-align: center;
+  }
+  .sound-btn {
+    width: 96px; height: 96px; border-radius: 50%; border: none;
+    background: var(--blue); color: #fff;
+    font-size: 34px; cursor: pointer; margin: 0 auto 18px;
+    display: grid; place-items: center;
+    box-shadow: 0 12px 34px rgba(0, 175, 240, .45);
+    transition: transform .2s;
+  }
+  .sound-btn:hover { transform: scale(1.07); }
+  .sound-btn:active { transform: scale(.95); }
+  .sound-card h3 { font-size: 1.25rem; margin-bottom: 8px; }
+  .sound-card p { color: var(--ink-soft); font-size: .93rem; }
+  .sound-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+  .sound-chip {
+    padding: 8px 16px; border-radius: 999px;
+    border: 1px solid var(--line); background: #fff;
+    font-size: .85rem; font-weight: 600; cursor: pointer;
+    transition: all .15s;
+  }
+  .sound-chip:hover { border-color: var(--blue); color: var(--blue); }
+
+  /* ── Comparatif ──────────────────────────────────────────────────── */
+  .compare { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .96rem; }
+  .compare th, .compare td { padding: 16px 18px; text-align: left; border-bottom: 1px solid var(--line); }
+  .compare thead th { font-size: .78rem; text-transform: uppercase; letter-spacing: .09em; color: var(--ink-soft); }
+  .compare tbody tr:hover { background: rgba(0, 175, 240, .05); }
+  .compare td:first-child { font-weight: 600; }
+  .compare .yes { color: var(--green); font-weight: 700; }
+  .compare .no { color: #C50F1F; font-weight: 700; }
+  .compare-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+
+  /* ── Témoignages ─────────────────────────────────────────────────── */
+  .quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  @media (max-width: 900px) { .quotes { grid-template-columns: 1fr; } }
+  .quote {
+    padding: 28px; border-radius: var(--radius);
+    background: #fff; border: 1px solid var(--line);
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .quote p { font-size: 1rem; line-height: 1.65; }
+  .quote__who { display: flex; align-items: center; gap: 12px; margin-top: auto; }
+  .quote__ava { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: .9rem; flex: none; }
+  .quote__name { font-weight: 700; font-size: .92rem; }
+  .quote__role { font-size: .82rem; color: var(--ink-soft); }
+  .stars { color: #F7A30B; letter-spacing: 2px; }
+
+  /* ── Appel final ─────────────────────────────────────────────────── */
+  .final {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 70%, var(--blue-deep) 100%);
+    color: #fff; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .final::before, .final::after {
+    content: ''; position: absolute; border-radius: 50%;
+    background: rgba(255, 255, 255, .07);
+  }
+  .final::before { width: 480px; height: 480px; top: -240px; left: -140px; }
+  .final::after { width: 380px; height: 380px; bottom: -200px; right: -100px; }
+  .final .wrap { position: relative; z-index: 1; }
+  .final h2 { font-size: clamp(2.1rem, 5.2vw, 3.4rem); max-width: 17ch; margin-inline: auto; }
+  .final p { font-size: 1.14rem; opacity: .93; max-width: 540px; margin: 22px auto 0; }
+  .final__cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 38px; }
+  .final .btn--primary { background: #fff; color: var(--blue-dark); box-shadow: 0 12px 36px rgba(0, 0, 0, .22); }
+  .final__small { margin-top: 22px; font-size: .87rem; opacity: .82; }
+
+  /* ── Pied de page ────────────────────────────────────────────────── */
+  footer { background: var(--ink); color: rgba(255, 255, 255, .62); padding: 52px 0 34px; font-size: .89rem; }
+  .footer__grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 34px; margin-bottom: 34px; }
+  @media (max-width: 800px) { .footer__grid { grid-template-columns: 1fr 1fr; } }
+  footer h4 { color: #fff; font-size: .82rem; text-transform: uppercase; letter-spacing: .09em; margin-bottom: 14px; }
+  footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 9px; }
+  footer a { text-decoration: none; transition: color .15s; }
+  footer a:hover { color: var(--blue); }
+  .footer__bottom { border-top: 1px solid rgba(255, 255, 255, .12); padding-top: 24px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: .82rem; }
+
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.is-visible { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#top"><span class="logo__mark">S</span> Skype</a>
+    <nav class="nav__links">
+      <a href="#pourquoi">Pourquoi revenir</a>
+      <a href="#fonctions">Fonctionnalités</a>
+      <a href="#sons">Les sons</a>
+      <a href="#comparatif">Comparatif</a>
+    </nav>
+    <a class="btn btn--primary" href="/" style="padding: 11px 24px; font-size: .93rem;">Ouvrir Skype</a>
+  </div>
+</header>
+
+<!-- ══ HÉROS ══ -->
+<div class="hero" id="top">
+  <div class="wrap hero__grid">
+    <div>
+      <span class="eyebrow"><span class="eyebrow__dot"></span> De retour, pour de bon</span>
+      <h1>Vous n'avez jamais eu besoin d'un <em>nouvel</em> outil. Vous aviez besoin du <em>vôtre</em>.</h1>
+      <p class="hero__lead">
+        Un pseudo. Un bouton vert. La voix de vos proches.
+        Skype revient avec tout ce que vous aimiez — et tout ce qui vous manquait depuis.
+      </p>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="/">Retrouver mes conversations →</a>
+        <a class="btn btn--dark" href="#pourquoi">Pourquoi maintenant ?</a>
+      </div>
+      <p class="hero__note">Gratuit · Aucune réunion à planifier · Aucun code à saisir · Ça s'ouvre et ça marche</p>
+    </div>
+
+    <div class="mock" aria-hidden="true">
+      <div class="mock__bar">
+        <span class="mock__dot" style="background:#FF5F57"></span>
+        <span class="mock__dot" style="background:#FEBC2E"></span>
+        <span class="mock__dot" style="background:#28C840"></span>
+      </div>
+      <div class="mock__body">
+        <div class="mock__side">
+          <div class="mock__contact"><span class="mock__ava" style="background:#F59E0B"></span><span class="mock__lines"><span class="mock__line" style="width:70%"></span><span class="mock__line" style="width:45%"></span></span></div>
+          <div class="mock__contact"><span class="mock__ava" style="background:#7B68EE"></span><span class="mock__lines"><span class="mock__line" style="width:60%"></span><span class="mock__line" style="width:52%"></span></span></div>
+          <div class="mock__contact"><span class="mock__ava" style="background:#20C997"></span><span class="mock__lines"><span class="mock__line" style="width:75%"></span><span class="mock__line" style="width:40%"></span></span></div>
+          <div class="mock__contact"><span class="mock__ava" style="background:#EC4899"></span><span class="mock__lines"><span class="mock__line" style="width:55%"></span><span class="mock__line" style="width:48%"></span></span></div>
+        </div>
+        <div class="mock__chat">
+          <div class="bubble bubble--in">Coucou ma puce, tu es là ? 😊</div>
+          <div class="bubble bubble--out">Oui Mamie ! On s'appelle en vidéo ?</div>
+          <div class="bubble bubble--in">Avec plaisir (y)</div>
+          <div class="bubble bubble--out">Je t'appelle dans 2 minutes ❤️</div>
+          <div class="mock__typing"><i></i><i></i><i></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CHIFFRES ══ -->
+<div class="stats">
+  <div class="wrap stats__grid">
+    <div><div class="stat__num">0</div><div class="stat__label">Code de réunion à saisir</div></div>
+    <div><div class="stat__num">1</div><div class="stat__label">Clic pour appeler quelqu'un</div></div>
+    <div><div class="stat__num">22</div><div class="stat__label">Ans de conversations</div></div>
+    <div><div class="stat__num">∞</div><div class="stat__label">Émoticônes retrouvées</div></div>
+  </div>
+</div>
+
+<!-- ══ MANIFESTE ══ -->
+<section class="manifesto" id="pourquoi">
+  <div class="wrap center">
+    <div class="quote-marks">&ldquo;</div>
+    <h2>On vous a demandé de changer. On ne vous a jamais demandé si vous le vouliez.</h2>
+    <p class="manifesto__text">
+      On vous a proposé des <strong>canaux</strong>, des <strong>équipes</strong>, des <strong>espaces de travail</strong>,
+      des <strong>onglets dans des onglets</strong>. Il fallait un compte professionnel, une invitation, un lien,
+      un fuseau horaire et un créneau de trente minutes juste pour dire bonjour à quelqu'un.
+    </p>
+    <p class="manifesto__text">
+      Skype, lui, n'a jamais eu besoin de tout ça. Vous tapiez un pseudo, vous cliquiez, ça sonnait.
+      Votre grand-mère y arrivait. <strong>C'était ça, le génie.</strong>
+    </p>
+    <p class="manifesto__text" style="font-size: 1.28rem; font-weight: 600; margin-top: 32px;">
+      Alors on l'a reconstruit. Entièrement. Sans rien enlever.
+    </p>
+    <div style="margin-top: 34px;">
+      <a class="btn btn--ghost" href="#fonctions">Voir ce qu'il y a dedans ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FONCTIONNALITÉS ══ -->
+<section id="fonctions">
+  <div class="wrap">
+    <div class="section__head reveal">
+      <h2>Tout est revenu. Vraiment tout.</h2>
+      <p>Pas une version « allégée ». Pas une bêta. Le Skype complet, jusqu'aux détails que vous seul remarquerez.</p>
+    </div>
+
+    <div class="features">
+      <div class="feature reveal"><div class="feature__icon">💬</div><h3>Messagerie instantanée</h3><p>Texte enrichi, réponses citées, modification, suppression, transfert, mentions, brouillons sauvegardés, accusés de lecture. Et l'indicateur « est en train d'écrire… ».</p></div>
+      <div class="feature reveal"><div class="feature__icon">📹</div><h3>Appels audio et vidéo</h3><p>En tête-à-tête ou à plusieurs, en HD, avec réduction de bruit. Un clic sur le bouton vert, comme avant. Sans lien, sans salon, sans mot de passe.</p></div>
+      <div class="feature reveal"><div class="feature__icon">🖥️</div><h3>Partage d'écran</h3><p>Toujours aussi simple, toujours aussi utile pour dépanner votre père à distance le dimanche après-midi.</p></div>
+      <div class="feature reveal"><div class="feature__icon">😀</div><h3>Les émoticônes d'origine</h3><p><code>(y)</code>, <code>(rofl)</code>, <code>(cool)</code>, <code>(party)</code>… Tapez-les, elles apparaissent. Plus de 80 classiques et 1 800 émojis modernes.</p></div>
+      <div class="feature reveal"><div class="feature__icon">👥</div><h3>Groupes complets</h3><p>Administrateurs, photo de groupe, lien d'invitation, ajout et retrait de membres, sondages intégrés. Jusqu'à toute la famille.</p></div>
+      <div class="feature reveal"><div class="feature__icon">🎤</div><h3>Messages vocaux</h3><p>Appuyez, parlez, envoyez. Avec forme d'onde et lecture à la demande, quand écrire prend trop de temps.</p></div>
+      <div class="feature reveal"><div class="feature__icon">📎</div><h3>Fichiers et photos</h3><p>Glissez-déposez jusqu'à 64 Mo. Galerie intégrée, aperçu plein écran, historique des fichiers par conversation.</p></div>
+      <div class="feature reveal"><div class="feature__icon">☎️</div><h3>Crédit Skype et numéro</h3><p>Appelez les fixes et les mobiles avec le crédit Skype. Obtenez un vrai numéro pour recevoir des appels.</p></div>
+      <div class="feature reveal"><div class="feature__icon">🔔</div><h3>Statuts de présence</h3><p>En ligne, Absent, Ne pas déranger, Invisible. Le petit point vert qui vous disait qui était là. Il est revenu.</p></div>
+      <div class="feature reveal"><div class="feature__icon">🌙</div><h3>Thèmes</h3><p>Clair, sombre, contraste élevé et le thème <strong>Skype Classic</strong> — le bleu d'origine, pour les nostalgiques assumés.</p></div>
+      <div class="feature reveal"><div class="feature__icon">🔍</div><h3>Recherche universelle</h3><p>Retrouvez un message de 2011 en trois lettres. Messages, personnes, conversations, fichiers, liens.</p></div>
+      <div class="feature reveal"><div class="feature__icon">🔒</div><h3>Chez vous, pas ailleurs</h3><p>Vos conversations restent sur votre serveur. Aucun traceur, aucune publicité, aucune donnée revendue.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ NOSTALGIE + SONS ══ -->
+<section class="tint nostalgia" id="sons">
+  <div class="wrap nostalgia__grid">
+    <div class="reveal">
+      <h2>Vous vous souvenez de ce bruit ?</h2>
+      <p style="color: var(--ink-soft); margin-top: 18px; font-size: 1.05rem;">
+        Ce petit « blop » quand un message arrivait. Cette sonnerie montante qui faisait sursauter
+        toute la maison. Vous ne les avez jamais oubliés — et nous non plus.
+      </p>
+      <ul class="checklist">
+        <li><span class="tick">✓</span><span><strong>Le son de message</strong><span>Reproduit note par note. Cliquez, vous allez sourire.</span></span></li>
+        <li><span class="tick">✓</span><span><strong>La sonnerie d'appel</strong><span>Celle qui annonçait qu'on pensait à vous.</span></span></li>
+        <li><span class="tick">✓</span><span><strong>Le décrochage et le raccrochage</strong><span>Ces deux notes qui signifiaient « on est connectés ».</span></span></li>
+        <li><span class="tick">✓</span><span><strong>Les tonalités du clavier</strong><span>Le vrai DTMF, pour les appels vers les téléphones.</span></span></li>
+      </ul>
+    </div>
+
+    <div class="sound-card reveal">
+      <button class="sound-btn" id="playMain" aria-label="Écouter le son de message Skype">▶</button>
+      <h3>Écoutez plutôt.</h3>
+      <p>Montez le son. Vous avez dix-huit ans à nouveau.</p>
+      <div class="sound-row">
+        <button class="sound-chip" data-sound="message">💬 Message</button>
+        <button class="sound-chip" data-sound="ring">📞 Sonnerie</button>
+        <button class="sound-chip" data-sound="connect">✅ Décrochage</button>
+        <button class="sound-chip" data-sound="end">🔚 Raccrochage</button>
+      </div>
+      <p style="margin-top: 18px; font-size: .8rem; opacity: .65;">Sons synthétisés en direct dans votre navigateur.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COMPARATIF ══ -->
+<section id="comparatif">
+  <div class="wrap">
+    <div class="section__head reveal">
+      <h2>Parler à quelqu'un ne devrait pas être un projet</h2>
+      <p>Comparons honnêtement ce que demande un simple « tu es dispo ? ».</p>
+    </div>
+
+    <div class="compare-wrap reveal">
+      <table class="compare">
+        <thead>
+          <tr><th>Pour appeler une personne</th><th>Skype</th><th>Une plateforme « collaborative »</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Créer une réunion à l'avance</td><td class="yes">Inutile</td><td class="no">Souvent obligatoire</td></tr>
+          <tr><td>Envoyer un lien à l'autre personne</td><td class="yes">Inutile</td><td class="no">Obligatoire</td></tr>
+          <tr><td>Avoir un compte professionnel</td><td class="yes">Non</td><td class="no">Fréquemment</td></tr>
+          <tr><td>Ajouter quelqu'un par son pseudo</td><td class="yes">Oui</td><td class="no">Adresse pro requise</td></tr>
+          <tr><td>Appeler un vrai numéro de téléphone</td><td class="yes">Oui, avec le crédit</td><td class="no">Licence payante</td></tr>
+          <tr><td>Utilisable par un enfant de 8 ans ou un grand-parent de 88 ans</td><td class="yes">Oui</td><td class="no">Bon courage</td></tr>
+          <tr><td>Statut de présence visible en un coup d'œil</td><td class="yes">Oui</td><td class="no">Noyé dans l'interface</td></tr>
+          <tr><td>Nombre de clics pour dire bonjour</td><td class="yes">1</td><td class="no">6 à 9</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="center" style="margin-top: 24px; color: var(--ink-soft); font-size: .9rem;">
+      Les outils d'entreprise sont excellents… pour l'entreprise. Pour votre vie, il vous faut autre chose.
+    </p>
+  </div>
+</section>
+
+<!-- ══ TÉMOIGNAGES ══ -->
+<section class="tint">
+  <div class="wrap">
+    <div class="section__head reveal">
+      <h2>Ce qu'on nous dit depuis le retour</h2>
+      <p>Des utilisateurs qui n'avaient pas ouvert Skype depuis des années.</p>
+    </div>
+
+    <div class="quotes">
+      <div class="quote reveal">
+        <div class="stars">★★★★★</div>
+        <p>« Ma mère a 79 ans. Elle n'a jamais compris l'autre application. Là, elle clique sur ma photo et ça sonne. On se parle tous les dimanches à nouveau. »</p>
+        <div class="quote__who">
+          <span class="quote__ava" style="background:#00AFF0">CD</span>
+          <span><span class="quote__name">Camille D.</span><span class="quote__role">Lyon</span></span>
+        </div>
+      </div>
+      <div class="quote reveal">
+        <div class="stars">★★★★★</div>
+        <p>« J'ai retapé <code>(rofl)</code> par réflexe. Ça a marché. Je crois que j'ai eu une émotion. »</p>
+        <div class="quote__who">
+          <span class="quote__ava" style="background:#7B68EE">TL</span>
+          <span><span class="quote__name">Thomas L.</span><span class="quote__role">Nantes</span></span>
+        </div>
+      </div>
+      <div class="quote reveal">
+        <div class="stars">★★★★★</div>
+        <p>« Le partage d'écran fonctionne en deux secondes, sans installer de module ni demander à l'administrateur. J'avais oublié que c'était possible. »</p>
+        <div class="quote__who">
+          <span class="quote__ava" style="background:#20C997">AB</span>
+          <span><span class="quote__name">Aïcha B.</span><span class="quote__role">Marseille</span></span>
+        </div>
+      </div>
+    </div>
+    <p class="center" style="margin-top: 26px; font-size: .78rem; color: var(--ink-soft);">
+      Témoignages illustratifs représentant des retours d'utilisateurs de la démonstration.
+    </p>
+  </div>
+</section>
+
+<!-- ══ APPEL FINAL ══ -->
+<section class="final">
+  <div class="wrap">
+    <h2>Quelqu'un attend de vos nouvelles.</h2>
+    <p>
+      Pas dans un canal. Pas dans un fil de discussion. Pas à la prochaine réunion d'équipe.
+      Juste quelqu'un, quelque part, qui serait content d'entendre votre voix ce soir.
+    </p>
+    <div class="final__cta">
+      <a class="btn btn--primary" href="/">Ouvrir Skype maintenant</a>
+      <a class="btn btn--ghost" href="/">Créer mon compte — 10 secondes</a>
+    </div>
+    <p class="final__small">Gratuit. Sans publicité. Sans numéro de téléphone obligatoire.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <a class="logo" href="/" style="color: #fff; margin-bottom: 14px;"><span class="logo__mark">S</span> Skype</a>
+        <p style="max-width: 34ch;">La messagerie et les appels qui vous ont accompagné pendant vingt ans. Reconstruits de A à Z, sans rien oublier.</p>
+      </div>
+      <div><h4>Produit</h4><ul>
+        <li><a href="#fonctions">Fonctionnalités</a></li>
+        <li><a href="#sons">Les sons</a></li>
+        <li><a href="#comparatif">Comparatif</a></li>
+        <li><a href="/">Ouvrir l'application</a></li>
+      </ul></div>
+      <div><h4>Retrouver</h4><ul>
+        <li><a href="/">Mes conversations</a></li>
+        <li><a href="/">Mes contacts</a></li>
+        <li><a href="/">Mon crédit Skype</a></li>
+        <li><a href="/">Mon numéro Skype</a></li>
+      </ul></div>
+      <div><h4>À propos</h4><ul>
+        <li><a href="#pourquoi">Notre manifeste</a></li>
+        <li><a href="#comparatif">Pourquoi pas Teams</a></li>
+        <li><a href="/">Confidentialité</a></li>
+        <li><a href="/">Version 8.130.0</a></li>
+      </ul></div>
+    </div>
+    <div class="footer__bottom">
+      <span>Skype Reborn · Projet indépendant de restauration, sans lien avec Microsoft.</span>
+      <span>Fait avec 💙 pour ceux qui n'ont jamais voulu changer.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Sons Skype synthétisés (Web Audio, aucun fichier) ──────────────
+  let ctx;
+  const audio = () => (ctx ||= new (window.AudioContext || window.webkitAudioContext)());
+
+  function tone({ freq, start = 0, duration = .15, gain = .22, type = 'sine' }) {
+    const c = audio();
+    const t = c.currentTime + start;
+    const osc = c.createOscillator();
+    const env = c.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t);
+    env.gain.setValueAtTime(.0001, t);
+    env.gain.exponentialRampToValueAtTime(gain, t + .012);
+    env.gain.setValueAtTime(gain, t + duration * .7);
+    env.gain.exponentialRampToValueAtTime(.0001, t + duration);
+    osc.connect(env).connect(c.destination);
+    osc.start(t);
+    osc.stop(t + duration + .02);
+  }
+
+  const SOUNDS = {
+    message: [{ freq: 660, duration: .09, gain: .2 }, { freq: 880, start: .07, duration: .13, gain: .22 }],
+    ring: [
+      { freq: 587, duration: .16, gain: .22 }, { freq: 698, start: .16, duration: .16, gain: .22 },
+      { freq: 880, start: .32, duration: .16, gain: .22 }, { freq: 1174, start: .48, duration: .3, gain: .24 },
+      { freq: 880, start: .85, duration: .16, gain: .2 }, { freq: 1174, start: 1.01, duration: .34, gain: .22 },
+    ],
+    connect: [{ freq: 523, duration: .11, gain: .2 }, { freq: 784, start: .1, duration: .16, gain: .2 }],
+    end: [{ freq: 587, duration: .12, gain: .18 }, { freq: 392, start: .11, duration: .22, gain: .18 }],
+  };
+
+  const play = (name) => (SOUNDS[name] || SOUNDS.message).forEach(tone);
+
+  const mainButton = document.getElementById('playMain');
+  mainButton.addEventListener('click', () => {
+    play('message');
+    mainButton.textContent = '🔊';
+    setTimeout(() => (mainButton.textContent = '▶'), 700);
+  });
+
+  document.querySelectorAll('.sound-chip').forEach((chip) => {
+    chip.addEventListener('click', () => play(chip.dataset.sound));
+  });
+
+  // ── Apparition progressive au défilement ───────────────────────────
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add('is-visible')),
+    { threshold: .12, rootMargin: '0px 0px -40px' }
+  );
+  document.querySelectorAll('.reveal').forEach((node, index) => {
+    node.style.transitionDelay = `${Math.min(index % 6, 5) * 70}ms`;
+    observer.observe(node);
+  });
+
+  // ── Compteurs animés ───────────────────────────────────────────────
+  const counters = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const node = entry.target;
+      const target = parseInt(node.textContent, 10);
+      if (Number.isNaN(target) || target === 0) return counters.unobserve(node);
+      let current = 0;
+      const step = Math.max(1, Math.round(target / 30));
+      const timer = setInterval(() => {
+        current = Math.min(target, current + step);
+        node.textContent = String(current);
+        if (current >= target) clearInterval(timer);
+      }, 40);
+      counters.unobserve(node);
+    });
+  }, { threshold: .5 });
+  document.querySelectorAll('.stat__num').forEach((node) => counters.observe(node));
+</script>
+</body>
+</html>

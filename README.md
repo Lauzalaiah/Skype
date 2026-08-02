@@ -1,0 +1,192 @@
+<div align="center">
+
+# Skype
+
+**La messagerie, les appels audio et vidéo et le partage d'écran que vous aimiez.
+Recréés de A à Z, sans rien oublier.**
+
+Version 8.130.0 · Zéro dépendance · Node.js ≥ 18
+
+</div>
+
+---
+
+## Démarrage en 30 secondes
+
+```bash
+npm run seed      # crée 7 comptes de démonstration et leurs conversations
+npm start         # démarre le serveur sur http://localhost:3000
+```
+
+Ouvrez **http://localhost:3000** et connectez-vous :
+
+| Pseudo Skype | Nom | Mot de passe |
+|---|---|---|
+| `camille.durand` | Camille Durand *(compte principal)* | `skype123` |
+| `thomas.leroy` | Thomas Leroy | `skype123` |
+| `aicha.benali` | Aïcha Benali | `skype123` |
+| `lucas.martin` | Lucas Martin | `skype123` |
+| `mamie.jeanne` | Mamie Jeanne | `skype123` |
+| `sofia.rossi` | Sofia Rossi | `skype123` |
+
+> **Pour tester les appels**, ouvrez un second navigateur (ou une fenêtre de navigation
+> privée) et connectez-vous avec un autre compte. Les appels audio, vidéo et le partage
+> d'écran fonctionnent réellement, en pair-à-pair via WebRTC.
+
+La publicité de lancement est servie sur **http://localhost:3000/pub**.
+
+### Autres commandes
+
+```bash
+npm run dev       # démarrage avec rechargement automatique
+npm run reset     # remet la base à zéro et recrée les comptes de démonstration
+npm test          # 43 tests de bout en bout (API, temps réel, sécurité)
+PORT=8080 npm start
+```
+
+---
+
+## Ce qu'il y a dedans
+
+Tout Skype, jusqu'aux détails. Le détail complet se trouve dans
+[`docs/FONCTIONNALITES.md`](docs/FONCTIONNALITES.md) — en résumé :
+
+**Messagerie** — conversations individuelles et de groupe, texte enrichi
+(`*gras*`, `_italique_`, `~barré~`, blocs de code), réponses citées, modification,
+suppression pour soi ou pour tous, transfert, mentions `@pseudo`, réactions, accusés
+de lecture, indicateur de saisie, brouillons, messages favoris, séparateurs de jour
+et de nouveaux messages.
+
+**Émoticônes** — les 80 classiques de Skype avec leurs raccourcis d'origine
+(`(y)`, `(rofl)`, `(cool)`, `(party)`…) plus 1 800 émojis modernes, recherche,
+récents, et affichage géant quand un message ne contient que des émojis.
+
+**Appels** — audio et vidéo, en tête-à-tête ou en groupe (maillage WebRTC complet),
+partage d'écran, coupure du micro, main levée, sous-titres en direct, vue grille ou
+intervenant, détection de la personne qui parle, réduction de bruit, réponses rapides
+sur appel entrant, historique et appels manqués.
+
+**Téléphonie** — pavé numérique avec tonalités DTMF, appels vers les numéros fixes et
+mobiles décomptés du crédit Skype, attribution d'un numéro Skype.
+
+**Groupes** — administrateurs, photo, renommage, lien d'invitation, ajout et retrait de
+participants, sondages avec choix simple ou multiple.
+
+**Fichiers** — glisser-déposer jusqu'à 64 Mo, images, vidéos, documents, messages
+vocaux enregistrés au micro, galerie de médias, historique des fichiers et des liens.
+
+**Présence** — En ligne, Absent, Ne pas déranger, Invisible, Hors ligne, passage
+automatique en Absent après 5 minutes d'inactivité, « vu il y a… ».
+
+**Personnalisation** — thèmes Clair, Sombre, **Skype Classic** (le bleu d'origine) et
+Contraste élevé, six couleurs d'accentuation, quatre tailles de texte, densité de liste.
+
+**Le reste** — recherche universelle, notifications système et sonores, sons Skype
+synthétisés (message, sonnerie, décrochage, raccrochage), blocage, confidentialité
+fine, export des données, raccourcis clavier, interface mobile, PWA installable.
+
+---
+
+## Architecture
+
+```
+server/          Node.js pur, aucune dépendance
+  index.js       serveur HTTP + fichiers statiques + montage WebSocket
+  ws.js          implémentation WebSocket (RFC 6455) écrite à la main
+  api.js         API REST (auth, contacts, conversations, messages, fichiers)
+  models.js      logique métier et vues publiques des données
+  realtime.js    présence, saisie en cours, signalisation WebRTC
+  store.js       persistance JSON atomique
+  seed.js        données de démonstration
+
+public/          Application web, modules ES natifs, aucun outil de build
+  css/           thème, base, mise en page, conversation, composants, appels
+  js/
+    lib/         dom, icônes, formatage, dates, sons, client API, client WebSocket
+    ui/          authentification, rail, panneau latéral, conversation, messages,
+                 rédaction, émoticônes, appels, réglages, détails, modales
+    state.js     état global et abonnements
+    app.js       amorçage, événements temps réel, raccourcis clavier
+  pub/           la publicité de lancement
+
+ad/campagne.md   films, spots radio, affichage, réseaux sociaux, e-mail de reconquête
+docs/            liste exhaustive des fonctionnalités
+test/            tests de bout en bout
+data/            base JSON et fichiers envoyés (créé au premier lancement)
+```
+
+**Aucune dépendance npm.** Le serveur WebSocket, la persistance, le routage HTTP et
+toute l'interface sont écrits directement sur les API de Node.js et du navigateur.
+`npm install` n'a rien à installer ; il suffit de `node server/index.js`.
+
+---
+
+## Comment ça marche
+
+**Temps réel** — un WebSocket par session porte la présence, la saisie en cours, les
+messages, les réactions et toute la signalisation d'appel. Reconnexion automatique avec
+attente exponentielle et resynchronisation des messages manqués.
+
+**Appels** — WebRTC en pair-à-pair. Le serveur ne relaie que les offres SDP et les
+candidats ICE : **l'audio et la vidéo ne transitent jamais par lui**. Les appels de
+groupe utilisent un maillage complet (chaque participant est connecté à tous les
+autres), ce qui convient jusqu'à environ 6 personnes.
+
+**Sécurité** — mots de passe hachés avec `scrypt` et un sel unique, comparaison à temps
+constant, jetons de session de 256 bits, échappement HTML systématique avant tout rendu
+de contenu utilisateur, protection contre la traversée de répertoire, contrôle
+d'appartenance sur chaque conversation, blocage respecté côté serveur.
+
+**Données** — tout est stocké dans `data/skype.json` et `data/files/`. Rien ne sort de
+votre machine. Aucun traceur, aucun service tiers, aucune police ni script distant.
+
+---
+
+## Tests
+
+```bash
+npm test
+```
+
+43 tests couvrent l'inscription et la connexion, le rejet des identifiants invalides,
+les demandes de contact, les permissions de conversation, l'édition et la suppression
+de messages, les réactions, les sondages, les rôles d'administrateur, les liens
+d'invitation, le blocage, la fusion des réglages imbriqués, le crédit Skype, l'envoi
+et le téléchargement de fichiers, la diffusion WebSocket et le refus des jetons
+invalides.
+
+L'interface a été validée dans Chromium sur 30 scénarios de bout en bout, y compris un
+appel vidéo réellement établi entre deux sessions.
+
+---
+
+## Raccourcis clavier
+
+| Action | Raccourci |
+|---|---|
+| Nouvelle conversation | `Ctrl + N` |
+| Rechercher | `Ctrl + F` |
+| Conversation suivante / précédente | `Ctrl + ⇧ + ↓` / `↑` |
+| Appel audio / vidéo | `Ctrl + ⇧ + P` / `K` |
+| Raccrocher | `Ctrl + ⇧ + H` |
+| Modifier le dernier message | `↑` dans un champ vide |
+| Thème sombre | `Ctrl + ⇧ + D` |
+| Réglages | `Ctrl + ,` |
+| Tous les raccourcis | `Ctrl + /` |
+
+---
+
+## Compatibilité
+
+Chrome, Edge, Firefox et Safari récents. Les appels nécessitent HTTPS en dehors de
+`localhost` (contrainte des navigateurs sur `getUserMedia`). L'application est
+installable en PWA et s'adapte aux écrans mobiles.
+
+---
+
+<div align="center">
+
+Projet indépendant de restauration, sans lien avec Microsoft.
+Fait pour ceux qui n'ont jamais voulu changer. 💙
+
+</div>

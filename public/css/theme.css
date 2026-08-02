@@ -1,0 +1,239 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   Skype Reborn — jetons de design
+   Palette officielle Skype : bleu #00AFF0, avec les nuances de Skype 8.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Marque */
+  --skype-blue: #00aff0;
+  --skype-blue-dark: #0091c8;
+  --skype-blue-darker: #0078a8;
+  --skype-blue-light: #35c1f5;
+  --skype-blue-pale: #e5f7fe;
+
+  /* Présence */
+  --presence-online: #6bb700;
+  --presence-away: #ffaa44;
+  --presence-busy: #c50f1f;
+  --presence-invisible: #8a8886;
+  --presence-offline: #b3b0ad;
+
+  /* Rayons et ombres */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 18px;
+  --radius-bubble: 18px;
+  --radius-round: 999px;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-3: 0 8px 24px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.08);
+  --shadow-4: 0 16px 48px rgba(0, 0, 0, 0.22);
+
+  /* Transitions */
+  --ease: cubic-bezier(0.33, 0, 0.15, 1);
+  --fast: 120ms var(--ease);
+  --normal: 200ms var(--ease);
+  --slow: 320ms var(--ease);
+
+  /* Typographie */
+  --font: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Roboto, Arial, sans-serif;
+  --font-mono: 'Cascadia Code', 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+
+  /* Métriques */
+  --rail-width: 68px;
+  --sidebar-width: 336px;
+  --header-height: 56px;
+  --composer-min-height: 52px;
+}
+
+/* ── Thème clair (défaut) ─────────────────────────────────────────────────── */
+:root,
+[data-theme='light'] {
+  --accent: var(--skype-blue);
+  --accent-hover: var(--skype-blue-dark);
+  --accent-active: var(--skype-blue-darker);
+  --accent-soft: var(--skype-blue-pale);
+  --accent-contrast: #ffffff;
+
+  --bg-app: #ffffff;
+  --bg-rail: #f5f5f5;
+  --bg-sidebar: #ffffff;
+  --bg-main: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-hover: rgba(0, 0, 0, 0.04);
+  --bg-active: rgba(0, 0, 0, 0.08);
+  --bg-selected: #ebebeb;
+  --bg-input: #f0f0f0;
+  --bg-overlay: rgba(0, 0, 0, 0.42);
+  --bg-scrim: rgba(255, 255, 255, 0.72);
+
+  --bubble-in: #f0f0f0;
+  --bubble-in-text: #1b1a19;
+  --bubble-out: #e1f2fb;
+  --bubble-out-text: #1b1a19;
+  --bubble-system: rgba(0, 0, 0, 0.045);
+
+  --text: #1b1a19;
+  --text-secondary: #605e5c;
+  --text-tertiary: #8a8886;
+  --text-inverse: #ffffff;
+  --link: #0067b8;
+
+  --border: rgba(0, 0, 0, 0.09);
+  --border-strong: rgba(0, 0, 0, 0.16);
+  --divider: rgba(0, 0, 0, 0.06);
+
+  --danger: #c50f1f;
+  --danger-hover: #a80c1a;
+  --success: #107c10;
+  --warning: #f7a30b;
+
+  color-scheme: light;
+}
+
+/* ── Thème sombre ─────────────────────────────────────────────────────────── */
+[data-theme='dark'] {
+  --accent: #29b6f6;
+  --accent-hover: #4fc3f7;
+  --accent-active: #81d4fa;
+  --accent-soft: rgba(41, 182, 246, 0.16);
+  --accent-contrast: #06263a;
+
+  --bg-app: #201f1e;
+  --bg-rail: #1b1a19;
+  --bg-sidebar: #201f1e;
+  --bg-main: #201f1e;
+  --bg-elevated: #292827;
+  --bg-hover: rgba(255, 255, 255, 0.06);
+  --bg-active: rgba(255, 255, 255, 0.1);
+  --bg-selected: #3b3a39;
+  --bg-input: #323130;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+  --bg-scrim: rgba(32, 31, 30, 0.72);
+
+  --bubble-in: #323130;
+  --bubble-in-text: #f3f2f1;
+  --bubble-out: #0f4c68;
+  --bubble-out-text: #f3f2f1;
+  --bubble-system: rgba(255, 255, 255, 0.06);
+
+  --text: #f3f2f1;
+  --text-secondary: #c8c6c4;
+  --text-tertiary: #979593;
+  --text-inverse: #1b1a19;
+  --link: #6cb8f6;
+
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --divider: rgba(255, 255, 255, 0.07);
+
+  --danger: #f1707b;
+  --danger-hover: #ff8a94;
+  --success: #6bb700;
+  --warning: #ffaa44;
+
+  color-scheme: dark;
+}
+
+/* ── Thème « Classic » : le bleu Skype d'origine ──────────────────────────── */
+[data-theme='classic'] {
+  --accent: #00aff0;
+  --accent-hover: #0091c8;
+  --accent-active: #0078a8;
+  --accent-soft: #d6f0fb;
+  --accent-contrast: #ffffff;
+
+  --bg-app: #ffffff;
+  --bg-rail: #00aff0;
+  --bg-sidebar: #f7fcff;
+  --bg-main: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-hover: rgba(0, 175, 240, 0.08);
+  --bg-active: rgba(0, 175, 240, 0.16);
+  --bg-selected: #cdeefc;
+  --bg-input: #eef8fd;
+  --bg-overlay: rgba(0, 60, 90, 0.42);
+  --bg-scrim: rgba(255, 255, 255, 0.75);
+
+  --bubble-in: #eef8fd;
+  --bubble-in-text: #14364a;
+  --bubble-out: #00aff0;
+  --bubble-out-text: #ffffff;
+  --bubble-system: rgba(0, 175, 240, 0.08);
+
+  --text: #14364a;
+  --text-secondary: #4a6b7e;
+  --text-tertiary: #7d97a6;
+  --text-inverse: #ffffff;
+  --link: #0078a8;
+
+  --border: rgba(0, 175, 240, 0.2);
+  --border-strong: rgba(0, 175, 240, 0.4);
+  --divider: rgba(0, 175, 240, 0.14);
+
+  color-scheme: light;
+}
+[data-theme='classic'] .rail__button { color: rgba(255, 255, 255, 0.85); }
+[data-theme='classic'] .rail__button:hover { background: rgba(255, 255, 255, 0.18); color: #fff; }
+[data-theme='classic'] .rail__button.is-active { background: rgba(255, 255, 255, 0.28); color: #fff; }
+
+/* ── Contraste élevé (accessibilité) ──────────────────────────────────────── */
+[data-theme='contrast'] {
+  --accent: #ffff00;
+  --accent-hover: #ffff66;
+  --accent-active: #ffffaa;
+  --accent-soft: #1a1a00;
+  --accent-contrast: #000000;
+
+  --bg-app: #000000;
+  --bg-rail: #000000;
+  --bg-sidebar: #000000;
+  --bg-main: #000000;
+  --bg-elevated: #000000;
+  --bg-hover: #1aebff;
+  --bg-active: #1aebff;
+  --bg-selected: #1aebff;
+  --bg-input: #000000;
+  --bg-overlay: rgba(0, 0, 0, 0.85);
+  --bg-scrim: rgba(0, 0, 0, 0.85);
+
+  --bubble-in: #000000;
+  --bubble-in-text: #ffffff;
+  --bubble-out: #000000;
+  --bubble-out-text: #ffff00;
+  --bubble-system: #000000;
+
+  --text: #ffffff;
+  --text-secondary: #ffffff;
+  --text-tertiary: #ffffff;
+  --link: #1aebff;
+
+  --border: #ffffff;
+  --border-strong: #ffffff;
+  --divider: #ffffff;
+
+  color-scheme: dark;
+}
+[data-theme='contrast'] .bubble { border: 2px solid var(--border); }
+[data-theme='contrast'] *:focus-visible { outline: 3px solid #1aebff !important; }
+
+/* ── Couleurs d'accentuation ──────────────────────────────────────────────── */
+[data-accent='ocean']  { --accent: #0078d4; --accent-hover: #106ebe; --accent-active: #005a9e; --accent-soft: #deecf9; }
+[data-accent='forest'] { --accent: #107c10; --accent-hover: #0b6a0b; --accent-active: #094509; --accent-soft: #dff6dd; }
+[data-accent='sunset'] { --accent: #ca5010; --accent-hover: #a74109; --accent-active: #8a3707; --accent-soft: #fdf1e8; }
+[data-accent='grape']  { --accent: #8764b8; --accent-hover: #744da9; --accent-active: #5c3f86; --accent-soft: #f2eef8; }
+[data-accent='rose']   { --accent: #e3008c; --accent-hover: #bf0077; --accent-active: #9b0060; --accent-soft: #fdeef7; }
+
+/* ── Taille du texte ──────────────────────────────────────────────────────── */
+[data-font-size='small']  { font-size: 13px; }
+[data-font-size='medium'] { font-size: 14px; }
+[data-font-size='large']  { font-size: 16px; }
+[data-font-size='xlarge'] { font-size: 18px; }
+
+/* ── Densité ──────────────────────────────────────────────────────────────── */
+[data-layout='compact'] { --sidebar-width: 300px; }
+[data-layout='compact'] .chat-item { padding: 6px 12px; }
+[data-layout='compact'] .chat-item__avatar { width: 36px; height: 36px; }
+[data-layout='compact'] .chat-item__preview { display: none; }
