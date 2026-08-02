@@ -93,6 +93,7 @@ async function acquireMedia({ video }) {
         /* micro également indisponible */
       }
     }
+    sounds.callFailed();
     toast('Micro ou caméra inaccessible. Vérifiez les autorisations du navigateur.', { type: 'error' });
     return null;
   }
@@ -698,7 +699,11 @@ function createSession({ chat, video, stream, outgoing }) {
     socket.on('call:ended', ({ callId: endedId, reason }) => {
       if (endedId !== callId) return;
       if (reason === 'missed') toast('Personne n’a répondu');
+      // Appel jamais établi : on joue le son « appel non abouti » plutôt que
+      // le raccrochage, comme le faisait Skype.
+      const aboutit = !!startedAt;
       destroy();
+      if (!aboutit && ['missed', 'declined', 'cancelled'].includes(reason)) sounds.callNotConnected();
     }),
   ];
 

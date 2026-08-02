@@ -81,9 +81,10 @@ automatique en Absent après 5 minutes d'inactivité, « vu il y a… ».
 **Personnalisation** — thèmes Clair, Sombre, **Skype Classic** (le bleu d'origine) et
 Contraste élevé, six couleurs d'accentuation, quatre tailles de texte, densité de liste.
 
-**Le reste** — recherche universelle, notifications système et sonores, sons Skype
-synthétisés (message, sonnerie, décrochage, raccrochage), blocage, confidentialité
-fine, export des données, raccourcis clavier, interface mobile, PWA installable.
+**Le reste** — recherche universelle, notifications système et sonores, les **sons
+d'origine de Skype** (sonnerie, tonalité d'appel, message, appel sans réponse),
+blocage, confidentialité fine, export des données, raccourcis clavier, interface
+mobile, PWA installable.
 
 ---
 

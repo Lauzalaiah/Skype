@@ -431,9 +431,9 @@
         toute la maison. Vous ne les avez jamais oubliés — et nous non plus.
       </p>
       <ul class="checklist">
-        <li><span class="tick">✓</span><span><strong>Le son de message</strong><span>Reproduit note par note. Cliquez, vous allez sourire.</span></span></li>
+        <li><span class="tick">✓</span><span><strong>Le son de message</strong><span>L'original, pas une imitation. Cliquez, vous allez sourire.</span></span></li>
         <li><span class="tick">✓</span><span><strong>La sonnerie d'appel</strong><span>Celle qui annonçait qu'on pensait à vous.</span></span></li>
-        <li><span class="tick">✓</span><span><strong>Le décrochage et le raccrochage</strong><span>Ces deux notes qui signifiaient « on est connectés ».</span></span></li>
+        <li><span class="tick">✓</span><span><strong>La tonalité d'appel</strong><span>Le « bip… bip… » de l'attente, quand ça sonnait chez l'autre.</span></span></li>
         <li><span class="tick">✓</span><span><strong>Les tonalités du clavier</strong><span>Le vrai DTMF, pour les appels vers les téléphones.</span></span></li>
       </ul>
     </div>
@@ -445,10 +445,10 @@
       <div class="sound-row">
         <button class="sound-chip" data-sound="message">💬 Message</button>
         <button class="sound-chip" data-sound="ring">📞 Sonnerie</button>
-        <button class="sound-chip" data-sound="connect">✅ Décrochage</button>
-        <button class="sound-chip" data-sound="end">🔚 Raccrochage</button>
+        <button class="sound-chip" data-sound="dialing">📲 Tonalité d'appel</button>
+        <button class="sound-chip" data-sound="notconnected">🔚 Sans réponse</button>
       </div>
-      <p style="margin-top: 18px; font-size: .8rem; opacity: .65;">Sons synthétisés en direct dans votre navigateur.</p>
+      <p style="margin-top: 18px; font-size: .8rem; opacity: .65;">Les sons d'origine de Skype, ceux que vous connaissez.</p>
     </div>
   </div>
 </section>
@@ -574,7 +574,18 @@
 </footer>
 
 <script>
-  // ── Sons Skype synthétisés (Web Audio, aucun fichier) ──────────────
+  // ── Les vrais sons de Skype ────────────────────────────────────────
+  // Repli sur une synthèse Web Audio si un fichier manque.
+  const FILES = {
+    message: '/assets/sounds/skype-message.mp3',
+    ring: '/assets/sounds/skype-ring.mp3',
+    dialing: '/assets/sounds/skype-dialing.mp3',
+    notconnected: '/assets/sounds/skype-call-not-connected.mp3',
+  };
+
+  const elements = {};
+  let enCours = null;
+
   let ctx;
   const audio = () => (ctx ||= new (window.AudioContext || window.webkitAudioContext)());
 
@@ -594,18 +605,32 @@
     osc.stop(t + duration + .02);
   }
 
-  const SOUNDS = {
+  const REPLIS = {
     message: [{ freq: 660, duration: .09, gain: .2 }, { freq: 880, start: .07, duration: .13, gain: .22 }],
     ring: [
       { freq: 587, duration: .16, gain: .22 }, { freq: 698, start: .16, duration: .16, gain: .22 },
       { freq: 880, start: .32, duration: .16, gain: .22 }, { freq: 1174, start: .48, duration: .3, gain: .24 },
       { freq: 880, start: .85, duration: .16, gain: .2 }, { freq: 1174, start: 1.01, duration: .34, gain: .22 },
     ],
-    connect: [{ freq: 523, duration: .11, gain: .2 }, { freq: 784, start: .1, duration: .16, gain: .2 }],
-    end: [{ freq: 587, duration: .12, gain: .18 }, { freq: 392, start: .11, duration: .22, gain: .18 }],
+    dialing: [{ freq: 440, duration: .4, gain: .12 }, { freq: 480, duration: .4, gain: .1 }],
+    notconnected: [{ freq: 480, duration: .3, gain: .16 }, { freq: 400, start: .32, duration: .4, gain: .16 }],
   };
 
-  const play = (name) => (SOUNDS[name] || SOUNDS.message).forEach(tone);
+  function play(name) {
+    // Un seul son à la fois : on coupe le précédent.
+    if (enCours) { enCours.pause(); enCours.currentTime = 0; }
+
+    const url = FILES[name];
+    if (!url) return (REPLIS[name] || REPLIS.message).forEach(tone);
+
+    const son = (elements[name] ||= new Audio(url));
+    son.currentTime = 0;
+    enCours = son;
+    son.play().catch(() => {
+      enCours = null;
+      (REPLIS[name] || REPLIS.message).forEach(tone);
+    });
+  }
 
   const mainButton = document.getElementById('playMain');
   mainButton.addEventListener('click', () => {

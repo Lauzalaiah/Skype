@@ -684,10 +684,13 @@ export function openSettings(section = 'profile') {
       group('Diagnostic', [
         settingRow('État de la connexion', state.connection === 'online' ? 'Connecté au serveur' : 'Reconnexion en cours…',
           el('span.status-dot', { dataset: { status: state.connection === 'online' ? 'online' : 'busy' } })),
-        settingRow('Tester les sons', 'Vérifier le volume des notifications',
-          el('div.row.gap-8', {}, [
+        settingRow('Tester les sons', 'Les sons d’origine de Skype',
+          el('div.row.gap-8', { style: { flexWrap: 'wrap', justifyContent: 'flex-end' } }, [
             el('button.btn.btn--sm', { text: 'Message', onclick: () => sounds.messageIn() }),
-            el('button.btn.btn--sm', { text: 'Appel', onclick: () => { sounds.startRinging(); setTimeout(() => sounds.stopRinging(), 2600); } }),
+            el('button.btn.btn--sm', { text: 'Sonnerie', onclick: () => { sounds.startRinging(); setTimeout(() => sounds.stopRinging(), 4000); } }),
+            el('button.btn.btn--sm', { text: 'Tonalité', onclick: () => { sounds.startDialing(); setTimeout(() => sounds.stopRinging(), 4000); } }),
+            el('button.btn.btn--sm', { text: 'Sans réponse', onclick: () => sounds.callNotConnected() }),
+            el('button.btn.btn--sm', { text: 'Échec', onclick: () => sounds.callFailed() }),
           ])),
       ]),
     ]);
