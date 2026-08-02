@@ -743,7 +743,12 @@ export function showIncomingCall({ call, from, chat }) {
   document.querySelector('.incoming-call')?.remove();
 
   const settings = state.user?.settings?.notifications || {};
-  if (settings.calls !== false && settings.sound !== false) sounds.startRinging();
+  if (settings.calls !== false && settings.sound !== false) {
+    // Déjà en communication : un bip discret plutôt que la sonnerie complète,
+    // qui couvrirait la conversation en cours.
+    if (session) sounds.callWaiting();
+    else sounds.startRinging();
+  }
 
   setState({ incomingCall: call });
 

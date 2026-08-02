@@ -434,6 +434,7 @@
         <li><span class="tick">✓</span><span><strong>Le son de message</strong><span>L'original, pas une imitation. Cliquez, vous allez sourire.</span></span></li>
         <li><span class="tick">✓</span><span><strong>La sonnerie d'appel</strong><span>Celle qui annonçait qu'on pensait à vous.</span></span></li>
         <li><span class="tick">✓</span><span><strong>La tonalité d'appel</strong><span>Le « bip… bip… » de l'attente, quand ça sonnait chez l'autre.</span></span></li>
+        <li><span class="tick">✓</span><span><strong>Le son de connexion</strong><span>Celui qui disait « ça y est, tu es en ligne ».</span></span></li>
         <li><span class="tick">✓</span><span><strong>Les tonalités du clavier</strong><span>Le vrai DTMF, pour les appels vers les téléphones.</span></span></li>
       </ul>
     </div>
@@ -446,6 +447,8 @@
         <button class="sound-chip" data-sound="message">💬 Message</button>
         <button class="sound-chip" data-sound="ring">📞 Sonnerie</button>
         <button class="sound-chip" data-sound="dialing">📲 Tonalité d'appel</button>
+        <button class="sound-chip" data-sound="login">🔑 Connexion</button>
+        <button class="sound-chip" data-sound="file">📎 Fichier reçu</button>
         <button class="sound-chip" data-sound="notconnected">🔚 Sans réponse</button>
       </div>
       <p style="margin-top: 18px; font-size: .8rem; opacity: .65;">Les sons d'origine de Skype, ceux que vous connaissez.</p>
@@ -581,6 +584,8 @@
     ring: '/assets/sounds/skype-ring.mp3',
     dialing: '/assets/sounds/skype-dialing.mp3',
     notconnected: '/assets/sounds/skype-call-not-connected.mp3',
+    login: '/assets/sounds/skype-login.mp3',
+    file: '/assets/sounds/skype-file-received.mp3',
   };
 
   const elements = {};

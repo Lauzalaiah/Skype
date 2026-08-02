@@ -183,10 +183,18 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 - Notifications système du navigateur, cliquables
 - Bandeau interne façon Skype
 - **Sons d'origine de Skype** (fichiers dans `public/assets/sounds/`) :
-  sonnerie d'appel entrant, tonalité d'appel sortant, message reçu,
-  appel sans réponse, échec d'appel
+  message reçu, sonnerie d'appel (deux variantes), tonalité d'appel sortant,
+  appel en attente, appel sans réponse, échec d'appel, fichier reçu,
+  connexion, notification
+- Choix de la sonnerie d'appel entrant dans les réglages, avec écoute
+- Bibliothèque de sons écoutable depuis les réglages
+- Le son de connexion ne retentit qu'à une vraie connexion, pas à chaque
+  rechargement de la page
+- Un fichier reçu et un message texte ont deux sons distincts
+- Un second appel pendant une communication déclenche un bip discret plutôt
+  que la sonnerie complète
 - Sons complémentaires synthétisés en Web Audio : message envoyé, mention,
-  décrochage, raccrochage, notification, erreur, tonalités DTMF normalisées
+  décrochage, raccrochage, erreur, tonalités DTMF normalisées
 - Repli automatique sur la synthèse si un fichier audio est absent
 - Réglages fins : messages, appels, réactions, demandes de contact
 - Silence des conversations sourdinées

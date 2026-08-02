@@ -1,10 +1,14 @@
 /**
  * Sons de Skype.
  *
- * Les sons officiels (sonnerie, tonalité d'appel, notification, échec d'appel)
- * sont lus depuis /assets/sounds/. Si un fichier est absent ou illisible, on
- * retombe automatiquement sur une synthèse Web Audio équivalente, pour que
- * l'application reste utilisable sans les fichiers audio.
+ * Les sons officiels sont déclarés dans BIBLIOTHEQUE ci-dessous et chargés
+ * depuis /assets/sounds/. Chaque son garde une synthèse Web Audio de secours :
+ * si un fichier manque ou ne se décode pas, l'application reste sonore.
+ *
+ * ── Ajouter un son ────────────────────────────────────────────────────────
+ *   1. Déposer le fichier dans public/assets/sounds/
+ *   2. Ajouter une ligne dans BIBLIOTHEQUE
+ *   3. L'appeler avec sound('maCle') ou via une fonction exportée dédiée
  */
 
 let ctx = null;
@@ -29,98 +33,155 @@ export const setSoundEnabled = (value) => {
 export const setVolume = (value) => {
   if (masterGain) masterGain.gain.value = Math.max(0, Math.min(1, value));
 };
+export const isSoundEnabled = () => enabled;
 
-// ── Sons officiels ────────────────────────────────────────────────────────────
+// ── Bibliothèque de sons ──────────────────────────────────────────────────────
+//
+//   file    : nom du fichier dans /assets/sounds/
+//   label   : libellé affiché dans les réglages
+//   loop    : le son tourne en boucle jusqu'à stopRinging()
+//   gain    : volume relatif (1 par défaut)
+//   eager   : préchargé au démarrage (sinon chargé à la première utilisation)
+//   secours : notes de synthèse jouées si le fichier est indisponible
 
-const ASSETS = {
-  ring: '/assets/sounds/skype-ring.mp3',                          // appel entrant
-  dialing: '/assets/sounds/skype-dialing.mp3',                    // tonalité d'appel sortant
-  message: '/assets/sounds/skype-message.mp3',                    // message reçu
-  callFailed: '/assets/sounds/skype-call-failed.mp3',             // échec de l'appel
-  callNotConnected: '/assets/sounds/skype-call-not-connected.mp3',// appel non abouti
+export const BIBLIOTHEQUE = {
+  message: {
+    file: 'skype-message.mp3',
+    label: 'Message reçu',
+    eager: true,
+    secours: [
+      { freq: 660, duration: 0.09, gain: 0.18 },
+      { freq: 880, start: 0.07, duration: 0.13, gain: 0.2 },
+    ],
+  },
+  ring: {
+    file: 'skype-ring.mp3',
+    label: 'Sonnerie — classique',
+    loop: true,
+    eager: true,
+    secours: [
+      { freq: 587, duration: 0.16, gain: 0.24 },
+      { freq: 698, start: 0.16, duration: 0.16, gain: 0.24 },
+      { freq: 880, start: 0.32, duration: 0.16, gain: 0.24 },
+      { freq: 1174, start: 0.48, duration: 0.3, gain: 0.26 },
+      { freq: 880, start: 0.85, duration: 0.16, gain: 0.2 },
+      { freq: 1174, start: 1.01, duration: 0.34, gain: 0.22 },
+    ],
+    secoursBoucle: 2600,
+  },
+  ringLong: {
+    file: 'skype-ringtone-classic.mp3',
+    label: 'Sonnerie — longue',
+    loop: true,
+    secours: null, // reprend celle de « ring »
+  },
+  dialing: {
+    file: 'skype-dialing.mp3',
+    label: 'Tonalité d’appel',
+    loop: true,
+    gain: 0.8,
+    eager: true,
+    secours: [
+      { freq: 440, duration: 0.4, gain: 0.12 },
+      { freq: 480, duration: 0.4, gain: 0.1 },
+    ],
+    secoursBoucle: 3000,
+  },
+  callWaiting: {
+    file: 'skype-call-waiting.mp3',
+    label: 'Appel en attente',
+    secours: [
+      { freq: 880, duration: 0.12, gain: 0.2 },
+      { freq: 880, start: 0.24, duration: 0.12, gain: 0.2 },
+    ],
+  },
+  callNotConnected: {
+    file: 'skype-call-not-connected.mp3',
+    label: 'Appel sans réponse',
+    secours: [
+      { freq: 480, duration: 0.3, gain: 0.16 },
+      { freq: 400, start: 0.32, duration: 0.4, gain: 0.16 },
+    ],
+  },
+  callFailed: {
+    file: 'skype-call-failed.mp3',
+    label: 'Échec de l’appel',
+    secours: [{ freq: 220, duration: 0.25, gain: 0.18, type: 'sawtooth', sweepTo: 150 }],
+  },
+  fileReceived: {
+    file: 'skype-file-received.mp3',
+    label: 'Fichier reçu',
+    secours: [
+      { freq: 784, duration: 0.1, gain: 0.18 },
+      { freq: 1046, start: 0.09, duration: 0.16, gain: 0.18 },
+    ],
+  },
+  login: {
+    file: 'skype-login.mp3',
+    label: 'Connexion',
+    secours: [
+      { freq: 523, duration: 0.12, gain: 0.16 },
+      { freq: 659, start: 0.11, duration: 0.12, gain: 0.16 },
+      { freq: 784, start: 0.22, duration: 0.22, gain: 0.16 },
+    ],
+  },
+  notification: {
+    file: 'skype-windows-new.mp3',
+    label: 'Notification',
+    eager: true,
+    secours: [
+      { freq: 1046, duration: 0.08, gain: 0.16 },
+      { freq: 1318, start: 0.08, duration: 0.12, gain: 0.14 },
+    ],
+  },
 };
 
-const buffers = new Map();   // nom -> AudioBuffer
-const loading = new Map();   // nom -> Promise
-const missing = new Set();   // fichiers dont le chargement a échoué
+const CHEMIN = '/assets/sounds/';
 
-/** Charge et décode un son, une seule fois. */
-function loadAsset(name) {
-  if (buffers.has(name)) return Promise.resolve(buffers.get(name));
-  if (missing.has(name)) return Promise.resolve(null);
-  if (loading.has(name)) return loading.get(name);
+const buffers = new Map();
+const loading = new Map();
+const missing = new Set();
 
-  const url = ASSETS[name];
-  if (!url) return Promise.resolve(null);
+function loadSound(key) {
+  const entry = BIBLIOTHEQUE[key];
+  if (!entry?.file) return Promise.resolve(null);
+  if (buffers.has(key)) return Promise.resolve(buffers.get(key));
+  if (missing.has(key)) return Promise.resolve(null);
+  if (loading.has(key)) return loading.get(key);
 
-  const promise = fetch(url)
+  const promise = fetch(CHEMIN + entry.file)
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.arrayBuffer();
     })
     .then((data) => audio().decodeAudioData(data))
     .then((buffer) => {
-      buffers.set(name, buffer);
-      loading.delete(name);
+      buffers.set(key, buffer);
+      loading.delete(key);
       return buffer;
     })
     .catch((err) => {
-      // Fichier absent ou format non pris en charge : on passe à la synthèse.
-      console.warn(`[sons] « ${name} » indisponible (${err.message}), repli sur la synthèse.`);
-      missing.add(name);
-      loading.delete(name);
+      console.warn(`[sons] « ${key} » indisponible (${err.message}) — repli sur la synthèse.`);
+      missing.add(key);
+      loading.delete(key);
       return null;
     });
 
-  loading.set(name, promise);
+  loading.set(key, promise);
   return promise;
 }
 
-/** Précharge les sons pour qu'ils démarrent sans latence au premier appel. */
+/** Précharge les sons marqués « eager ». */
 export function preload() {
-  for (const name of Object.keys(ASSETS)) loadAsset(name);
+  return Promise.all(
+    Object.entries(BIBLIOTHEQUE)
+      .filter(([, entry]) => entry.eager)
+      .map(([key]) => loadSound(key))
+  );
 }
 
-/**
- * Joue un son officiel. Renvoie une poignée { stop } ou null si indisponible
- * (l'appelant se rabat alors sur la synthèse).
- */
-function playAsset(name, { loop = false, gain = 1, onFallback = null } = {}) {
-  if (!enabled) return { stop() {} };
-
-  const buffer = buffers.get(name);
-  if (!buffer) {
-    // Pas encore décodé : on charge, puis on joue si c'est toujours pertinent.
-    const handle = { stopped: false, source: null, stop() { this.stopped = true; this.source?.stop(); } };
-    loadAsset(name).then((loaded) => {
-      if (handle.stopped) return;
-      if (!loaded) {
-        onFallback?.();
-        return;
-      }
-      handle.source = startBuffer(loaded, loop, gain);
-    });
-    return handle;
-  }
-
-  const source = startBuffer(buffer, loop, gain);
-  return { source, stop: () => { try { source.stop(); } catch { /* déjà arrêté */ } } };
-}
-
-function startBuffer(buffer, loop, gain) {
-  const context = audio();
-  const source = context.createBufferSource();
-  source.buffer = buffer;
-  source.loop = loop;
-
-  const volume = context.createGain();
-  volume.gain.value = gain;
-
-  source.connect(volume);
-  volume.connect(masterGain);
-  source.start();
-  return source;
-}
+/** Précharge la totalité de la bibliothèque (utilisé par les réglages). */
+export const preloadAll = () => Promise.all(Object.keys(BIBLIOTHEQUE).map(loadSound));
 
 // ── Synthèse de secours ───────────────────────────────────────────────────────
 
@@ -148,7 +209,7 @@ function tone({ freq, start = 0, duration = 0.15, type = 'sine', gain = 0.25, sw
 }
 
 const play = (notes) => {
-  if (!enabled) return;
+  if (!enabled || !notes) return;
   try {
     notes.forEach(tone);
   } catch {
@@ -156,19 +217,101 @@ const play = (notes) => {
   }
 };
 
+const secoursDe = (key) => BIBLIOTHEQUE[key]?.secours ?? BIBLIOTHEQUE.ring.secours;
+
+// ── Lecture ───────────────────────────────────────────────────────────────────
+
+function startBuffer(buffer, loop, gain) {
+  const context = audio();
+  const source = context.createBufferSource();
+  source.buffer = buffer;
+  source.loop = loop;
+
+  const volume = context.createGain();
+  volume.gain.value = gain;
+
+  source.connect(volume);
+  volume.connect(masterGain);
+  source.start();
+  return source;
+}
+
+/**
+ * Joue un son de la bibliothèque. Renvoie une poignée { stop }.
+ * Si le fichier est indisponible, la synthèse de secours prend le relais.
+ */
+export function sound(key, { loop = null, gain = null } = {}) {
+  if (!enabled) return { stop() {} };
+
+  const entry = BIBLIOTHEQUE[key];
+  if (!entry) {
+    console.warn(`[sons] clé inconnue : ${key}`);
+    return { stop() {} };
+  }
+
+  const enBoucle = loop ?? !!entry.loop;
+  const volume = gain ?? entry.gain ?? 1;
+
+  const jouerSecours = () => {
+    const notes = secoursDe(key);
+    play(notes);
+    if (!enBoucle || !entry.secoursBoucle) return { stop() {} };
+    const timer = setInterval(() => play(notes), entry.secoursBoucle);
+    return { stop: () => clearInterval(timer) };
+  };
+
+  const buffer = buffers.get(key);
+  if (buffer) {
+    const source = startBuffer(buffer, enBoucle, volume);
+    return { stop: () => { try { source.stop(); } catch { /* déjà arrêté */ } } };
+  }
+  if (missing.has(key)) return jouerSecours();
+
+  // Pas encore décodé : on charge, puis on joue si c'est toujours pertinent.
+  const handle = {
+    stopped: false,
+    inner: null,
+    stop() {
+      this.stopped = true;
+      this.inner?.stop();
+    },
+  };
+  loadSound(key).then((loaded) => {
+    if (handle.stopped) return;
+    if (!loaded) {
+      handle.inner = jouerSecours();
+      return;
+    }
+    const source = startBuffer(loaded, enBoucle, volume);
+    handle.inner = { stop: () => { try { source.stop(); } catch { /* déjà arrêté */ } } };
+  });
+  return handle;
+}
+
 // ── Sons ponctuels ────────────────────────────────────────────────────────────
 
 /** Message reçu — le « blop » de Skype. */
-export const messageIn = () =>
-  playAsset('message', {
-    onFallback: () =>
-      play([
-        { freq: 660, duration: 0.09, gain: 0.18 },
-        { freq: 880, start: 0.07, duration: 0.13, gain: 0.2 },
-      ]),
-  });
+export const messageIn = () => sound('message');
 
-/** Message envoyé : plus discret, toujours synthétisé. */
+/** Fichier ou photo reçu. */
+export const fileReceived = () => sound('fileReceived');
+
+/** Connexion réussie. */
+export const login = () => sound('login');
+
+/** Notification générale : demande de contact, réaction… */
+export const notify = () => sound('notification');
+
+/** Second appel entrant pendant un appel en cours. */
+export const callWaiting = () => sound('callWaiting');
+
+/** L'appel n'a pas abouti : personne n'a répondu, ou refus. */
+export const callNotConnected = () => sound('callNotConnected');
+
+/** L'appel a échoué (erreur technique, périphérique inaccessible). */
+export const callFailed = () => sound('callFailed');
+
+/** Message envoyé : discret, toujours synthétisé. */
 export const messageOut = () => play([{ freq: 950, duration: 0.07, gain: 0.1 }]);
 
 /** Mention : trois notes montantes, distinctes du message ordinaire. */
@@ -193,87 +336,42 @@ export const callEnd = () =>
     { freq: 392, start: 0.11, duration: 0.22, gain: 0.18 },
   ]);
 
-/** L'appel n'a pas abouti : personne n'a répondu, ou refus. */
-export const callNotConnected = () =>
-  playAsset('callNotConnected', {
-    onFallback: () =>
-      play([
-        { freq: 480, duration: 0.3, gain: 0.16 },
-        { freq: 400, start: 0.32, duration: 0.4, gain: 0.16 },
-      ]),
-  });
-
-/** L'appel a échoué (erreur technique, correspondant injoignable). */
-export const callFailed = () =>
-  playAsset('callFailed', {
-    onFallback: () => play([{ freq: 220, duration: 0.25, gain: 0.18, type: 'sawtooth', sweepTo: 150 }]),
-  });
-
-export const notify = () =>
-  play([
-    { freq: 1046, duration: 0.08, gain: 0.16 },
-    { freq: 1318, start: 0.08, duration: 0.12, gain: 0.14 },
-  ]);
-
 export const error = () => play([{ freq: 220, duration: 0.22, gain: 0.18, type: 'sawtooth', sweepTo: 160 }]);
 
-// ── Sons en boucle ────────────────────────────────────────────────────────────
+// ── Sonneries (en boucle) ─────────────────────────────────────────────────────
+
+/** Sonneries proposées à l'utilisateur dans les réglages. */
+export const SONNERIES = ['ring', 'ringLong'];
+
+let ringtone = 'ring';
+export const setRingtone = (key) => {
+  if (SONNERIES.includes(key)) ringtone = key;
+};
+export const getRingtone = () => ringtone;
 
 let ringHandle = null;
-let ringTimer = null;
 
-/** Sonnerie d'appel entrant — le fichier officiel, en boucle. */
+/** Sonnerie d'appel entrant, en boucle, selon la sonnerie choisie. */
 export function startRinging() {
-  if (!enabled || ringHandle || ringTimer) return;
-
-  ringHandle = playAsset('ring', {
-    loop: true,
-    onFallback: () => {
-      ringHandle = null;
-      const melody = () =>
-        play([
-          { freq: 587, duration: 0.16, gain: 0.24 },
-          { freq: 698, start: 0.16, duration: 0.16, gain: 0.24 },
-          { freq: 880, start: 0.32, duration: 0.16, gain: 0.24 },
-          { freq: 1174, start: 0.48, duration: 0.3, gain: 0.26 },
-          { freq: 880, start: 0.85, duration: 0.16, gain: 0.2 },
-          { freq: 1174, start: 1.01, duration: 0.34, gain: 0.22 },
-        ]);
-      melody();
-      ringTimer = setInterval(melody, 2600);
-    },
-  });
+  if (!enabled || ringHandle) return;
+  ringHandle = sound(ringtone, { loop: true });
 }
 
-/** Tonalité d'appel sortant — le fichier officiel, en boucle. */
+/** Tonalité d'appel sortant, en boucle. */
 export function startDialing() {
-  if (!enabled || ringHandle || ringTimer) return;
-
-  ringHandle = playAsset('dialing', {
-    loop: true,
-    gain: 0.8,
-    onFallback: () => {
-      ringHandle = null;
-      const beep = () =>
-        play([
-          { freq: 440, duration: 0.4, gain: 0.12 },
-          { freq: 480, duration: 0.4, gain: 0.1 },
-        ]);
-      beep();
-      ringTimer = setInterval(beep, 3000);
-    },
-  });
+  if (!enabled || ringHandle) return;
+  ringHandle = sound('dialing', { loop: true });
 }
 
 /** Arrête toute boucle en cours (sonnerie ou tonalité). */
 export function stopRinging() {
   ringHandle?.stop();
   ringHandle = null;
-  clearInterval(ringTimer);
-  ringTimer = null;
 }
 
-/** Tonalités DTMF du pavé numérique (fréquences normalisées). */
+// ── Pavé numérique ────────────────────────────────────────────────────────────
+
+/** Tonalités DTMF (fréquences normalisées, toujours synthétisées). */
 const DTMF = {
   1: [697, 1209], 2: [697, 1336], 3: [697, 1477],
   4: [770, 1209], 5: [770, 1336], 6: [770, 1477],
@@ -289,7 +387,7 @@ export function dtmf(key) {
 
 /**
  * Réveille le contexte audio au premier geste utilisateur (politique autoplay)
- * et précharge les sons officiels dans la foulée.
+ * et précharge les sons les plus courants.
  */
 export function unlockAudio() {
   const handler = () => {

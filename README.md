@@ -82,9 +82,26 @@ automatique en Absent après 5 minutes d'inactivité, « vu il y a… ».
 Contraste élevé, six couleurs d'accentuation, quatre tailles de texte, densité de liste.
 
 **Le reste** — recherche universelle, notifications système et sonores, les **sons
-d'origine de Skype** (sonnerie, tonalité d'appel, message, appel sans réponse),
-blocage, confidentialité fine, export des données, raccourcis clavier, interface
-mobile, PWA installable.
+d'origine de Skype** (message, sonnerie au choix, tonalité d'appel, connexion,
+fichier reçu, appel en attente…), blocage, confidentialité fine, export des
+données, raccourcis clavier, interface mobile, PWA installable.
+
+### Ajouter un son
+
+Les sons vivent dans `public/assets/sounds/` et sont déclarés dans un seul
+tableau, en haut de `public/js/lib/sounds.js` :
+
+```js
+export const BIBLIOTHEQUE = {
+  message: { file: 'skype-message.mp3', label: 'Message reçu', eager: true, secours: [...] },
+  ring:    { file: 'skype-ring.mp3',    label: 'Sonnerie — classique', loop: true, ... },
+  // …
+};
+```
+
+Déposez le fichier, ajoutez une ligne, et le son apparaît automatiquement dans
+la bibliothèque des réglages. `secours` contient les notes de synthèse jouées
+si le fichier venait à manquer.
 
 ---
 

@@ -29,6 +29,19 @@ export function openSettings(section = 'profile') {
   const panel = el('div.settings__panel');
   const nav = el('div.settings__nav');
 
+  // Aperçu sonore : un seul à la fois, arrêté à la fermeture des réglages.
+  // Déclaré ici — et non plus bas — car les sections y accèdent dès le
+  // premier rendu, avant que la fin du corps de la fonction ne soit atteinte.
+  let preview = null;
+  let previewTimer = null;
+
+  const stopPreview = () => {
+    clearTimeout(previewTimer);
+    previewTimer = null;
+    preview?.stop();
+    preview = null;
+  };
+
   const renderNav = () => {
     clear(nav);
     for (const [id, label, iconName] of SECTIONS) {
@@ -67,6 +80,10 @@ export function openSettings(section = 'profile') {
     size: 'full',
     flush: true,
     body: el('div.settings', {}, [nav, panel]),
+    onClose: () => {
+      stopPreview();
+      sounds.stopRinging();
+    },
   });
 
   renderNav();
@@ -489,6 +506,56 @@ export function openSettings(section = 'profile') {
       group('Aperçu', [
         settingRow('Afficher le contenu', 'Montrer le texte du message dans la notification', toggle('showPreviews')),
       ]),
+
+      group('Sonnerie', [
+        settingRow('Sonnerie d’appel entrant', 'Celle qui retentit quand on vous appelle',
+          el('div.row.gap-8', {}, [
+            el('select.select', {
+              style: { width: 'auto', minWidth: '180px' },
+              onchange: async (e) => {
+                sounds.setRingtone(e.target.value);
+                await saveSettings({ notifications: { ringtone: e.target.value } });
+                state.user.settings.notifications.ringtone = e.target.value;
+                sounds.stopRinging();
+                sounds.startRinging();
+                setTimeout(() => sounds.stopRinging(), 3500);
+              },
+            }, sounds.SONNERIES.map((key) =>
+              el('option', {
+                value: key,
+                selected: (state.user.settings.notifications?.ringtone || 'ring') === key,
+                text: sounds.BIBLIOTHEQUE[key].label,
+              })
+            )),
+            el('button.btn.btn--sm', {
+              text: '▶',
+              title: 'Écouter',
+              onclick: () => {
+                sounds.stopRinging();
+                sounds.startRinging();
+                setTimeout(() => sounds.stopRinging(), 4000);
+              },
+            }),
+          ])),
+      ]),
+
+      group('Bibliothèque de sons', [
+        el('p.dim', { style: { fontSize: '0.84em', marginBottom: '10px' }, text: 'Les sons d’origine de Skype. Cliquez pour les écouter.' }),
+        el('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '8px' } },
+          Object.entries(sounds.BIBLIOTHEQUE).map(([key, entry]) =>
+            el('button.btn.btn--sm.btn--outline', {
+              text: entry.label,
+              onclick: () => {
+                // Un aperçu à la fois, et les sons en boucle s'arrêtent seuls.
+                stopPreview();
+                sounds.stopRinging();
+                preview = sounds.sound(key);
+                if (entry.loop) previewTimer = setTimeout(stopPreview, 4000);
+              },
+            })
+          )
+        ),
+      ]),
     ]);
   }
 
@@ -684,13 +751,16 @@ export function openSettings(section = 'profile') {
       group('Diagnostic', [
         settingRow('État de la connexion', state.connection === 'online' ? 'Connecté au serveur' : 'Reconnexion en cours…',
           el('span.status-dot', { dataset: { status: state.connection === 'online' ? 'online' : 'busy' } })),
-        settingRow('Tester les sons', 'Les sons d’origine de Skype',
-          el('div.row.gap-8', { style: { flexWrap: 'wrap', justifyContent: 'flex-end' } }, [
+        settingRow('Tester les sons', 'La bibliothèque complète est dans Notifications',
+          el('div.row.gap-8', {}, [
             el('button.btn.btn--sm', { text: 'Message', onclick: () => sounds.messageIn() }),
-            el('button.btn.btn--sm', { text: 'Sonnerie', onclick: () => { sounds.startRinging(); setTimeout(() => sounds.stopRinging(), 4000); } }),
-            el('button.btn.btn--sm', { text: 'Tonalité', onclick: () => { sounds.startDialing(); setTimeout(() => sounds.stopRinging(), 4000); } }),
-            el('button.btn.btn--sm', { text: 'Sans réponse', onclick: () => sounds.callNotConnected() }),
-            el('button.btn.btn--sm', { text: 'Échec', onclick: () => sounds.callFailed() }),
+            el('button.btn.btn--sm', {
+              text: 'Sonnerie',
+              onclick: () => {
+                sounds.startRinging();
+                setTimeout(() => sounds.stopRinging(), 4000);
+              },
+            }),
           ])),
       ]),
     ]);

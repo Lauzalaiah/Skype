@@ -20,6 +20,7 @@ export const DEFAULT_SETTINGS = {
     contactRequests: true,
     sound: true,
     desktop: true,
+    ringtone: 'ring',             // sonnerie choisie (voir SONNERIES côté client)
     quietHours: null,             // { from: '22:00', to: '08:00' }
   },
   privacy: {

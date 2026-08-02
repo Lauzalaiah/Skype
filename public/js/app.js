@@ -41,12 +41,17 @@ restoreAppearance();
       setToken(null);
     }
   }
+  // Une session restaurée n'est pas une connexion : le son ne doit pas
+  // retentir à chaque rechargement de la page.
+  const connexionFraiche = !session;
   if (!session) session = await showAuth();
 
   state.user = session.user;
   applyAppearance(state.user.settings);
   watchSystemTheme(() => state.user?.settings);
   sounds.setSoundEnabled(state.user.settings?.notifications?.sound !== false);
+  sounds.setRingtone(state.user.settings?.notifications?.ringtone || 'ring');
+  if (connexionFraiche) sounds.login();
 
   renderShell();
   wireSocket();
@@ -395,6 +400,7 @@ function notifyIncoming(chat, message, sender) {
   const mentionsMe = message.mentions?.includes(state.user.id);
   if (settings.sound !== false) {
     if (mentionsMe) sounds.mention();
+    else if (message.attachments?.length) sounds.fileReceived();
     else sounds.messageIn();
   }
 
