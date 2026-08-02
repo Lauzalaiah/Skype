@@ -116,6 +116,9 @@ const groupe = M.createGroupChat(users['camille.durand'], {
   topic: 'Les inséparables 💙',
   memberIds: [users['thomas.leroy'].id, users['aicha.benali'].id, users['lucas.martin'].id, users['sofia.rossi'].id],
 });
+// Le message « groupe créé » doit précéder les conversations qu'on antidate.
+groupe.createdAt = ago(320);
+db.messages[groupe.id][0].createdAt = groupe.createdAt;
 seedChat(groupe, [
   ['lucas.martin', 'Bon, qui est chaud pour un apéro Skype vendredi ?', 300],
   ['sofia.rossi', 'Moi !! 🍾', 298],
