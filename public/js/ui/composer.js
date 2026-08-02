@@ -159,7 +159,9 @@ export function createComposer(chat, { onSent = () => {} } = {}) {
 
     try {
       await api.send(chat.id, payload);
-      sounds.messageOut();
+      // Un envoi de fichier a son propre son ; un message texte reste discret.
+      if (pending.length) sounds.fileSent();
+      else sounds.messageOut();
       onSent();
     } catch (err) {
       toast(err.message, { type: 'error' });
@@ -692,6 +694,7 @@ function openContactPicker(chat) {
               content: `Carte de contact : ${contact.displayName}`,
               contactCard: { id: contact.id, displayName: contact.displayName, skypeName: contact.skypeName, avatar: contact.avatar },
             });
+            sounds.fileSent();
           } catch (err) {
             toast(err.message, { type: 'error' });
           }
@@ -754,6 +757,7 @@ function openGifPicker(chat) {
             blob.name = `gif-${caption}.svg`;
             const meta = await api.upload(blob);
             await api.send(chat.id, { type: 'image', content: '', attachments: [meta] });
+            sounds.fileSent();
           } catch (err) {
             toast(err.message, { type: 'error' });
           }

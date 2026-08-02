@@ -38,15 +38,22 @@ export const isSoundEnabled = () => enabled;
 // ── Bibliothèque de sons ──────────────────────────────────────────────────────
 //
 //   file    : nom du fichier dans /assets/sounds/
+//   source  : nom du fichier d'origine, pour pouvoir auditer la correspondance
+//   usage   : l'événement exact — et unique — qui déclenche ce son
 //   label   : libellé affiché dans les réglages
 //   loop    : le son tourne en boucle jusqu'à stopRinging()
 //   gain    : volume relatif (1 par défaut)
 //   eager   : préchargé au démarrage (sinon chargé à la première utilisation)
 //   secours : notes de synthèse jouées si le fichier est indisponible
+//
+// Chaque son ne doit servir qu'à l'événement décrit dans « usage ».
+// Le test test/sons.test.js vérifie que cette table et le code ne divergent pas.
 
 export const BIBLIOTHEQUE = {
   message: {
     file: 'skype-message.mp3',
+    source: 'Skypenotification_.mp3',
+    usage: 'Message texte reçu, conversation non ouverte',
     label: 'Message reçu',
     eager: true,
     secours: [
@@ -56,6 +63,8 @@ export const BIBLIOTHEQUE = {
   },
   ring: {
     file: 'skype-ring.mp3',
+    source: 'Skypecall.mp3',
+    usage: 'Appel entrant, quand aucun appel n’est déjà en cours',
     label: 'Sonnerie — classique',
     loop: true,
     eager: true,
@@ -71,12 +80,18 @@ export const BIBLIOTHEQUE = {
   },
   ringLong: {
     file: 'skype-ringtone-classic.mp3',
+    source: 'Skype_ringtone_.mp3',
+    usage: 'Appel entrant — variante choisie dans les réglages',
     label: 'Sonnerie — longue',
     loop: true,
-    secours: null, // reprend celle de « ring »
+    secours: null,
+    secoursRepris: 'ring',   // même mélodie de secours que la sonnerie classique
+    secoursBoucle: 2600,
   },
   dialing: {
     file: 'skype-dialing.mp3',
+    source: 'Skypecallbipbip.mp3',
+    usage: 'Appel sortant, pendant que ça sonne chez le correspondant',
     label: 'Tonalité d’appel',
     loop: true,
     gain: 0.8,
@@ -89,6 +104,8 @@ export const BIBLIOTHEQUE = {
   },
   callWaiting: {
     file: 'skype-call-waiting.mp3',
+    source: 'Skypecallincall.mp3',
+    usage: 'Appel entrant alors qu’une communication est déjà en cours',
     label: 'Appel en attente',
     secours: [
       { freq: 880, duration: 0.12, gain: 0.2 },
@@ -97,6 +114,8 @@ export const BIBLIOTHEQUE = {
   },
   callNotConnected: {
     file: 'skype-call-not-connected.mp3',
+    source: 'Skypecallnotconnected.mp3',
+    usage: 'Appel terminé sans avoir abouti : sans réponse, refusé ou annulé',
     label: 'Appel sans réponse',
     secours: [
       { freq: 480, duration: 0.3, gain: 0.16 },
@@ -105,11 +124,15 @@ export const BIBLIOTHEQUE = {
   },
   callFailed: {
     file: 'skype-call-failed.mp3',
+    source: 'Skypecallfailed.mp3',
+    usage: 'Appel impossible à démarrer : micro ou caméra inaccessible',
     label: 'Échec de l’appel',
     secours: [{ freq: 220, duration: 0.25, gain: 0.18, type: 'sawtooth', sweepTo: 150 }],
   },
   fileReceived: {
     file: 'skype-file-received.mp3',
+    source: 'Skypefolderreceived.mp3',
+    usage: 'Message reçu contenant une pièce jointe',
     label: 'Fichier reçu',
     secours: [
       { freq: 784, duration: 0.1, gain: 0.18 },
@@ -118,6 +141,9 @@ export const BIBLIOTHEQUE = {
   },
   login: {
     file: 'skype-login.mp3',
+    source: 'Skypelogin.mp3',
+    usage: 'Connexion à Skype, et rien d’autre. Ne retentit pas au rechargement '
+      + 'de la page ni à la reconnexion automatique du socket.',
     label: 'Connexion',
     secours: [
       { freq: 523, duration: 0.12, gain: 0.16 },
@@ -125,10 +151,11 @@ export const BIBLIOTHEQUE = {
       { freq: 784, start: 0.22, duration: 0.22, gain: 0.16 },
     ],
   },
-  notification: {
-    file: 'skype-windows-new.mp3',
-    label: 'Notification',
-    eager: true,
+  fileSent: {
+    file: 'skype-file-sent.mp3',
+    source: 'Skypeforwindowsnew.mp3',
+    usage: 'Envoi d’un fichier ou d’une carte de contact depuis la conversation',
+    label: 'Fichier envoyé',
     secours: [
       { freq: 1046, duration: 0.08, gain: 0.16 },
       { freq: 1318, start: 0.08, duration: 0.12, gain: 0.14 },
@@ -217,7 +244,18 @@ const play = (notes) => {
   }
 };
 
-const secoursDe = (key) => BIBLIOTHEQUE[key]?.secours ?? BIBLIOTHEQUE.ring.secours;
+/**
+ * Notes de secours d'un son. Un son sans secours déclaré et sans renvoi
+ * explicite ne joue rien : mieux vaut le silence qu'une mélodie qui n'a
+ * aucun rapport avec l'événement.
+ */
+function secoursDe(key) {
+  const entry = BIBLIOTHEQUE[key];
+  if (!entry) return null;
+  if (entry.secours) return entry.secours;
+  if (entry.secoursRepris) return BIBLIOTHEQUE[entry.secoursRepris]?.secours ?? null;
+  return null;
+}
 
 // ── Lecture ───────────────────────────────────────────────────────────────────
 
@@ -296,11 +334,22 @@ export const messageIn = () => sound('message');
 /** Fichier ou photo reçu. */
 export const fileReceived = () => sound('fileReceived');
 
+/** Fichier ou carte de contact envoyé depuis la conversation. */
+export const fileSent = () => sound('fileSent');
+
 /** Connexion réussie. */
 export const login = () => sound('login');
 
-/** Notification générale : demande de contact, réaction… */
-export const notify = () => sound('notification');
+/**
+ * Notification générale : demande de contact, réaction…
+ * Synthétisée : aucun fichier officiel ne correspond à cet événement pour
+ * l'instant. Voir l'entrée « aIdentifier » de la bibliothèque.
+ */
+export const notify = () =>
+  play([
+    { freq: 1046, duration: 0.08, gain: 0.16 },
+    { freq: 1318, start: 0.08, duration: 0.12, gain: 0.14 },
+  ]);
 
 /** Second appel entrant pendant un appel en cours. */
 export const callWaiting = () => sound('callWaiting');

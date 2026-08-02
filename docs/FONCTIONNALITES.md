@@ -182,10 +182,25 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 
 - Notifications système du navigateur, cliquables
 - Bandeau interne façon Skype
-- **Sons d'origine de Skype** (fichiers dans `public/assets/sounds/`) :
-  message reçu, sonnerie d'appel (deux variantes), tonalité d'appel sortant,
-  appel en attente, appel sans réponse, échec d'appel, fichier reçu,
-  connexion, notification
+- **Sons d'origine de Skype** — chaque fichier est rattaché à un événement
+  précis, et à un seul :
+
+  | Fichier d'origine | Se déclenche sur |
+  |---|---|
+  | `Skypelogin.mp3` | connexion à Skype, et rien d'autre |
+  | `Skypecall.mp3` | appel entrant (sonnerie par défaut) |
+  | `Skype_ringtone_.mp3` | appel entrant (sonnerie alternative, au choix) |
+  | `Skypecallbipbip.mp3` | appel sortant, pendant que ça sonne |
+  | `Skypecallincall.mp3` | appel entrant pendant une communication |
+  | `Skypecallnotconnected.mp3` | appel sans réponse, refusé ou annulé |
+  | `Skypecallfailed.mp3` | micro ou caméra inaccessible |
+  | `Skypenotification_.mp3` | message texte reçu |
+  | `Skypefolderreceived.mp3` | fichier reçu |
+  | `Skypeforwindowsnew.mp3` | fichier ou contact envoyé |
+
+  La correspondance est déclarée dans `public/js/lib/sounds.js` (champs
+  `source` et `usage`) et verrouillée par `test/sons.test.js`, qui échoue si
+  un son se retrouve branché ailleurs que sur son événement.
 - Choix de la sonnerie d'appel entrant dans les réglages, avec écoute
 - Bibliothèque de sons écoutable depuis les réglages
 - Le son de connexion ne retentit qu'à une vraie connexion, pas à chaque

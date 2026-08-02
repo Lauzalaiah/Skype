@@ -540,22 +540,48 @@ export function openSettings(section = 'profile') {
       ]),
 
       group('Bibliothèque de sons', [
-        el('p.dim', { style: { fontSize: '0.84em', marginBottom: '10px' }, text: 'Les sons d’origine de Skype. Cliquez pour les écouter.' }),
+        el('p.dim', { style: { fontSize: '0.84em', marginBottom: '10px' }, text: 'Les sons d’origine de Skype. Survolez pour voir quand ils se déclenchent, cliquez pour les écouter.' }),
         el('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '8px' } },
-          Object.entries(sounds.BIBLIOTHEQUE).map(([key, entry]) =>
-            el('button.btn.btn--sm.btn--outline', {
-              text: entry.label,
-              onclick: () => {
-                // Un aperçu à la fois, et les sons en boucle s'arrêtent seuls.
-                stopPreview();
-                sounds.stopRinging();
-                preview = sounds.sound(key);
-                if (entry.loop) previewTimer = setTimeout(stopPreview, 4000);
-              },
-            })
-          )
+          Object.entries(sounds.BIBLIOTHEQUE)
+            .filter(([, entry]) => !entry.orphelin)
+            .map(([key, entry]) =>
+              el('button.btn.btn--sm.btn--outline', {
+                text: entry.label,
+                title: entry.usage || '',
+                onclick: () => {
+                  // Un aperçu à la fois, et les sons en boucle s'arrêtent seuls.
+                  stopPreview();
+                  sounds.stopRinging();
+                  preview = sounds.sound(key);
+                  if (entry.loop) previewTimer = setTimeout(stopPreview, 4000);
+                },
+              })
+            )
         ),
       ]),
+
+      // Sons présents mais dont l'usage d'origine n'est pas établi : ils sont
+      // écoutables, jamais joués automatiquement tant qu'ils ne sont pas placés.
+      ...(Object.entries(sounds.BIBLIOTHEQUE).some(([, e]) => e.orphelin)
+        ? [group('Sons non attribués', [
+            el('p.dim', { style: { fontSize: '0.84em', marginBottom: '10px' }, text: 'Ces sons ne sont branchés sur aucun événement, faute de savoir à quoi ils correspondent. Écoutez-les pour les identifier.' }),
+            el('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '8px' } },
+              Object.entries(sounds.BIBLIOTHEQUE)
+                .filter(([, entry]) => entry.orphelin)
+                .map(([key, entry]) =>
+                  el('button.btn.btn--sm.btn--outline', {
+                    text: `${entry.label} · ${entry.source || entry.file}`,
+                    style: { borderStyle: 'dashed' },
+                    onclick: () => {
+                      stopPreview();
+                      sounds.stopRinging();
+                      preview = sounds.sound(key);
+                    },
+                  })
+                )
+            ),
+          ])]
+        : []),
     ]);
   }
 
