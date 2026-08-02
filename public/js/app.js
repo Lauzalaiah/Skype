@@ -399,7 +399,9 @@ function notifyIncoming(chat, message, sender) {
 
   const mentionsMe = message.mentions?.includes(state.user.id);
   if (settings.sound !== false) {
+    const estVocal = message.attachments?.some((a) => a.mime?.startsWith('audio/'));
     if (mentionsMe) sounds.mention();
+    else if (estVocal) sounds.voicemail();
     else if (message.attachments?.length) sounds.fileReceived();
     else sounds.messageIn();
   }

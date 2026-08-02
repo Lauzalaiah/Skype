@@ -88,6 +88,46 @@ export const BIBLIOTHEQUE = {
     secoursRepris: 'ring',   // même mélodie de secours que la sonnerie classique
     secoursBoucle: 2600,
   },
+  ringAlt: {
+    file: 'skype-ringtone-2.mp3',
+    source: 'Sonnerieskype2.mp3',
+    usage: 'Appel entrant — variante choisie dans les réglages',
+    label: 'Sonnerie — variante',
+    loop: true,
+    secours: null,
+    secoursRepris: 'ring',
+    secoursBoucle: 2600,
+  },
+  ringVideo: {
+    file: 'skype-video-call.mp3',
+    source: 'Skypevideocall.mp3',
+    usage: 'Appel vidéo entrant — sonnerie propre à la vidéo',
+    label: 'Sonnerie — appel vidéo',
+    loop: true,
+    secours: null,
+    secoursRepris: 'ring',
+    secoursBoucle: 2600,
+  },
+  callStart: {
+    file: 'skype-call-start.mp3',
+    source: 'Skypestartcall.mp3',
+    usage: 'L’appel est établi : la communication démarre',
+    label: 'Début d’appel',
+    secours: [
+      { freq: 523, duration: 0.11, gain: 0.2 },
+      { freq: 784, start: 0.1, duration: 0.16, gain: 0.2 },
+    ],
+  },
+  voicemail: {
+    file: 'skype-voicemail.mp3',
+    source: 'Skypevoicemail.mp3',
+    usage: 'Réception d’un message vocal',
+    label: 'Message vocal reçu',
+    secours: [
+      { freq: 698, duration: 0.1, gain: 0.18 },
+      { freq: 880, start: 0.1, duration: 0.18, gain: 0.18 },
+    ],
+  },
   dialing: {
     file: 'skype-dialing.mp3',
     source: 'Skypecallbipbip.mp3',
@@ -371,12 +411,11 @@ export const mention = () =>
     { freq: 1318, start: 0.2, duration: 0.16, gain: 0.18 },
   ]);
 
-/** Décrochage. */
-export const callConnect = () =>
-  play([
-    { freq: 523, duration: 0.11, gain: 0.2 },
-    { freq: 784, start: 0.1, duration: 0.16, gain: 0.2 },
-  ]);
+/** L'appel est établi : la communication démarre. */
+export const callConnect = () => sound('callStart');
+
+/** Message vocal reçu. */
+export const voicemail = () => sound('voicemail');
 
 /** Raccrochage. */
 export const callEnd = () =>
@@ -389,8 +428,8 @@ export const error = () => play([{ freq: 220, duration: 0.22, gain: 0.18, type: 
 
 // ── Sonneries (en boucle) ─────────────────────────────────────────────────────
 
-/** Sonneries proposées à l'utilisateur dans les réglages. */
-export const SONNERIES = ['ring', 'ringLong'];
+/** Sonneries proposées à l'utilisateur dans les réglages, pour les appels audio. */
+export const SONNERIES = ['ring', 'ringLong', 'ringAlt'];
 
 let ringtone = 'ring';
 export const setRingtone = (key) => {
@@ -400,10 +439,14 @@ export const getRingtone = () => ringtone;
 
 let ringHandle = null;
 
-/** Sonnerie d'appel entrant, en boucle, selon la sonnerie choisie. */
-export function startRinging() {
+/**
+ * Sonnerie d'appel entrant, en boucle.
+ * Un appel vidéo a sa propre sonnerie ; un appel audio utilise celle choisie
+ * dans les réglages.
+ */
+export function startRinging({ video = false } = {}) {
   if (!enabled || ringHandle) return;
-  ringHandle = sound(ringtone, { loop: true });
+  ringHandle = sound(video ? 'ringVideo' : ringtone, { loop: true });
 }
 
 /** Tonalité d'appel sortant, en boucle. */

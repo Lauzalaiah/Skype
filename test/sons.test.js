@@ -38,8 +38,8 @@ function bibliotheque() {
 const LIB = bibliotheque();
 
 describe('Bibliothèque de sons', () => {
-  test('les dix sons sont déclarés', () => {
-    assert.equal(Object.keys(LIB).length, 10, `clés : ${Object.keys(LIB).join(', ')}`);
+  test('les quatorze sons sont déclarés', () => {
+    assert.equal(Object.keys(LIB).length, 14, `clés : ${Object.keys(LIB).join(', ')}`);
   });
 
   test('chaque son déclare son fichier, sa provenance et son usage', () => {
@@ -85,8 +85,37 @@ describe('Correspondance son ↔ événement', () => {
   });
 
   test('la sonnerie ne retentit que pour un appel entrant hors communication', () => {
-    assert.match(appels, /if \(session\) sounds\.callWaiting\(\);\s*\n\s*else sounds\.startRinging\(\);/,
+    assert.match(appels, /if \(session\) sounds\.callWaiting\(\);\s*\n\s*else sounds\.startRinging\(\{ video: call\.video \}\);/,
       'un appel entrant pendant une communication doit jouer callWaiting, pas la sonnerie');
+  });
+
+  test('un appel vidéo entrant a sa propre sonnerie', () => {
+    assert.match(sons, /sound\(video \? 'ringVideo' : ringtone, \{ loop: true \}\)/,
+      'la sonnerie vidéo doit être distincte de celle des appels audio');
+    // La sonnerie vidéo n'est pas proposée dans la liste des sonneries au choix :
+    // elle est imposée par la nature de l'appel.
+    assert.match(sons, /export const SONNERIES = \['ring', 'ringLong', 'ringAlt'\];/);
+  });
+
+  test('le son de début d’appel ne sert qu’à l’établissement de la communication', () => {
+    assert.match(sons, /export const callConnect = \(\) => sound\('callStart'\);/);
+    const points = [...appels.matchAll(/sounds\.callConnect\(\)/g)];
+    assert.ok(points.length >= 1 && points.length <= 3, `callConnect appelé ${points.length} fois`);
+  });
+
+  test('un message vocal reçu a son propre son, distinct du fichier ordinaire', () => {
+    assert.match(app, /const estVocal = message\.attachments\?\.some\(\(a\) => a\.mime\?\.startsWith\('audio\/'\)\);/);
+    assert.match(app, /else if \(estVocal\) sounds\.voicemail\(\);/);
+    assert.notEqual(LIB.voicemail?.file, LIB.fileReceived?.file);
+
+    const points = [...app.matchAll(/sounds\.voicemail\(\)/g)];
+    assert.equal(points.length, 1, 'le son de message vocal ne doit servir qu’à la réception d’un vocal');
+  });
+
+  test('les sonneries au choix sont bien des sons en boucle', () => {
+    for (const cle of ['ring', 'ringLong', 'ringAlt', 'ringVideo']) {
+      assert.ok(LIB[cle]?.loop, `${cle} doit être déclaré en boucle`);
+    }
   });
 
   test('la tonalité d’appel ne sert qu’aux appels sortants', () => {
