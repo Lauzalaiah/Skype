@@ -51,18 +51,27 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Les fichiers .yml sont la liste de versions que l'application
+          # installée interroge pour savoir qu'une mise à jour existe. Sans
+          # eux, la mise à jour automatique ne verrait jamais rien.
           - systeme: windows
             os: windows-latest
             cible: build:win
-            fichiers: desktop/dist/*.exe
+            fichiers: |
+              desktop/dist/*.exe
+              desktop/dist/latest.yml
           - systeme: macos
             os: macos-latest
             cible: build:mac
-            fichiers: desktop/dist/*.dmg
+            fichiers: |
+              desktop/dist/*.dmg
+              desktop/dist/latest-mac.yml
           - systeme: linux
             os: ubuntu-latest
             cible: build:linux
-            fichiers: desktop/dist/*.AppImage
+            fichiers: |
+              desktop/dist/*.AppImage
+              desktop/dist/latest-linux.yml
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -109,14 +118,27 @@ jobs:
       - name: Rassembler les fichiers
         run: |
           mkdir -p publication
-          find recolte -type f \( -name '*.exe' -o -name '*.dmg' -o -name '*.AppImage' \) \
+          find recolte -type f \
+            \( -name '*.exe' -o -name '*.dmg' -o -name '*.AppImage' -o -name 'latest*.yml' \) \
             -exec cp {} publication/ \;
           ls -lh publication
           test -n "$(ls -A publication)" || { echo "aucun fichier à publier"; exit 1; }
 
+          # Sans description de version, l'application installée ne saurait pas
+          # qu'une mise à jour existe : mieux vaut échouer ici que publier une
+          # version que personne ne recevra.
+          ls publication/latest*.yml >/dev/null || {
+            echo "aucun fichier de description : la mise à jour automatique serait muette"; exit 1;
+          }
+
       - name: Calculer les empreintes SHA-256
         working-directory: publication
-        run: sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt
+        # Uniquement les fichiers que quelqu'un télécharge à la main : les
+        # descriptions de version portent déjà leur propre empreinte SHA-512.
+        run: |
+          sha256sum *.exe *.dmg *.AppImage 2>/dev/null > SHA256SUMS.txt || true
+          test -s SHA256SUMS.txt || { echo "aucune empreinte calculée"; exit 1; }
+          cat SHA256SUMS.txt
 
       - name: Rédiger les notes de version
         run: |
@@ -150,6 +172,16 @@ jobs:
           Les empreintes SHA-256 de chaque fichier sont dans `SHA256SUMS.txt`,
           et tout a été construit automatiquement par GitHub Actions à partir du
           code source de ce dépôt — le journal de construction est public.
+
+          ## Mises à jour
+
+          **Windows et Linux** se mettent à jour tout seuls : l'application
+          vérifie au démarrage, télécharge en arrière-plan et propose
+          « Redémarrer maintenant ». Rien à retélécharger.
+
+          **macOS** ne le peut pas : remplacer une application exige une
+          signature Apple, que ce projet gratuit n'a pas. L'application signale
+          la nouvelle version et renvoie vers la page de téléchargement.
 
           ## Ce qui est inclus
 

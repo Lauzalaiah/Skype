@@ -23,6 +23,40 @@ Chaque installation a sa **propre base de données locale**, indépendante du
 site web ou d'une autre installation — comme le ferait n'importe quel
 programme de bureau.
 
+## Mises à jour automatiques
+
+L'application se met à jour seule, à partir des versions publiées du dépôt —
+exactement celles que le site de téléchargement propose. Huit secondes après
+le démarrage puis toutes les six heures, elle demande s'il existe plus récent,
+télécharge en arrière-plan, et affiche un bandeau « Redémarrer maintenant ».
+Rien ne s'installe sans que l'utilisateur l'ait accepté.
+
+Le mécanisme repose sur trois pièces, et il est muet si l'une manque :
+
+1. `publish` dans la configuration d'`electron-builder` — c'est elle qui fait
+   produire les fichiers de description `latest.yml`, `latest-mac.yml` et
+   `latest-linux.yml` ;
+2. le workflow **Publier une version**, qui joint ces fichiers à la version
+   publiée en même temps que les installateurs ;
+3. `desktop/maj.js`, qui les interroge.
+
+`test/maj.test.js` vérifie que les trois restent attachées.
+
+### macOS fait exception
+
+macOS n'autorise une application à se remplacer elle-même que si elle est
+signée par un certificat Apple. Celle-ci ne l'est pas : la mise à jour
+automatique y échouerait silencieusement à chaque démarrage. `maj.js` détecte
+donc `darwin` et se contente d'interroger la dernière version publiée, puis
+d'afficher un bandeau renvoyant vers la page de téléchargement.
+
+### Ce que l'interface reçoit
+
+`preload.cjs` n'expose que trois fonctions — s'abonner à l'état, installer,
+ouvrir les nouveautés. La page reste aussi limitée que dans un navigateur :
+ni `ipcRenderer`, ni `require`, ni `process`. Dans la version web,
+`window.skypeMaj` n'existe pas et le bandeau ne s'affiche jamais.
+
 ## Construire l'installateur
 
 ### Le plus simple : GitHub Actions

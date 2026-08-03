@@ -1,16 +1,19 @@
 {
   "name": "skype-reborn-desktop",
   "private": true,
-  "version": "8.130.0",
+  "version": "8.131.0",
   "description": "Skype Reborn — application de bureau. Recréation indépendante, faite par un fan, sans lien avec Microsoft.",
   "author": "Skype Reborn",
   "main": "main.js",
   "type": "module",
   "scripts": {
     "start": "electron .",
-    "build:win": "electron-builder --win nsis",
-    "build:linux": "electron-builder --linux AppImage",
-    "build:mac": "electron-builder --mac dmg"
+    "build:win": "electron-builder --win nsis --publish never",
+    "build:linux": "electron-builder --linux AppImage --publish never",
+    "build:mac": "electron-builder --mac dmg --publish never"
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9"
   },
   "devDependencies": {
     "electron": "^31.3.1",
@@ -20,13 +23,23 @@
     "appId": "app.skypereborn.fan",
     "productName": "Skype",
     "copyright": "Skype Reborn — recréation indépendante par un fan, sans lien avec Microsoft.",
-    "publish": null,
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Lauzalaiah",
+        "repo": "Skype"
+      }
+    ],
     "directories": {
       "output": "dist",
       "buildResources": "build"
     },
     "files": [
       "main.js",
+      "maj.js",
+      "preload.cjs",
+      "package.json",
+      "node_modules/**/*",
       "build/icon.png"
     ],
     "extraResources": [

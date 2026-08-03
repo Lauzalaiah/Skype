@@ -5,7 +5,7 @@
 **La messagerie, les appels audio et vidéo et le partage d'écran que vous aimiez.
 Recréés de A à Z, sans rien oublier.**
 
-Version 8.130.0 · Zéro dépendance · Node.js ≥ 18
+Version 8.131.0 · Zéro dépendance · Node.js ≥ 18
 
 </div>
 
@@ -235,6 +235,12 @@ bureau, installateur classique — construite avec Electron. Contrairement à
 l'iOS, aucun compte développeur n'est nécessaire : un `.exe` Windows s'installe
 sans certificat. Elle embarque son propre serveur : aucune adresse à
 configurer, aucune connexion Internet requise une fois installée.
+
+Elle **se met à jour toute seule** sous Windows et Linux : vérification
+discrète, téléchargement en arrière-plan, puis un bandeau « Redémarrer
+maintenant ». macOS fait exception — se remplacer soi-même y exige une
+signature Apple que ce projet n'a pas ; l'application y signale la nouvelle
+version et renvoie vers la page de téléchargement.
 
 ```bash
 cd desktop && npm install && npm run build:win

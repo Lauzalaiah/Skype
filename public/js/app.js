@@ -21,6 +21,7 @@ import { openSettings, setStatus } from './ui/settings.js';
 import { openNewChatDialog, openProfileCard, openShortcutsDialog } from './ui/modals.js';
 import { showIncomingCall, dismissIncomingCall, activeSession, hangupActiveCall } from './ui/calls.js';
 import { plainPreview } from './lib/format.js';
+import { surveillerMisesAJour } from './lib/maj.js';
 import * as sounds from './lib/sounds.js';
 
 const appNode = document.getElementById('app');
@@ -31,6 +32,10 @@ restoreAppearance();
 
 (async function boot() {
   sounds.unlockAudio();
+
+  // Sans effet dans un navigateur : seule l'application de bureau expose le
+  // pont de mise à jour.
+  surveillerMisesAJour();
 
   let session = null;
 

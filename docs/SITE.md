@@ -48,7 +48,7 @@ Pour publier une version, il faut donc lancer le workflow
 `.github/workflows/release.yml` :
 
 - **Actions** › **Publier une version** › **Run workflow** ;
-- ou en poussant une étiquette : `git tag v8.130.0 && git push origin v8.130.0`.
+- ou en poussant une étiquette : `git tag v8.131.0 && git push origin v8.131.0`.
 
 Il exécute la suite de tests, construit l'application sur un vrai exécuteur
 Windows, macOS et Linux, calcule les empreintes SHA-256, puis crée la
@@ -60,9 +60,17 @@ Windows, macOS et Linux, calcule les empreintes SHA-256, puis crée la
 | `Skype-Reborn-<version>.dmg` | macOS |
 | `Skype-Reborn-<version>.AppImage` | Linux |
 | `SHA256SUMS.txt` | vérification des trois précédents |
+| `latest.yml`, `latest-mac.yml`, `latest-linux.yml` | **mise à jour automatique** |
 
 Relancer le workflow sur une version déjà publiée remplace les fichiers au lieu
 d'échouer.
+
+> Les trois fichiers `latest*.yml` ne servent à personne qui télécharge à la
+> main : ce sont eux que **les applications déjà installées** interrogent pour
+> apprendre qu'une version plus récente existe. Les oublier ne casse rien de
+> visible — les utilisateurs restent simplement bloqués sur leur vieille
+> version, sans le savoir. Le workflow échoue plutôt que de publier sans eux,
+> et `test/maj.test.js` verrouille la règle.
 
 ---
 

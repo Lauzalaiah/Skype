@@ -10,6 +10,7 @@
 import { app, BrowserWindow, dialog, session, shell } from 'electron';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { surveillerMisesAJour } from './maj.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -77,6 +78,8 @@ function creerFenetre(port) {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      // N'expose que l'état des mises à jour — rien d'autre du système.
+      preload: path.join(__dirname, 'preload.cjs'),
     },
   });
 
@@ -125,6 +128,7 @@ app.whenReady().then(async () => {
 
   const port = await demarrerServeur();
   creerFenetre(port);
+  surveillerMisesAJour(mainWindow);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) creerFenetre(port);

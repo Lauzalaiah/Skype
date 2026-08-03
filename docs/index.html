@@ -279,7 +279,7 @@
 <div class="hero" id="top">
   <div class="wrap hero__grid">
     <div>
-      <span class="eyebrow"><span class="eyebrow__dot"></span> Version <span id="etiquetteVersion">8.130.0</span> · gratuit</span>
+      <span class="eyebrow"><span class="eyebrow__dot"></span> Version <span id="etiquetteVersion">8.131.0</span> · gratuit</span>
       <h1>Téléchargez <em>l'ancien Skype</em>.</h1>
       <p class="hero__lead">
         Celui d'avant : un pseudo, une liste de contacts, un bouton vert.
@@ -355,7 +355,7 @@
           crée le raccourci du bureau et l'entrée du menu Démarrer, et s'ajoute
           à la liste des programmes installés.
         </p>
-        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-Setup-8.130.0.exe · 64 bits</p>
+        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-Setup-8.131.0.exe · 64 bits</p>
         <a class="btn btn--primary" data-role="lien" href="https://github.com/Lauzalaiah/Skype/releases/latest">Télécharger le .exe</a>
       </div>
 
@@ -366,9 +366,10 @@
         <p class="plateforme__desc">
           Image disque à glisser dans le dossier Applications. Sans certificat
           Apple, macOS demandera de l'autoriser une fois dans
-          Réglages Système › Confidentialité et sécurité.
+          Réglages Système › Confidentialité et sécurité — et les mises à jour
+          y restent manuelles, pour la même raison.
         </p>
-        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-8.130.0.dmg</p>
+        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-8.131.0.dmg</p>
         <a class="btn btn--line" data-role="lien" href="https://github.com/Lauzalaiah/Skype/releases/latest">Télécharger le .dmg</a>
       </div>
 
@@ -381,7 +382,7 @@
           (<code>chmod +x</code>) et lancez-le. Fonctionne sur la plupart des
           distributions récentes.
         </p>
-        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-8.130.0.AppImage</p>
+        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-8.131.0.AppImage</p>
         <a class="btn btn--line" data-role="lien" href="https://github.com/Lauzalaiah/Skype/releases/latest">Télécharger l'AppImage</a>
       </div>
 
@@ -497,6 +498,7 @@
       <div class="point"><span class="point__tick">✓</span><div><h3>Statuts de présence</h3><p>En ligne, Absent, Ne pas déranger, Invisible. Le petit point vert, retrouvé.</p></div></div>
       <div class="point"><span class="point__tick">✓</span><div><h3>Thème Skype Classic</h3><p>Le bleu d'origine, plus les thèmes clair, sombre et contraste élevé.</p></div></div>
       <div class="point"><span class="point__tick">✓</span><div><h3>Fonctionne hors ligne</h3><p>L'application de bureau embarque son propre serveur : elle démarre et s'utilise sans connexion Internet.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Se met à jour toute seule</h3><p>Sous Windows et Linux, l'application vérifie discrètement, télécharge en arrière-plan et propose « Redémarrer maintenant ». Vous ne retéléchargerez plus rien.</p></div></div>
     </div>
 
     <p class="center" style="margin-top: 40px;">
@@ -524,7 +526,7 @@
       <div class="empreintes__ligne" id="empreintesEtat"><b>SHA-256</b> — publiées avec chaque version, dans le fichier <b>SHA256SUMS.txt</b>.</div>
     </div>
     <p class="center" style="margin-top: 16px; font-size: .86rem; color: var(--ink-soft);">
-      Sous Windows : <code>certutil -hashfile Skype-Reborn-Setup-8.130.0.exe SHA256</code> —
+      Sous Windows : <code>certutil -hashfile Skype-Reborn-Setup-8.131.0.exe SHA256</code> —
       sous macOS et Linux : <code>shasum -a 256 &lt;fichier&gt;</code>
     </p>
   </div>
@@ -601,6 +603,28 @@
       </details>
 
       <details>
+        <summary>Faut-il retélécharger à chaque nouvelle version ?</summary>
+        <p>
+          <strong>Sous Windows et Linux, non.</strong> L'application vérifie
+          d'elle-même s'il existe une version plus récente, la télécharge en
+          arrière-plan sans rien interrompre, puis affiche un bandeau
+          « Redémarrer maintenant ». Vous redémarrez quand ça vous arrange —
+          rien ne s'installe dans votre dos, et rien ne vous est imposé.
+        </p>
+        <p>
+          <strong>Sous macOS, oui</strong>, et c'est une limite honnête :
+          macOS n'autorise une application à se remplacer elle-même que si
+          elle est signée par un certificat Apple payant, que ce projet
+          gratuit n'a pas. L'application vous signale alors la nouvelle
+          version et vous renvoie ici.
+        </p>
+        <p>
+          <strong>Sur téléphone</strong>, l'application installée depuis le
+          navigateur se met à jour toute seule, sans rien demander.
+        </p>
+      </details>
+
+      <details>
         <summary>Comment le désinstaller ?</summary>
         <p>
           Comme n'importe quel programme : Paramètres › Applications sous Windows,
@@ -661,7 +685,7 @@
   // Le dépôt est la seule source de vérité : les fichiers proposés ici
   // sont ceux que GitHub Actions a publiés, jamais des liens écrits à la main.
   const DEPOT = 'Lauzalaiah/Skype';
-  const VERSION = '8.130.0';
+  const VERSION = '8.131.0';
   const PAGE_VERSIONS = `https://github.com/${DEPOT}/releases`;
 
   // Comment reconnaître le fichier de chaque système parmi ceux publiés.

@@ -557,3 +557,86 @@
 .shortcut-list { display: grid; grid-template-columns: 1fr auto; gap: 8px 20px; align-items: center; }
 .shortcut-list dt { color: var(--text-secondary); font-size: 0.9em; }
 .shortcut-list dd { margin: 0; text-align: right; }
+
+/* ── Bandeau de mise à jour (application de bureau uniquement) ─────────────── */
+/* Au-dessus de l'écran d'appel (470) mais sous les modales (500) : une mise à
+   jour ne doit jamais recouvrir une boîte de dialogue en cours. */
+.maj {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 490;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: min(620px, 92vw);
+  padding: 10px 12px 10px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.18);
+  animation: fade-down 220ms var(--ease);
+}
+@keyframes fade-down {
+  from { opacity: 0; transform: translate(-50%, -10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+.maj__point {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+}
+.maj__texte {
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.maj__lien {
+  flex: none;
+  border: none;
+  background: none;
+  padding: 6px 4px;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.maj__lien:hover { color: var(--accent); }
+.maj__action {
+  flex: none;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.maj__action:hover { filter: brightness(1.06); }
+.maj__fermer {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.maj__fermer:hover { background: var(--bg-hover); }
+
+@media (max-width: 620px) {
+  .maj { flex-wrap: wrap; border-radius: 16px; justify-content: flex-end; }
+  .maj__texte { white-space: normal; flex: 1 1 100%; }
+}

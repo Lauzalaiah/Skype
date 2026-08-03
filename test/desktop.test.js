@@ -121,9 +121,13 @@ describe('Un démarrage raté ne reste jamais silencieux', () => {
 });
 
 describe('Empaquetage', () => {
-  test('la mise à jour automatique est désactivée (aucun serveur de publication configuré)', () => {
-    assert.equal(pkg.build.publish, null,
-      'sans ce réglage, la construction plante en cherchant un canal de mise à jour inexistant');
+  test('la mise à jour automatique a une source déclarée', () => {
+    // C'est cette configuration qui fait produire les fichiers latest*.yml
+    // à electron-builder ; sans elle, l'application installée n'aurait aucun
+    // moyen d'apprendre qu'une version plus récente existe.
+    // Le détail du mécanisme est vérifié dans test/maj.test.js.
+    assert.ok(Array.isArray(pkg.build.publish) && pkg.build.publish.length,
+      'sans source de publication, la mise à jour automatique est muette');
   });
 
   test('server/ et public/ sont inclus tels quels, au même niveau relatif que dans le dépôt', () => {

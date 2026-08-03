@@ -160,7 +160,7 @@ describe('Publication des fichiers téléchargeables', () => {
   });
 
   test('les empreintes SHA-256 sont produites, jointes et recopiées dans les notes', () => {
-    assert.match(workflow, /sha256sum \* > SHA256SUMS\.txt/);
+    assert.match(workflow, /sha256sum \*\.exe \*\.dmg \*\.AppImage/);
     // Recopiées dans les notes, sinon la page ne peut pas les lire : le
     // téléchargement d'une pièce jointe redirige vers un hôte qui n'autorise
     // pas les requêtes venues d'une autre origine.
