@@ -25,6 +25,12 @@ jobs:
   build:
     runs-on: macos-14
     timeout-minutes: 40
+    env:
+      # Le contexte « secrets » n'est pas autorisé dans une condition « if : »
+      # (erreur GitHub Actions : « Unrecognized named-value: 'secrets' »).
+      # On expose donc l'information via une variable d'environnement, elle
+      # autorisée dans « if : ».
+      SIGNE: ${{ secrets.IOS_CERTIFICATE_P12 != '' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -60,7 +66,7 @@ jobs:
           npx cap sync ios
 
       - name: Construire (archive non signée)
-        if: ${{ !secrets.IOS_CERTIFICATE_P12 }}
+        if: env.SIGNE != 'true'
         working-directory: ios/ios/App
         run: |
           xcodebuild -workspace App.xcworkspace -scheme App \
@@ -69,7 +75,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
       - name: Construire (archive signée)
-        if: ${{ secrets.IOS_CERTIFICATE_P12 != '' }}
+        if: env.SIGNE == 'true'
         working-directory: ios/ios/App
         env:
           P12: ${{ secrets.IOS_CERTIFICATE_P12 }}
@@ -100,7 +106,7 @@ jobs:
             -exportOptionsPlist ../../ExportOptions.plist
 
       - name: Emballer l'archive non signée
-        if: ${{ !secrets.IOS_CERTIFICATE_P12 }}
+        if: env.SIGNE != 'true'
         run: |
           mkdir -p "$RUNNER_TEMP/export/Payload"
           cp -r "$RUNNER_TEMP/App.xcarchive/Products/Applications/App.app" "$RUNNER_TEMP/export/Payload/"
