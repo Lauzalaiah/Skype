@@ -10,10 +10,24 @@ import { paysDuNumero, tarifDuNumero } from '../public/js/lib/pays.js';
 
 const { httpError } = M;
 
-/** Version déclarée dans package.json, exposée par /api/health. */
-const VERSION = JSON.parse(
-  fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8')
-).version;
+/**
+ * Version déclarée dans package.json, exposée par /api/health.
+ *
+ * Deux emplacements possibles : dans le dépôt, package.json est à la racine,
+ * un niveau au-dessus de server/ ; dans l'application de bureau empaquetée,
+ * server/ est un dossier détaché qui emporte le sien. On essaie les deux, et
+ * on ne fait jamais échouer le démarrage du serveur pour une version.
+ */
+const VERSION = (() => {
+  for (const chemin of ['./package.json', '../package.json']) {
+    try {
+      return JSON.parse(fs.readFileSync(new URL(chemin, import.meta.url), 'utf8')).version;
+    } catch {
+      /* emplacement suivant */
+    }
+  }
+  return '0.0.0';
+})();
 
 const json = (res, status, body) => {
   const payload = JSON.stringify(body);

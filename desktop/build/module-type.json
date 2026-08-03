@@ -1,0 +1,4 @@
+{
+  "type": "module",
+  "_pourquoi": "Copié en tant que package.json à côté de server/ et de public/ dans l'application empaquetée. Ces dossiers héritent normalement du « type: module » du package.json à la racine du dépôt, mais l'empaquetage les en détache : sans ce marqueur, Node les lit comme du CommonJS et chaque « import » échoue au démarrage."
+}

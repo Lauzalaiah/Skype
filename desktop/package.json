@@ -26,14 +26,36 @@
       "buildResources": "build"
     },
     "files": [
-      "main.js"
+      "main.js",
+      "build/icon.png"
     ],
     "extraResources": [
-      { "from": "../server", "to": "server" },
-      { "from": "../public", "to": "public" }
+      {
+        "from": "../server",
+        "to": "server"
+      },
+      {
+        "from": "../public",
+        "to": "public"
+      },
+      {
+        "from": "../package.json",
+        "to": "server/package.json"
+      },
+      {
+        "from": "build/module-type.json",
+        "to": "public/package.json"
+      }
     ],
     "win": {
-      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
       "icon": "build/icon.ico",
       "artifactName": "Skype-Reborn-Setup-${version}.${ext}"
     },
@@ -47,13 +69,17 @@
       "artifactName": "Skype-Reborn-Setup-${version}.${ext}"
     },
     "linux": {
-      "target": ["AppImage"],
+      "target": [
+        "AppImage"
+      ],
       "icon": "build/icon.png",
       "category": "Network",
       "artifactName": "Skype-Reborn-${version}.${ext}"
     },
     "mac": {
-      "target": ["dmg"],
+      "target": [
+        "dmg"
+      ],
       "icon": "build/icon.png",
       "category": "public.app-category.social-networking",
       "artifactName": "Skype-Reborn-${version}.${ext}"

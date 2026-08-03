@@ -45,6 +45,34 @@ sait construire une cible Windows depuis n'importe quel système ; sous Linux,
 il lui faut [Wine](https://www.winehq.org/) installé — `apt install wine32`
 suffit).
 
+### Tester l'installateur sans machine Windows
+
+Wine sait exécuter l'installateur et vérifier qu'il fait son travail —
+fichiers déposés, raccourcis bureau et menu Démarrer, entrée de
+désinstallation, démarrage du serveur embarqué :
+
+```bash
+export WINEPREFIX=/tmp/essai WINEARCH=win64
+wine64 wineboot --init
+wine64 dist/Skype-Reborn-Setup-*.exe /S
+ls "$WINEPREFIX/drive_c/users/$USER/AppData/Local/Programs/Skype"
+```
+
+Deux pièges à connaître :
+
+- l'installateur est **par utilisateur** (`perMachine: false`) : il installe
+  dans `%LOCALAPPDATA%\Programs\Skype`, **jamais** dans `Program Files` — y
+  chercher les fichiers donne l'impression que l'installation a échoué ;
+- il faut un préfixe **64 bits** (`WINEARCH=win64`) et donc `wine64`, sinon
+  l'application x64 ne peut pas se lancer.
+
+En revanche, **l'interface graphique ne s'affiche pas de façon fiable sous
+Wine** : Chromium y est trop exigeant, la fenêtre ne se réalise pas et
+l'application se referme. Ce n'est pas un défaut de l'application — pour
+vérifier l'interface de la version *empaquetée*, construisez la cible Linux
+(`npx electron-builder --linux dir`), qui utilise exactement le même
+`app.asar` et les mêmes ressources, et lancez-la nativement.
+
 Pour tester sans construire d'installateur :
 
 ```bash

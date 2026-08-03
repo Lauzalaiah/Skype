@@ -156,13 +156,16 @@ save();
 
 server.listen(PORT, HOST, () => {
   const count = Object.keys(db.users).length;
+  // PORT peut valoir 0 (« choisis-en un ») : on annonce le port réellement
+  // attribué, sinon l'adresse affichée ne mène nulle part.
+  const port = server.address().port;
   console.log(`
   ╭──────────────────────────────────────────────╮
   │   S k y p e   R e b o r n   ·   v8.130.0     │
   ╰──────────────────────────────────────────────╯
 
-  ▸ Application : http://localhost:${PORT}
-  ▸ Publicité   : http://localhost:${PORT}/pub
+  ▸ Application : http://localhost:${port}
+  ▸ Publicité   : http://localhost:${port}/pub
   ▸ ${count} compte${count > 1 ? 's' : ''} enregistré${count > 1 ? 's' : ''}${count === 0 ? "  (lancez « npm run seed » pour des comptes de démo)" : ''}
 
   Ctrl+C pour arrêter.
