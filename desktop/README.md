@@ -23,6 +23,29 @@ Chaque installation a sa **propre base de données locale**, indépendante du
 site web ou d'une autre installation — comme le ferait n'importe quel
 programme de bureau.
 
+## Parler à quelqu'un d'autre : le serveur partagé
+
+Par défaut, l'application se sert du serveur qu'elle embarque. Elle fonctionne
+seule, hors ligne, sans rien configurer — mais **deux personnes sur deux
+machines ne se voient pas** : chacune s'adresse à son propre serveur.
+
+Pour se retrouver, elles visent le même. Sur l'écran de connexion,
+**« Changer de serveur »** demande une adresse (`https://skype.exemple.fr`),
+la vérifie, puis **recharge la fenêtre dessus**.
+
+Ce choix — recharger plutôt que préfixer les appels d'API — est délibéré : tout
+redevient de même origine, l'API comme le WebSocket, les fichiers envoyés comme
+les images. Il n'y a aucun cas particulier à traiter dans l'application web, et
+aucun réglage de CORS à faire côté serveur.
+
+L'adresse est mémorisée dans `serveur.json`, à côté des données. Une adresse
+vide ramène au serveur embarqué. **Si le serveur partagé ne répond pas au
+démarrage**, l'application le dit et revient d'elle-même au serveur local :
+sans cela, l'utilisateur se retrouverait devant une page d'erreur, sans
+interface, donc sans moyen de corriger son adresse.
+
+Monter ce serveur : [`../docs/HEBERGEMENT.md`](../docs/HEBERGEMENT.md).
+
 ## Mises à jour automatiques
 
 L'application se met à jour seule, à partir des versions publiées du dépôt —
@@ -70,10 +93,15 @@ d'afficher un bandeau renvoyant vers la page de téléchargement.
 
 ### Ce que l'interface reçoit
 
-`preload.cjs` n'expose que trois fonctions — s'abonner à l'état, installer,
-ouvrir les nouveautés. La page reste aussi limitée que dans un navigateur :
-ni `ipcRenderer`, ni `require`, ni `process`. Dans la version web,
-`window.skypeMaj` n'existe pas et le bandeau ne s'affiche jamais.
+`preload.cjs` n'expose que deux ponts, de cinq fonctions en tout : s'abonner à
+l'état d'une mise à jour, l'installer, ouvrir les nouveautés — et lire ou
+changer le serveur partagé. La page reste aussi limitée que dans un
+navigateur : ni `ipcRenderer`, ni `require`, ni `process`. Dans la version web,
+ces ponts n'existent pas et l'interface se comporte comme avant.
+
+Un test suit les imports depuis `main.js` pour exiger que chaque module atteint
+soit empaqueté : une liste écrite à la main oublie le fichier suivant, ce qui
+est arrivé — l'application installée refusait alors de démarrer.
 
 ## Construire l'installateur
 

@@ -7,10 +7,11 @@
  * installer à part, aucune adresse à configurer, les données restent sur la
  * machine de l'utilisateur.
  */
-import { app, BrowserWindow, dialog, session, shell } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, session, shell } from 'electron';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { surveillerMisesAJour } from './maj.js';
+import { adresseServeur, definirAdresseServeur } from './serveur-partage.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -64,6 +65,33 @@ async function demarrerServeur() {
   return new Promise((resolve) => server.once('listening', () => resolve(server.address().port)));
 }
 
+let adresseLocale = '';
+
+/**
+ * Charge l'adresse voulue, avec un filet : si le serveur partagé ne répond
+ * pas, on retombe sur le serveur embarqué plutôt que de laisser l'utilisateur
+ * devant une page d'erreur — sans interface, il n'aurait plus aucun moyen de
+ * corriger son adresse.
+ */
+function chargerServeur(fenetre) {
+  const distant = adresseServeur();
+  fenetre.loadURL(distant || adresseLocale);
+
+  if (!distant) return;
+
+  fenetre.webContents.once('did-fail-load', (_e, code, description, url, principale) => {
+    if (!principale || code === -3) return;   // -3 : chargement interrompu volontairement
+    console.warn(`[skype] serveur partagé injoignable (${description}) : retour au serveur local`);
+    dialog.showErrorBox(
+      'Serveur injoignable',
+      `${url}\n\n${description}\n\nSkype revient à son serveur local. `
+      + 'Vous pourrez saisir une autre adresse depuis l’écran de connexion.'
+    );
+    definirAdresseServeur('');
+    fenetre.loadURL(adresseLocale);
+  });
+}
+
 function creerFenetre(port) {
   mainWindow = new BrowserWindow({
     width: 1180,
@@ -83,12 +111,15 @@ function creerFenetre(port) {
     },
   });
 
-  mainWindow.loadURL(`http://127.0.0.1:${port}`);
+  adresseLocale = `http://127.0.0.1:${port}`;
+  chargerServeur(mainWindow);
 
   // Les liens externes (aide, à propos…) s'ouvrent dans le navigateur du
   // système plutôt que dans une fenêtre Electron sans barre d'adresse.
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if (!url.startsWith(`http://127.0.0.1:${port}`)) {
+    const interne = url.startsWith(adresseLocale)
+      || (adresseServeur() && url.startsWith(adresseServeur()));
+    if (!interne) {
       shell.openExternal(url);
       return { action: 'deny' };
     }
@@ -138,6 +169,19 @@ app.whenReady().then(async () => {
   // demander — jamais l'accès au système de fichiers ou autre.
   session.defaultSession.setPermissionRequestHandler((_wc, permission, callback) => {
     callback(['media', 'display-capture', 'notifications', 'clipboard-sanitized-write'].includes(permission));
+  });
+
+  // L'application web demande où elle tourne, et peut changer de serveur.
+  ipcMain.handle('bureau:etat', () => ({
+    serveur: adresseServeur(),
+    local: adresseLocale,
+    version: app.getVersion(),
+  }));
+
+  ipcMain.handle('bureau:serveur', (_evenement, valeur) => {
+    const propre = definirAdresseServeur(valeur);
+    if (mainWindow) chargerServeur(mainWindow);
+    return propre;
   });
 
   const port = await demarrerServeur();

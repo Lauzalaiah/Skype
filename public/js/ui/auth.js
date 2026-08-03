@@ -2,7 +2,7 @@
 import { el, $, clear } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
 import { api, setToken } from '../lib/api.js';
-import { estNatif, serveurChoisi, definirServeur, serveurManquant, tester } from '../lib/serveur.js';
+import { estNatif, estBureau, serveurChoisi, definirServeur, serveurManquant, tester } from '../lib/serveur.js';
 
 const skypeLogo = (size = 40) =>
   el('div', {
@@ -140,7 +140,7 @@ export function showAuth() {
           el('button', { type: 'button', text: 'Créez-en un', onclick: () => { mode = 'signup'; render(); } }),
         ]),
         // Utile hors du navigateur, où l'adresse n'est pas déduite de la page.
-        estNatif() || serveurChoisi()
+        estNatif() || estBureau() || serveurChoisi()
           ? el('p.auth__switch', { style: { fontSize: '0.8em' } }, [
             el('button', { type: 'button', text: 'Changer de serveur', onclick: () => { mode = 'serveur'; render(); } }),
           ])

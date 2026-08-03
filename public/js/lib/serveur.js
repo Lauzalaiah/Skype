@@ -15,6 +15,26 @@
 
 const CLE = 'skype.server';
 
+/**
+ * L'application de bureau, elle, ne se contente pas de préfixer les chemins :
+ * sa fenêtre charge directement l'adresse choisie, ce qui remet tout — API,
+ * WebSocket, fichiers, images — sur une seule origine. Le choix vit donc côté
+ * Electron, et non dans le stockage local de la page.
+ */
+export const estBureau = () => typeof globalThis.skypeBureau?.definirServeur === 'function';
+
+let bureau = { serveur: '', local: '', version: '' };
+
+/** À appeler au démarrage : récupère l'état du bureau avant tout affichage. */
+export async function initialiserServeur() {
+  if (!estBureau()) return;
+  try {
+    bureau = await globalThis.skypeBureau.etat();
+  } catch {
+    /* on garde les valeurs par défaut : l'application reste utilisable */
+  }
+}
+
 /** Origines depuis lesquelles les chemins relatifs ne mènent nulle part. */
 const ORIGINE_LOCALE = /^(capacitor|ionic|file):/i;
 
@@ -26,6 +46,7 @@ export const estNatif = () =>
 
 /** Adresse configurée par l'utilisateur, si elle existe. */
 export const serveurChoisi = () => {
+  if (estBureau()) return nettoyer(bureau.serveur);
   try {
     return nettoyer(localStorage.getItem(CLE)) || '';
   } catch {
@@ -39,6 +60,15 @@ export const serveurChoisi = () => {
  */
 export function definirServeur(valeur) {
   const propre = nettoyer(valeur);
+
+  // Sur le bureau, c'est Electron qui décide et qui recharge la fenêtre sur la
+  // nouvelle adresse : rien à mémoriser ici.
+  if (estBureau()) {
+    bureau = { ...bureau, serveur: propre };
+    globalThis.skypeBureau.definirServeur(propre);
+    return propre;
+  }
+
   try {
     if (propre) localStorage.setItem(CLE, propre);
     else localStorage.removeItem(CLE);

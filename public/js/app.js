@@ -18,10 +18,11 @@ import { renderConversation, currentConversation } from './ui/conversation.js';
 import { renderDetails } from './ui/details.js';
 import { toast, emptyState, closeTopModal, closeMenu, avatar } from './ui/common.js';
 import { openSettings, setStatus } from './ui/settings.js';
-import { openNewChatDialog, openProfileCard, openShortcutsDialog } from './ui/modals.js';
+import { openNewChatDialog, openAddContactDialog, openProfileCard, openShortcutsDialog } from './ui/modals.js';
 import { showIncomingCall, dismissIncomingCall, activeSession, hangupActiveCall } from './ui/calls.js';
 import { plainPreview } from './lib/format.js';
 import { surveillerMisesAJour } from './lib/maj.js';
+import { initialiserServeur } from './lib/serveur.js';
 import * as sounds from './lib/sounds.js';
 
 const appNode = document.getElementById('app');
@@ -33,8 +34,10 @@ restoreAppearance();
 (async function boot() {
   sounds.unlockAudio();
 
-  // Sans effet dans un navigateur : seule l'application de bureau expose le
-  // pont de mise à jour.
+  // Sans effet dans un navigateur : seuls les ponts de l'application de bureau
+  // répondent. Le serveur doit être connu avant tout affichage, car l'écran de
+  // connexion propose d'en changer.
+  await initialiserServeur();
   surveillerMisesAJour();
 
   let session = null;
@@ -131,7 +134,7 @@ function welcomeScreen() {
     el('p.empty-state__text', { text: 'Choisissez une conversation à gauche, ou commencez-en une nouvelle. Vos appels, vos groupes et vos messages sont là où vous les aviez laissés.' }),
     el('div.row.gap-8', { style: { marginTop: '8px', flexWrap: 'wrap', justifyContent: 'center' } }, [
       el('button.btn.btn--primary', { onclick: openNewChatDialog }, [icon('edit', 'icon icon--sm'), 'Nouvelle conversation']),
-      el('button.btn', { onclick: () => setState({ view: 'contacts' }) }, [icon('person-add', 'icon icon--sm'), 'Ajouter un contact']),
+      el('button.btn', { onclick: openAddContactDialog }, [icon('person-add', 'icon icon--sm'), 'Ajouter un contact']),
       el('button.btn', { onclick: () => setState({ view: 'dialpad' }) }, [icon('dialpad', 'icon icon--sm'), 'Appeler un numéro']),
     ]),
     el('p.dim', { style: { marginTop: '20px', fontSize: '0.82em' } }, [

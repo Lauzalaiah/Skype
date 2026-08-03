@@ -25,3 +25,16 @@ contextBridge.exposeInMainWorld('skypeMaj', {
   /** Ouvre les nouveautés dans le navigateur du système. */
   ouvrirNouveautes: () => ipcRenderer.invoke('maj:nouveautes'),
 });
+
+/**
+ * De quoi choisir un serveur partagé. Sans cela, deux personnes qui installent
+ * l'application ne se verraient jamais : chacune parlerait au serveur que sa
+ * propre installation embarque.
+ */
+contextBridge.exposeInMainWorld('skypeBureau', {
+  /** { serveur, local, version } — serveur vide = celui embarqué. */
+  etat: () => ipcRenderer.invoke('bureau:etat'),
+
+  /** Change de serveur et recharge la fenêtre dessus. Vide = retour au local. */
+  definirServeur: (adresse) => ipcRenderer.invoke('bureau:serveur', adresse),
+});

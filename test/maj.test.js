@@ -41,10 +41,29 @@ describe('Configuration de la mise à jour', () => {
     assert.equal(publication.repo, 'Skype');
   });
 
-  test('l’empaquetage embarque le pont et les modules nécessaires', () => {
-    for (const fichier of ['main.js', 'maj.js', 'preload.cjs', 'node_modules/**/*']) {
-      assert.ok(paquetBureau.build.files.includes(fichier),
-        `absent de la liste des fichiers empaquetés : ${fichier}`);
+  test('tout module importé par l’application est empaqueté', () => {
+    // Une liste écrite à la main oublie le fichier suivant : c'est arrivé, et
+    // l'application installée refusait de démarrer (« Cannot find module »).
+    // On suit donc les imports depuis main.js, plutôt que de les énumérer.
+    const empaquetes = new Set(paquetBureau.build.files);
+    const vus = new Set();
+    const aVoir = ['main.js'];
+
+    while (aVoir.length) {
+      const fichier = aVoir.pop();
+      if (vus.has(fichier)) continue;
+      vus.add(fichier);
+
+      assert.ok(empaquetes.has(fichier),
+        `importé par l’application mais absent de « files » : ${fichier}`);
+
+      const source = fs.readFileSync(path.join(ROOT, 'desktop', fichier), 'utf8');
+      for (const [, chemin] of source.matchAll(/from\s+'\.\/([\w./-]+)'/g)) aVoir.push(chemin);
+    }
+
+    assert.ok(vus.size >= 3, `seulement ${vus.size} module(s) suivis : le parcours n’a rien trouvé`);
+    for (const indispensable of ['preload.cjs', 'node_modules/**/*', 'package.json']) {
+      assert.ok(empaquetes.has(indispensable), `absent de « files » : ${indispensable}`);
     }
   });
 
@@ -67,10 +86,24 @@ describe('Configuration de la mise à jour', () => {
 });
 
 describe('Le pont exposé à l’interface', () => {
-  test('il n’expose que les trois fonctions de mise à jour', () => {
-    const exposees = [...preload.matchAll(/^\s{2}(?:(\w+)\(|(\w+):)/gm)]
-      .map((m) => m[1] || m[2]).sort();
-    assert.deepEqual(exposees, ['installer', 'ouvrirNouveautes', 'surEtat']);
+  test('il n’expose que ce qui est nécessaire, et rien de plus', () => {
+    // Deux ponts seulement : les mises à jour, et le choix du serveur partagé.
+    // Toute fonction ajoutée ici élargit ce que la page peut demander au
+    // système : elle doit être un choix, jamais un oubli.
+    const attendu = {
+      skypeMaj: ['installer', 'ouvrirNouveautes', 'surEtat'],
+      skypeBureau: ['definirServeur', 'etat'],
+    };
+
+    const blocs = [...preload.matchAll(
+      /exposeInMainWorld\(\s*'(\w+)'\s*,\s*\{([\s\S]*?)\n\}\);/g)];
+    assert.equal(blocs.length, Object.keys(attendu).length, 'nombre de ponts inattendu');
+
+    for (const [, nom, corps] of blocs) {
+      const exposees = [...corps.matchAll(/^\s{2}(?:(\w+)\(|(\w+):)/gm)]
+        .map((m) => m[1] || m[2]).sort();
+      assert.deepEqual(exposees, attendu[nom], `contenu inattendu du pont ${nom}`);
+    }
   });
 
   test('ni ipcRenderer ni require ne sont donnés à la page', () => {

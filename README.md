@@ -5,7 +5,7 @@
 **La messagerie, les appels audio et vidéo et le partage d'écran que vous aimiez.
 Recréés de A à Z, sans rien oublier.**
 
-Version 8.133.0 · Zéro dépendance · Node.js ≥ 18
+Version 8.134.0 · Zéro dépendance · Node.js ≥ 18
 
 </div>
 
@@ -40,7 +40,7 @@ La publicité de lancement est servie sur **http://localhost:3000/pub**.
 ```bash
 npm run dev       # démarrage avec rechargement automatique
 npm run reset     # remet la base à zéro et recrée les comptes de démonstration
-npm test          # 156 tests de bout en bout (API, temps réel, sécurité, sons) — Node 22+
+npm test          # 220 tests de bout en bout (API, temps réel, sécurité, sons) — Node 22+
 PORT=8080 npm start
 ```
 
@@ -166,7 +166,7 @@ votre machine. Aucun traceur, aucun service tiers, aucune police ni script dista
 npm test
 ```
 
-157 tests couvrent l'inscription et la connexion, le rejet des identifiants invalides,
+220 tests couvrent l'inscription et la connexion, le rejet des identifiants invalides,
 les demandes de contact, les permissions de conversation, l'édition et la suppression
 de messages, les réactions, les sondages, les rôles d'administrateur, les liens
 d'invitation, le blocage, la fusion des réglages imbriqués, le crédit Skype, l'envoi
@@ -235,6 +235,11 @@ bureau, installateur classique — construite avec Electron. Contrairement à
 l'iOS, aucun compte développeur n'est nécessaire : un `.exe` Windows s'installe
 sans certificat. Elle embarque son propre serveur : aucune adresse à
 configurer, aucune connexion Internet requise une fois installée.
+
+Par défaut elle utilise le serveur qu'elle embarque — donc **seule**. Pour
+parler à quelqu'un d'autre, les deux installations doivent viser le même
+serveur : « Changer de serveur » sur l'écran de connexion, et la fenêtre se
+recharge dessus. Monter ce serveur : [`docs/HEBERGEMENT.md`](docs/HEBERGEMENT.md).
 
 Elle **se met à jour toute seule** sous Windows et Linux : vérification
 discrète, téléchargement en arrière-plan, puis un bandeau « Redémarrer
