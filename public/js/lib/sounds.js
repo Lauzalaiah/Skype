@@ -382,8 +382,8 @@ export const login = () => sound('login');
 
 /**
  * Notification générale : demande de contact, réaction…
- * Synthétisée : aucun fichier officiel ne correspond à cet événement pour
- * l'instant. Voir l'entrée « aIdentifier » de la bibliothèque.
+ * Synthétisée : aucun fichier officiel n'a encore été rattaché à cet
+ * événement. Emplacement libre, voir docs/SONS.md.
  */
 export const notify = () =>
   play([

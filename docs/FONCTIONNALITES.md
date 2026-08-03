@@ -205,6 +205,8 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
   La correspondance est déclarée dans `public/js/lib/sounds.js` (champs
   `source` et `usage`) et verrouillée par `test/sons.test.js`, qui échoue si
   un son se retrouve branché ailleurs que sur son événement.
+  La règle qui décide où va un nouveau son — et la liste des emplacements
+  encore vides — est dans [`docs/SONS.md`](SONS.md).
 - Choix parmi quatre sonneries d'appel entrant dans les réglages, avec écoute ;
   la même sonnerie sert aux appels audio et vidéo
 - Bibliothèque de sons écoutable depuis les réglages

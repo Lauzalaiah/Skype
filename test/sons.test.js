@@ -169,6 +169,38 @@ describe('Correspondance son ↔ événement', () => {
   });
 });
 
+describe('Documentation de la correspondance', () => {
+  const doc = lire('docs/SONS.md');
+
+  test('chaque son intégré est documenté avec sa provenance', () => {
+    for (const [cle, entree] of Object.entries(LIB)) {
+      assert.ok(doc.includes(`\`${entree.source}\``),
+        `${cle} : ${entree.source} absent de docs/SONS.md`);
+    }
+  });
+
+  test('le document ne décrit aucun fichier qui n’existe pas', () => {
+    const sources = new Set(Object.values(LIB).map((e) => e.source));
+    const cites = [...doc.matchAll(/`([\w.]+\.mp3)`/g)].map((m) => m[1]);
+    for (const f of cites) {
+      assert.ok(sources.has(f), `${f} est documenté mais n'est plus dans la bibliothèque`);
+    }
+  });
+
+  test('le décompte annoncé correspond à la bibliothèque', () => {
+    assert.match(doc, new RegExp(`## Les ${Object.keys(LIB).length} sons attribués`),
+      'le titre de la table doit annoncer le nombre réel de sons');
+  });
+
+  test('un emplacement libre n’est branché sur aucun fichier', () => {
+    // Les événements listés comme « encore vides » doivent rester synthétisés.
+    for (const nom of ['messageOut', 'mention', 'callEnd', 'error', 'notify']) {
+      assert.match(sons, new RegExp(`export const ${nom} = \\(\\) =>\\s*\\n?\\s*play\\(`),
+        `${nom} est annoncé comme emplacement libre : il doit rester synthétisé`);
+    }
+  });
+});
+
 describe('Sons non attribués', () => {
   test('un son orphelin n’est branché sur aucun événement', () => {
     const orphelins = Object.entries(LIB).filter(([, e]) => e.orphelin);
