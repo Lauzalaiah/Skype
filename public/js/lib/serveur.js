@@ -1,0 +1,100 @@
+/**
+ * Adresse du serveur Skype.
+ *
+ * Sur le web et en application installée depuis Safari, la page vient du
+ * serveur lui-même : les chemins relatifs suffisent, et rien ne change.
+ *
+ * Dans une application native (Capacitor), la page est servie depuis
+ * `capacitor://localhost` : « /api/… » désignerait le paquet embarqué, pas le
+ * serveur. Il faut donc une adresse explicite. Elle peut venir :
+ *
+ *   1. de la coquille native, via `window.SKYPE_SERVER` ;
+ *   2. d'un réglage saisi par l'utilisateur, conservé localement ;
+ *   3. à défaut, de l'origine de la page — le cas normal sur le web.
+ */
+
+const CLE = 'skype.server';
+
+/** Origines depuis lesquelles les chemins relatifs ne mènent nulle part. */
+const ORIGINE_LOCALE = /^(capacitor|ionic|file):/i;
+
+const nettoyer = (valeur) => String(valeur || '').trim().replace(/\/+$/, '');
+
+/** L'application tourne-t-elle dans une coquille native ? */
+export const estNatif = () =>
+  ORIGINE_LOCALE.test(location.protocol) || location.protocol === 'file:';
+
+/** Adresse configurée par l'utilisateur, si elle existe. */
+export const serveurChoisi = () => {
+  try {
+    return nettoyer(localStorage.getItem(CLE)) || '';
+  } catch {
+    return '';
+  }
+};
+
+/**
+ * Enregistre l'adresse du serveur. Une chaîne vide efface le réglage et
+ * ramène au comportement par défaut.
+ */
+export function definirServeur(valeur) {
+  const propre = nettoyer(valeur);
+  try {
+    if (propre) localStorage.setItem(CLE, propre);
+    else localStorage.removeItem(CLE);
+  } catch {
+    /* stockage indisponible : on continue sans mémoriser */
+  }
+  return propre;
+}
+
+/**
+ * Base à préfixer aux chemins d'API. Chaîne vide sur le web : les chemins
+ * relatifs restent relatifs, ce qui évite toute régression.
+ */
+export function baseServeur() {
+  const explicite = nettoyer(globalThis.SKYPE_SERVER) || serveurChoisi();
+  if (explicite) return explicite;
+  if (estNatif()) return '';        // aucune adresse : l'appelant devra en demander une
+  return '';                         // web : même origine, chemins relatifs
+}
+
+/** Vrai quand l'application ne sait pas à qui parler. */
+export const serveurManquant = () => estNatif() && !baseServeur();
+
+/** Transforme « /api/x » en URL absolue si une base est configurée. */
+export const url = (chemin) => {
+  const base = baseServeur();
+  if (!base) return chemin;
+  return chemin.startsWith('/') ? base + chemin : `${base}/${chemin}`;
+};
+
+/** Adresse WebSocket correspondante. */
+export function urlSocket(chemin) {
+  const base = baseServeur();
+  if (!base) {
+    const protocole = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    return `${protocole}//${location.host}${chemin}`;
+  }
+  return base.replace(/^http/i, 'ws') + chemin;
+}
+
+/** Vérifie qu'une adresse répond bien comme un serveur Skype. */
+export async function tester(adresse) {
+  const base = nettoyer(adresse);
+  if (!/^https?:\/\//i.test(base)) {
+    throw new Error('L’adresse doit commencer par http:// ou https://');
+  }
+  let reponse;
+  try {
+    reponse = await fetch(`${base}/api/health`, { method: 'GET' });
+  } catch {
+    throw new Error('Serveur injoignable à cette adresse.');
+  }
+  if (!reponse.ok) throw new Error(`Le serveur a répondu ${reponse.status}.`);
+  const info = await reponse.json().catch(() => null);
+  if (!info || info.service !== 'skype') {
+    throw new Error('Cette adresse ne répond pas comme un serveur Skype.');
+  }
+  return info;
+}

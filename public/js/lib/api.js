@@ -1,4 +1,5 @@
 /** Client HTTP de l'API Skype. */
+import { url as urlServeur } from './serveur.js';
 
 const TOKEN_KEY = 'skype.token';
 
@@ -26,7 +27,7 @@ async function request(method, path, body, options = {}) {
 
   let response;
   try {
-    response = await fetch(path, { method, headers, body: payload, signal: options.signal });
+    response = await fetch(urlServeur(path), { method, headers, body: payload, signal: options.signal });
   } catch (err) {
     if (err.name === 'AbortError') throw err;
     throw new ApiError('Connexion au serveur impossible. Vérifiez votre réseau.', 0);
@@ -137,4 +138,4 @@ export const api = {
 
 /** URL de téléchargement/affichage d'un fichier (jeton inclus pour les balises img). */
 export const fileUrl = (fileId, download = false) =>
-  `/api/files/${fileId}?token=${encodeURIComponent(getToken() || '')}${download ? '&download=1' : ''}`;
+  urlServeur(`/api/files/${fileId}?token=${encodeURIComponent(getToken() || '')}${download ? '&download=1' : ''}`);

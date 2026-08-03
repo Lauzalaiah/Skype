@@ -98,6 +98,19 @@ pas.
 
 ## Adresse du serveur dans l'application native
 
-L'application native charge l'interface depuis votre serveur. Réglez son
-adresse dans `ios/capacitor.config.json`, champ `server.url`. En développement,
-pointez-la vers votre machine ; en production, vers l'hébergement du serveur.
+C'est **le point qui décide si l'application fonctionne**. La page vient du
+paquet embarqué : elle ne peut pas deviner à quel serveur parler.
+
+**Par défaut**, l'application le demande au premier lancement, vérifie que
+l'adresse répond bien comme un serveur Skype (`/api/health`), puis la mémorise.
+On peut en changer depuis l'écran de connexion.
+
+**Pour figer l'adresse**, renseignez `server.url` dans `capacitor.config.json` :
+
+```json
+"server": { "url": "https://skype.exemple.fr" }
+```
+
+Dans les deux cas, il faut un serveur joignable en HTTPS. Voir
+[`docs/HEBERGEMENT.md`](../docs/HEBERGEMENT.md) — sans serveur, l'application
+s'ouvre mais reste vide.

@@ -208,6 +208,12 @@ Projet indépendant de restauration, **créé par un fan**, sans aucun lien avec
 Microsoft ni avec les équipes de Skype. « Skype » est une marque de Microsoft,
 citée ici pour désigner le logiciel d'origine.
 
+## Mise en service
+
+L'application est un client : elle a besoin d'un serveur joignable en HTTPS.
+La marche à suivre — serveur, certificat, WebSocket derrière un proxy, TURN
+pour les appels — est dans [`docs/HEBERGEMENT.md`](docs/HEBERGEMENT.md).
+
 ## Sur iPhone
 
 L'application s'installe sur l'écran d'accueil depuis Safari (Partager → Sur

@@ -90,6 +90,14 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
+  // Un client hébergé ailleurs (application native, front séparé) doit pouvoir
+  // appeler l'API : le préflight ne suffit pas, la réponse réelle doit porter
+  // l'en-tête elle aussi.
+  if (url.pathname.startsWith('/api/') && req.headers.origin) {
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+    res.setHeader('Vary', 'Origin');
+  }
+
   if (!url.pathname.startsWith('/api/')) return serveStatic(req, res, url.pathname);
 
   const route = router.match(req.method, url.pathname);

@@ -2,6 +2,7 @@
 import { el, $, clear } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
 import { api, setToken } from '../lib/api.js';
+import { estNatif, serveurChoisi, definirServeur, serveurManquant, tester } from '../lib/serveur.js';
 
 const skypeLogo = (size = 40) =>
   el('div', {
@@ -23,13 +24,16 @@ const skypeLogo = (size = 40) =>
 /** Affiche l'écran d'authentification ; résout avec { token, user }. */
 export function showAuth() {
   return new Promise((resolve) => {
-    let mode = 'signin';
+    // Dans une application native, l'interface est embarquée : elle ne sait pas
+    // à quel serveur parler tant qu'on ne le lui a pas dit.
+    let mode = serveurManquant() ? 'serveur' : 'signin';
     const root = el('div.auth');
     document.getElementById('overlays').append(root);
 
     const render = () => {
       clear(root);
-      root.append(mode === 'signin' ? signinCard() : signupCard());
+      if (mode === 'serveur') root.append(serveurCard());
+      else root.append(mode === 'signin' ? signinCard() : signupCard());
     };
 
     const finish = (result) => {
@@ -44,6 +48,60 @@ export function showAuth() {
       box.textContent = message;
       box.classList.remove('hidden');
     };
+
+    function serveurCard() {
+      const error = errorBox();
+      const champ = el('input.input', {
+        id: 'srv-url',
+        name: 'serveur',
+        type: 'url',
+        inputmode: 'url',
+        autocapitalize: 'none',
+        autocorrect: 'off',
+        spellcheck: 'false',
+        placeholder: 'https://skype.exemple.fr',
+        value: serveurChoisi(),
+        autofocus: true,
+      });
+      const submit = el('button.btn.btn--primary.btn--block.btn--lg', { type: 'submit', text: 'Se connecter au serveur' });
+
+      const form = el('form', {
+        onsubmit: async (e) => {
+          e.preventDefault();
+          error.classList.add('hidden');
+          submit.disabled = true;
+          submit.textContent = 'Vérification…';
+          try {
+            await tester(champ.value);
+            definirServeur(champ.value);
+            mode = 'signin';
+            render();
+          } catch (err) {
+            showError(error, err.message);
+            submit.disabled = false;
+            submit.textContent = 'Se connecter au serveur';
+          }
+        },
+      }, [
+        error,
+        el('div.field', {}, [
+          el('label.field__label', { for: 'srv-url', text: 'Adresse de votre serveur Skype' }),
+          champ,
+          el('div.field__hint', { text: 'L’adresse complète, https comprise. Le micro et la caméra exigent https.' }),
+        ]),
+        submit,
+      ]);
+
+      return el('div.auth__card', {}, [
+        el('div.auth__logo', {}, [skypeLogo(44), el('span.auth__logo-text', { text: 'Skype' })]),
+        el('p.auth__tagline', { text: 'À quel serveur cette application doit-elle se connecter ?' }),
+        form,
+        el('p.auth__switch', { style: { fontSize: '0.82em' } }, [
+          'Skype Reborn n’a pas de serveur central : chacun héberge le sien. '
+          + 'Demandez son adresse à la personne qui l’héberge.',
+        ]),
+      ]);
+    }
 
     function signinCard() {
       const error = errorBox();
@@ -81,6 +139,12 @@ export function showAuth() {
           'Pas encore de compte ? ',
           el('button', { type: 'button', text: 'Créez-en un', onclick: () => { mode = 'signup'; render(); } }),
         ]),
+        // Utile hors du navigateur, où l'adresse n'est pas déduite de la page.
+        estNatif() || serveurChoisi()
+          ? el('p.auth__switch', { style: { fontSize: '0.8em' } }, [
+            el('button', { type: 'button', text: 'Changer de serveur', onclick: () => { mode = 'serveur'; render(); } }),
+          ])
+          : null,
         el('div.auth__demo', {}, [
           el('strong', { text: 'Comptes de démonstration ' }),
           el('br'),

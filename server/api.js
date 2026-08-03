@@ -10,6 +10,11 @@ import { paysDuNumero, tarifDuNumero } from '../public/js/lib/pays.js';
 
 const { httpError } = M;
 
+/** Version déclarée dans package.json, exposée par /api/health. */
+const VERSION = JSON.parse(
+  fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8')
+).version;
+
 const json = (res, status, body) => {
   const payload = JSON.stringify(body);
   res.writeHead(status, {
@@ -612,11 +617,14 @@ export function createApi(hub) {
     return { translation: pseudoTranslate(text, to), to, engine: 'skype-translator-local' };
   });
 
+  // Point d'entrée public : il sert à un client distant (application native)
+  // pour vérifier qu'il parle bien à un serveur Skype avant de mémoriser son
+  // adresse. Volontairement avare — le nombre d'utilisateurs et de
+  // conversations n'a pas à être lisible sans authentification.
   router.get('/api/health', () => ({
+    service: 'skype',
     ok: true,
-    version: '8.130.0',
-    users: Object.keys(db.users).length,
-    chats: Object.keys(db.chats).length,
+    version: VERSION,
     uptime: Math.round(process.uptime()),
   }));
 

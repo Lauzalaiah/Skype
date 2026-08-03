@@ -1,4 +1,5 @@
 /** Client WebSocket : reconnexion automatique et distribution des événements. */
+import { urlSocket } from './serveur.js';
 import { getToken } from './api.js';
 
 export class Socket extends EventTarget {
@@ -18,8 +19,7 @@ export class Socket extends EventTarget {
     if (!token) return;
 
     this.closing = false;
-    const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    this.ws = new WebSocket(`${protocol}//${location.host}/ws?token=${encodeURIComponent(token)}`);
+    this.ws = new WebSocket(urlSocket(`/ws?token=${encodeURIComponent(token)}`));
 
     this.ws.onopen = () => {
       this.connected = true;
