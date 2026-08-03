@@ -107,10 +107,11 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 
 - **Service d'écho — test du micro** : le contact « echo123 » est proposé dès
   l'inscription, avec un message d'accueil. L'appeler décroche instantanément,
-  fait entendre un message d'accueil (synthèse vocale locale), un bip, puis
-  renvoie la voix de l'utilisateur avec un léger décalage — de quoi vérifier
-  micro et haut-parleurs avant un vrai appel, exactement comme dans Skype.
-  Ne passe par aucune signalisation WebRTC : personne ne répond réellement à
+  dit : « Bienvenue au service de test d'appel Skype. Après le bip, parlez,
+  votre message sera enregistré puis rejoué. » (synthèse vocale locale), fait
+  entendre un bip, enregistre dix secondes, puis rejoue l'enregistrement — de
+  quoi vérifier micro et haut-parleurs avant un vrai appel, exactement comme
+  dans Skype. Ne passe par aucune signalisation WebRTC : personne ne répond réellement à
   l'autre bout, tout se joue dans le navigateur
 - Coupure/réactivation du micro en cours d'appel, y compris pendant le test
   avec le service d'écho

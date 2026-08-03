@@ -55,30 +55,59 @@ describe('La session d’écho ne parle jamais au serveur d’appel', () => {
     assert.doesNotMatch(corps, /RTCPeerConnection/);
   });
 
-  test('le message d’accueil est synthétisé localement (SpeechSynthesisUtterance)', () => {
+  test('le message d’accueil est synthétisé localement, avec le texte exact demandé', () => {
     assert.match(corps, /SpeechSynthesisUtterance/);
-    assert.match(corps, /écho/i, 'le message doit se présenter comme le service d’écho');
+    assert.match(corps,
+      /Bienvenue au service de test d’appel Skype\. Après le bip, parlez, votre message sera enregistré puis rejoué\./,
+      'le texte doit correspondre mot pour mot à ce qui a été demandé');
   });
 
-  test('le bip retentit après le message, puis le rebouclage démarre', () => {
+  test('le bip retentit après le message, puis l’enregistrement démarre', () => {
     const iBeep = corps.indexOf('sounds.beep()');
-    // On cherche l'appel « demarrerBoucle(); », pas sa déclaration
-    // « function demarrerBoucle() { », qui apparaît plus tôt dans le fichier.
-    const iBoucle = corps.indexOf('demarrerBoucle();');
-    assert.ok(iBeep > 0 && iBoucle > iBeep, 'le bip doit précéder le début du rebouclage');
+    // On cherche l'appel « demarrerEnregistrement(); », pas sa déclaration
+    // « function demarrerEnregistrement() { », qui apparaît plus tôt dans le fichier.
+    const iEnr = corps.indexOf('demarrerEnregistrement();');
+    assert.ok(iBeep > 0 && iEnr > iBeep, 'le bip doit précéder le début de l’enregistrement');
   });
 
-  test('le rebouclage passe par un DelayNode : ce n’est pas un simple monitoring', () => {
-    assert.match(corps, /createDelay/, 'sans délai, on ne distingue pas sa propre voix de l’écho');
+  test('un MediaRecorder qui refuse de démarrer ne fait pas planter l’appel', () => {
+    // start() peut lever une exception au même titre que le constructeur
+    // (état invalide, périphérique repris entre deux appels) : les deux
+    // doivent être couverts par le même filet, sans quoi une erreur non
+    // interceptée remonte jusqu'au gestionnaire de clic.
+    assert.match(corps,
+      /try \{\s*\n\s*recorder = new MediaRecorder\(stream\.current[\s\S]*?recorder\.start\(\);\s*\n\s*\} catch \{/,
+      'la construction ET le démarrage doivent être dans le même bloc try');
+  });
+
+  test('l’enregistrement est borné dans le temps, puis relu automatiquement', () => {
+    // La constante de durée est déclarée juste avant la fonction : hors du
+    // corps isolé par corpsEchoTest(), on la cherche dans le fichier entier.
+    assert.match(appels, /const ECHO_DUREE_ENREGISTREMENT = 10;/);
+    assert.match(corps, /recorder\.onstop = rejouer;/);
+    assert.match(corps, /new MediaRecorder\(stream\.current/);
+  });
+
+  test('la relecture est un vrai réenregistrement de ce qui a été capté, pas un rebouclage en direct', () => {
+    // Ancien comportement (retiré) : un graphe Web Audio en direct via DelayNode.
+    assert.doesNotMatch(corps, /createDelay/, 'la voix ne doit plus être renvoyée en direct : elle est enregistrée puis relue');
+    assert.match(corps, /new Blob\(morceaux/);
+    assert.match(corps, /new Audio\(urlLecture\)/);
   });
 
   test('couper le micro désactive réellement la piste audio locale', () => {
     assert.match(corps, /stream\.current\?\.getAudioTracks\(\)\.forEach\(\(t\) => \(t\.enabled = !muted\)\)/);
   });
 
-  test('raccrocher libère le micro, ferme le contexte audio, et vide la session', () => {
+  test('raccrocher en cours d’enregistrement n’en déclenche pas la relecture', () => {
+    assert.match(corps, /recorder\.onstop = null;/,
+      'hangup() doit retirer le gestionnaire avant d’arrêter l’enregistreur, sinon il rejoue après avoir raccroché');
+  });
+
+  test('raccrocher libère le micro, arrête toute lecture en cours, et vide la session', () => {
     assert.match(corps, /stream\.current\?\.getTracks\(\)\.forEach\(\(t\) => t\.stop\(\)\)/);
-    assert.match(corps, /audioCtx\?\.close\(\)/);
+    assert.match(corps, /lecture\.pause\(\)/);
+    assert.match(corps, /URL\.revokeObjectURL\(urlLecture\)/);
     assert.match(corps, /session = null;/);
   });
 

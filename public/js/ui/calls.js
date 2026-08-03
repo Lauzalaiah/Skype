@@ -113,20 +113,25 @@ async function acquireMedia({ video }) {
 // réellement à l'autre bout — tout se joue en local, dans le navigateur —
 // donc aucune signalisation WebRTC n'est utilisée ici.
 
+/** Combien de temps le service enregistre après le bip, comme l'original. */
+const ECHO_DUREE_ENREGISTREMENT = 10;
+
 function startEchoTest(chat) {
   const bot = otherMember(chat);
   const stream = { current: null };
-  let audioCtx = null;
-  let source = null;
-  let delay = null;
-  let boucle = null;
+  let recorder = null;
+  let morceaux = [];
+  let lecture = null;
+  let urlLecture = null;
+  let raccroche = false;
   let muted = false;
   let startedAt = null;
   let timerInterval = null;
+  let compteARebours = null;
 
   const timerLabel = el('span.call-screen__timer', { text: 'Connexion…' });
   const titleLabel = el('span.call-screen__title', { text: bot?.displayName || 'Echo / Test de son' });
-  const statusLabel = el('p.echo-test__status', { text: 'Connexion au service d’écho…' });
+  const statusLabel = el('p.echo-test__status', { text: 'Connexion au service de test d’appel…' });
 
   const micIcon = icon('mic', 'icon icon--lg');
   const micButton = el('button.icon-btn', {
@@ -188,37 +193,84 @@ function startEchoTest(chat) {
     }
   }
 
-  function demarrerBoucle() {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    source = audioCtx.createMediaStreamSource(stream.current);
-    delay = audioCtx.createDelay(1.5);
-    delay.delayTime.value = 0.6;         // le décalage rend l'écho reconnaissable
-    boucle = audioCtx.createGain();
-    boucle.gain.value = 0.9;
-    source.connect(delay).connect(boucle).connect(audioCtx.destination);
+  /** Enregistre pendant ECHO_DUREE_ENREGISTREMENT secondes, puis rejoue. */
+  function demarrerEnregistrement() {
+    morceaux = [];
+    const mime = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4']
+      .find((type) => MediaRecorder.isTypeSupported(type)) || '';
+    try {
+      recorder = new MediaRecorder(stream.current, mime ? { mimeType: mime } : undefined);
+      recorder.ondataavailable = (e) => e.data.size && morceaux.push(e.data);
+      // Sur un raccrochage en cours d'enregistrement, on coupe sans relire :
+      // hangup() retire ce gestionnaire avant d'arrêter l'enregistreur.
+      recorder.onstop = rejouer;
+      recorder.start();
+    } catch {
+      // start() peut lever aussi bien que le constructeur (état invalide,
+      // périphérique repris entre deux appels) : même repli pour les deux.
+      statusLabel.textContent = 'Enregistrement indisponible sur ce navigateur.';
+      return;
+    }
+
+    let restant = ECHO_DUREE_ENREGISTREMENT;
+    statusLabel.textContent = `Enregistrement… (${restant} s)`;
+    compteARebours = setInterval(() => {
+      restant -= 1;
+      if (restant > 0) statusLabel.textContent = `Enregistrement… (${restant} s)`;
+    }, 1000);
+    setTimeout(() => {
+      clearInterval(compteARebours);
+      if (recorder.state !== 'inactive') recorder.stop();
+    }, ECHO_DUREE_ENREGISTREMENT * 1000);
+  }
+
+  function rejouer() {
+    if (raccroche) return;
+    if (!morceaux.length) {
+      statusLabel.textContent = 'Aucun son détecté. Raccrochez, puis rappelez pour réessayer.';
+      return;
+    }
+    const blob = new Blob(morceaux, { type: morceaux[0].type || 'audio/webm' });
+    urlLecture = URL.createObjectURL(blob);
+    statusLabel.textContent = 'Lecture de votre message…';
+    lecture = new Audio(urlLecture);
+    lecture.onended = () => {
+      URL.revokeObjectURL(urlLecture);
+      urlLecture = null;
+      if (!raccroche) statusLabel.textContent = 'Terminé. Raccrochez, ou redécrochez pour recommencer.';
+    };
+    lecture.play().catch(() => {
+      if (!raccroche) statusLabel.textContent = 'Lecture impossible : vérifiez le son de l’appareil.';
+    });
   }
 
   function connecter() {
     startedAt = Date.now();
     sounds.callConnect();
-    statusLabel.textContent = 'Parlez après le bip : vous devez vous entendre, avec un léger décalage.';
+    statusLabel.textContent = 'Connexion…';
     timerInterval = setInterval(() => {
       timerLabel.textContent = formatDuration((Date.now() - startedAt) / 1000);
     }, 1000);
     parler(
-      'Bienvenue au service d’écho de Skype. Après le bip, parlez, puis écoutez : vous devez vous entendre. Raccrochez quand vous avez terminé.',
+      'Bienvenue au service de test d’appel Skype. Après le bip, parlez, votre message sera enregistré puis rejoué.',
       () => {
         sounds.beep();
-        demarrerBoucle();
+        demarrerEnregistrement();
       }
     );
   }
 
   function hangup() {
+    raccroche = true;
     clearInterval(timerInterval);
+    clearInterval(compteARebours);
     try { speechSynthesis.cancel(); } catch { /* indisponible */ }
-    try { source?.disconnect(); delay?.disconnect(); boucle?.disconnect(); } catch { /* déjà déconnecté */ }
-    audioCtx?.close().catch(() => {});
+    if (recorder && recorder.state !== 'inactive') {
+      recorder.onstop = null;      // on ne veut pas relire après avoir raccroché
+      try { recorder.stop(); } catch { /* déjà arrêté */ }
+    }
+    if (lecture) { try { lecture.pause(); } catch { /* déjà arrêtée */ } }
+    if (urlLecture) { URL.revokeObjectURL(urlLecture); urlLecture = null; }
     stream.current?.getTracks().forEach((t) => t.stop());
     sounds.callEnd();
     screenNode.remove();
