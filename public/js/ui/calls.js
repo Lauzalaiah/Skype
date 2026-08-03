@@ -747,7 +747,7 @@ export function showIncomingCall({ call, from, chat }) {
     // Déjà en communication : un bip discret plutôt que la sonnerie complète,
     // qui couvrirait la conversation en cours.
     if (session) sounds.callWaiting();
-    else sounds.startRinging({ video: call.video });
+    else sounds.startRinging();
   }
 
   setState({ incomingCall: call });

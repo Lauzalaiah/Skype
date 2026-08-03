@@ -197,15 +197,16 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
   | `Skypenotification_.mp3` | message texte reçu |
   | `Skypefolderreceived.mp3` | fichier reçu |
   | `Skypeforwindowsnew.mp3` | fichier ou contact envoyé |
-  | `Skypevideocall.mp3` | appel **vidéo** entrant (sonnerie dédiée) |
   | `Sonnerieskype2.mp3` | appel entrant (3ᵉ sonnerie, au choix) |
+  | `Skypevideocall.mp3` | appel entrant (4ᵉ sonnerie, au choix) |
   | `Skypestartcall.mp3` | l'appel est établi, la communication démarre |
   | `Skypevoicemail.mp3` | réception d'un message vocal |
 
   La correspondance est déclarée dans `public/js/lib/sounds.js` (champs
   `source` et `usage`) et verrouillée par `test/sons.test.js`, qui échoue si
   un son se retrouve branché ailleurs que sur son événement.
-- Choix de la sonnerie d'appel entrant dans les réglages, avec écoute
+- Choix parmi quatre sonneries d'appel entrant dans les réglages, avec écoute ;
+  la même sonnerie sert aux appels audio et vidéo
 - Bibliothèque de sons écoutable depuis les réglages
 - Le son de connexion ne retentit qu'à une vraie connexion, pas à chaque
   rechargement de la page

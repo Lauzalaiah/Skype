@@ -85,16 +85,17 @@ describe('Correspondance son ↔ événement', () => {
   });
 
   test('la sonnerie ne retentit que pour un appel entrant hors communication', () => {
-    assert.match(appels, /if \(session\) sounds\.callWaiting\(\);\s*\n\s*else sounds\.startRinging\(\{ video: call\.video \}\);/,
+    assert.match(appels, /if \(session\) sounds\.callWaiting\(\);\s*\n\s*else sounds\.startRinging\(\);/,
       'un appel entrant pendant une communication doit jouer callWaiting, pas la sonnerie');
   });
 
-  test('un appel vidéo entrant a sa propre sonnerie', () => {
-    assert.match(sons, /sound\(video \? 'ringVideo' : ringtone, \{ loop: true \}\)/,
-      'la sonnerie vidéo doit être distincte de celle des appels audio');
-    // La sonnerie vidéo n'est pas proposée dans la liste des sonneries au choix :
-    // elle est imposée par la nature de l'appel.
-    assert.match(sons, /export const SONNERIES = \['ring', 'ringLong', 'ringAlt'\];/);
+  test('la sonnerie est celle choisie dans les réglages, audio comme vidéo', () => {
+    // Skype ne distingue pas la sonnerie d'un appel audio de celle d'un appel
+    // vidéo : les quatre sonneries sont interchangeables et au choix.
+    assert.match(sons, /export function startRinging\(\) \{[\s\S]*?ringHandle = sound\(ringtone, \{ loop: true \}\);/,
+      'la sonnerie ne doit pas dépendre du type d’appel');
+    assert.doesNotMatch(sons, /ringVideo/, 'plus de sonnerie propre à la vidéo');
+    assert.match(sons, /export const SONNERIES = \['ring', 'ringLong', 'ringAlt', 'ringAlt2'\];/);
   });
 
   test('le son de début d’appel ne sert qu’à l’établissement de la communication', () => {
@@ -113,8 +114,12 @@ describe('Correspondance son ↔ événement', () => {
   });
 
   test('les sonneries au choix sont bien des sons en boucle', () => {
-    for (const cle of ['ring', 'ringLong', 'ringAlt', 'ringVideo']) {
+    const proposees = sons.match(/export const SONNERIES = \[([^\]]+)\]/)[1]
+      .split(',').map((s) => s.trim().replace(/'/g, ''));
+    assert.equal(proposees.length, 4);
+    for (const cle of proposees) {
       assert.ok(LIB[cle]?.loop, `${cle} doit être déclaré en boucle`);
+      assert.match(LIB[cle].usage, /^Appel entrant/, `${cle} doit servir à un appel entrant`);
     }
   });
 

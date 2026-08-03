@@ -92,17 +92,17 @@ export const BIBLIOTHEQUE = {
     file: 'skype-ringtone-2.mp3',
     source: 'Sonnerieskype2.mp3',
     usage: 'Appel entrant — variante choisie dans les réglages',
-    label: 'Sonnerie — variante',
+    label: 'Sonnerie — variante 1',
     loop: true,
     secours: null,
     secoursRepris: 'ring',
     secoursBoucle: 2600,
   },
-  ringVideo: {
-    file: 'skype-video-call.mp3',
+  ringAlt2: {
+    file: 'skype-ringtone-3.mp3',
     source: 'Skypevideocall.mp3',
-    usage: 'Appel vidéo entrant — sonnerie propre à la vidéo',
-    label: 'Sonnerie — appel vidéo',
+    usage: 'Appel entrant — variante choisie dans les réglages',
+    label: 'Sonnerie — variante 2',
     loop: true,
     secours: null,
     secoursRepris: 'ring',
@@ -428,8 +428,8 @@ export const error = () => play([{ freq: 220, duration: 0.22, gain: 0.18, type: 
 
 // ── Sonneries (en boucle) ─────────────────────────────────────────────────────
 
-/** Sonneries proposées à l'utilisateur dans les réglages, pour les appels audio. */
-export const SONNERIES = ['ring', 'ringLong', 'ringAlt'];
+/** Sonneries proposées à l'utilisateur dans les réglages. */
+export const SONNERIES = ['ring', 'ringLong', 'ringAlt', 'ringAlt2'];
 
 let ringtone = 'ring';
 export const setRingtone = (key) => {
@@ -441,12 +441,11 @@ let ringHandle = null;
 
 /**
  * Sonnerie d'appel entrant, en boucle.
- * Un appel vidéo a sa propre sonnerie ; un appel audio utilise celle choisie
- * dans les réglages.
+ * Audio ou vidéo, c'est la même : celle choisie dans les réglages.
  */
-export function startRinging({ video = false } = {}) {
+export function startRinging() {
   if (!enabled || ringHandle) return;
-  ringHandle = sound(video ? 'ringVideo' : ringtone, { loop: true });
+  ringHandle = sound(ringtone, { loop: true });
 }
 
 /** Tonalité d'appel sortant, en boucle. */
