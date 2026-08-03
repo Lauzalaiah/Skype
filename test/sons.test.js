@@ -7,6 +7,7 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -68,6 +69,32 @@ describe('Bibliothèque de sons', () => {
   test('aucun fichier audio n’est déclaré deux fois', () => {
     const fichiers = Object.values(LIB).map((e) => e.file);
     assert.equal(new Set(fichiers).size, fichiers.length, 'un même fichier sert à deux événements');
+  });
+
+  test('deux sons n’ont jamais le même contenu audio', () => {
+    // Des noms différents ne suffisent pas : un même enregistrement livré deux
+    // fois sous deux noms brancherait le même son sur deux événements. On
+    // compare donc les empreintes du contenu, pas les noms.
+    const parEmpreinte = new Map();
+    for (const [cle, entree] of Object.entries(LIB)) {
+      const octets = fs.readFileSync(path.join(ROOT, 'public/assets/sounds', entree.file));
+      const empreinte = crypto.createHash('md5').update(octets).digest('hex');
+      if (parEmpreinte.has(empreinte)) {
+        const jumeau = parEmpreinte.get(empreinte);
+        assert.fail(
+          `« ${cle} » (${entree.file}, ${entree.source}) est le même enregistrement `
+          + `que « ${jumeau.cle} » (${jumeau.file}, ${jumeau.source}) — empreinte ${empreinte}`
+        );
+      }
+      parEmpreinte.set(empreinte, { cle, file: entree.file, source: entree.source });
+    }
+    assert.equal(parEmpreinte.size, Object.keys(LIB).length);
+  });
+
+  test('deux entrées ne réclament jamais le même fichier d’origine', () => {
+    const sources = Object.values(LIB).map((e) => e.source);
+    assert.equal(new Set(sources).size, sources.length,
+      'un même fichier d’origine ne peut pas servir deux événements');
   });
 
   test('tout fichier présent sur le disque est déclaré', () => {

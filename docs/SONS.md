@@ -125,5 +125,15 @@ qu'il manque quelque chose à la recréation.
 - `test/sons.test.js` lit le code source et échoue si un son est déplacé,
   dupliqué, branché à deux endroits, ou si ce document cesse de décrire la
   bibliothèque réelle.
-- Un fichier déjà intégré est détecté par empreinte MD5 avant tout ajout : un
-  même son ne peut pas servir deux événements.
+- Un même enregistrement ne peut pas servir deux événements : `test/sons.test.js`
+  compare les **empreintes MD5 du contenu** des 21 fichiers, et non leurs noms.
+  Deux noms différents portant le même son font échouer la suite.
+- Deux entrées ne peuvent pas revendiquer le même fichier d'origine.
+
+## Sons renvoyés une seconde fois
+
+Il arrive qu'un fichier déjà intégré soit transmis à nouveau. Le réflexe est de
+comparer son empreinte à celles des sons en place **avant** de toucher à quoi
+que ce soit : si elle correspond, il n'y a rien à faire, et surtout rien à
+déplacer. Un lot entier peut n'être constitué que de doublons — c'est arrivé,
+et la bonne réponse était de ne rien changer.
