@@ -1,0 +1,62 @@
+{
+  "name": "skype-reborn-desktop",
+  "private": true,
+  "version": "8.130.0",
+  "description": "Skype Reborn — application de bureau. Recréation indépendante, faite par un fan, sans lien avec Microsoft.",
+  "author": "Skype Reborn",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win nsis",
+    "build:linux": "electron-builder --linux AppImage",
+    "build:mac": "electron-builder --mac dmg"
+  },
+  "devDependencies": {
+    "electron": "^31.3.1",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "app.skypereborn.fan",
+    "productName": "Skype",
+    "copyright": "Skype Reborn — recréation indépendante par un fan, sans lien avec Microsoft.",
+    "publish": null,
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js"
+    ],
+    "extraResources": [
+      { "from": "../server", "to": "server" },
+      { "from": "../public", "to": "public" }
+    ],
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "build/icon.ico",
+      "artifactName": "Skype-Reborn-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Skype",
+      "artifactName": "Skype-Reborn-Setup-${version}.${ext}"
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "icon": "build/icon.png",
+      "category": "Network",
+      "artifactName": "Skype-Reborn-${version}.${ext}"
+    },
+    "mac": {
+      "target": ["dmg"],
+      "icon": "build/icon.png",
+      "category": "public.app-category.social-networking",
+      "artifactName": "Skype-Reborn-${version}.${ext}"
+    }
+  }
+}

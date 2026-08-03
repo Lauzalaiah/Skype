@@ -223,6 +223,23 @@ le site en HTTPS — iOS refuse le micro et la caméra sans cela.
 Un `.ipa` ne peut pas être produit ailleurs que sur macOS avec Xcode et un
 certificat Apple. Le projet Capacitor et le workflow de build sont fournis dans
 [`ios/README.md`](ios/README.md).
+
+## Sur PC
+
+Une vraie application de bureau — icône, menu Démarrer, raccourci sur le
+bureau, installateur classique — construite avec Electron. Contrairement à
+l'iOS, aucun compte développeur n'est nécessaire : un `.exe` Windows s'installe
+sans certificat. Elle embarque son propre serveur : aucune adresse à
+configurer, aucune connexion Internet requise une fois installée.
+
+```bash
+cd desktop && npm install && npm run build:win
+```
+
+Ou depuis GitHub Actions (onglet **Actions** → **Windows** → **Run
+workflow**), qui construit sur un exécuteur Windows réel. Détails dans
+[`desktop/README.md`](desktop/README.md).
+
 Fait pour ceux qui n'ont jamais voulu changer. 💙
 
 </div>

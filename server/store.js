@@ -8,7 +8,10 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-export const DATA_DIR = path.join(__dirname, '..', 'data');
+// Surchageable : une application de bureau empaquetée (voir desktop/) ne peut
+// pas écrire à côté de son propre exécutable (droits refusés sous
+// « Program Files »), et doit ranger les données dans le dossier utilisateur.
+export const DATA_DIR = process.env.SKYPE_DATA_DIR || path.join(__dirname, '..', 'data');
 export const FILES_DIR = path.join(DATA_DIR, 'files');
 const DB_PATH = path.join(DATA_DIR, 'skype.json');
 

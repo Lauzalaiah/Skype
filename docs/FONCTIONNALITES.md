@@ -333,7 +333,7 @@ Contacts, Confidentialité, Crédit Skype, Général, Aide et retours.
 - Mise en tampon des candidats ICE reçus trop tôt
 
 
-## 15. Installation et mobile
+## 19. Installation et mobile
 
 - Application installable sur l'écran d'accueil (iOS via Safari, Android via
   Chrome) : plein écran, icône dédiée, sans barre d'adresse
@@ -347,3 +347,11 @@ Contacts, Confidentialité, Crédit Skype, Général, Aide et retours.
   automatique et les gestionnaires de mots de passe fonctionnent
 - Partage d'écran indisponible sur iOS : le système ne l'expose à aucun
   navigateur
+- **Application de bureau (Windows, Linux, macOS)** : enveloppe Electron qui
+  embarque le serveur lui-même — aucune adresse à configurer, fonctionne sans
+  connexion Internet une fois installée. Un vrai programme d'installation
+  (`.exe` NSIS sous Windows), avec choix du dossier, raccourci bureau et menu
+  Démarrer. Chaque installation a sa propre base de données locale, dans le
+  dossier utilisateur du système, jamais dans le dossier d'installation.
+  Micro, caméra et partage d'écran sont autorisés par l'application elle-même,
+  sans boîte de dialogue de navigateur

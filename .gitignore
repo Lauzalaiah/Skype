@@ -1,5 +1,6 @@
 node_modules/
 data/
+desktop/dist/
 *.log
 .DS_Store
 .env

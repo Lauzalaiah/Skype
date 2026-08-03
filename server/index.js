@@ -15,7 +15,10 @@ import { Hub, handleSocketMessage } from './realtime.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
-const PORT = Number(process.env.PORT) || 3000;
+// « || » traiterait PORT=0 comme absent et retomberait sur 3000, alors que 0
+// a un sens précis pour Node : laisser le système attribuer un port libre
+// (utilisé par l'application de bureau, pour ne jamais entrer en conflit).
+const PORT = process.env.PORT !== undefined ? Number(process.env.PORT) : 3000;
 const HOST = process.env.HOST || '0.0.0.0';
 
 const MIME = {
