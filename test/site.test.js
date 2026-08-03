@@ -159,9 +159,17 @@ describe('Publication des fichiers téléchargeables', () => {
     }
   });
 
-  test('les empreintes SHA-256 sont produites puis affichées', () => {
+  test('les empreintes SHA-256 sont produites, jointes et recopiées dans les notes', () => {
     assert.match(workflow, /sha256sum \* > SHA256SUMS\.txt/);
-    assert.match(site, /SHA256SUMS/i, 'la page doit aller chercher le fichier d’empreintes');
+    // Recopiées dans les notes, sinon la page ne peut pas les lire : le
+    // téléchargement d'une pièce jointe redirige vers un hôte qui n'autorise
+    // pas les requêtes venues d'une autre origine.
+    assert.match(workflow, /cat publication\/SHA256SUMS\.txt/,
+      'les empreintes doivent être recopiées dans les notes de version');
+    assert.match(site, /version\.body/,
+      'la page doit lire les empreintes dans les notes, pas dans la pièce jointe');
+    assert.doesNotMatch(site, /fetch\(somme\.browser_download_url\)/,
+      'une pièce jointe de release n’est pas lisible depuis un navigateur');
   });
 
   test('les notes de version portent la mention de projet de fan', () => {

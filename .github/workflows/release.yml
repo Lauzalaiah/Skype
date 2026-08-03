@@ -161,6 +161,21 @@ jobs:
           sans connexion Internet et range ses données dans votre dossier
           utilisateur.
           FIN
+
+          # Les empreintes sont recopiées DANS les notes, en plus du fichier :
+          # un navigateur ne peut pas lire une pièce jointe de release (la
+          # redirection de téléchargement n'autorise pas les requêtes d'une
+          # autre origine), alors qu'il lit les notes sans difficulté. C'est
+          # ainsi que le site de téléchargement les affiche.
+          {
+            echo
+            echo '## Empreintes SHA-256'
+            echo
+            echo '```'
+            cat publication/SHA256SUMS.txt
+            echo '```'
+          } >> notes.md
+
           echo "--- notes ---" && cat notes.md
 
       - name: Publier la version

@@ -773,27 +773,21 @@
       $('avertissementIndispo').hidden = false;
     }
 
-    afficherEmpreintes(fichiers);
+    afficherEmpreintes(version.body || '');
   }
 
   // ── Empreintes SHA-256 ─────────────────────────────────────────────
-  async function afficherEmpreintes(fichiers) {
-    const somme = fichiers.find((f) => /SHA256SUMS/i.test(f.name));
-    if (!somme) return;
-    try {
-      const texte = await (await fetch(somme.browser_download_url)).text();
-      const lignes = texte.trim().split('\n').filter(Boolean).slice(0, 6);
-      if (!lignes.length) return;
-      $('empreintes').innerHTML = lignes
-        .map((ligne) => {
-          const [empreinte, ...reste] = ligne.trim().split(/\s+/);
-          const nom = reste.join(' ').replace(/^\*/, '');
-          return `<div class="empreintes__ligne"><b>${nom}</b><br>${empreinte}</div>`;
-        })
-        .join('');
-    } catch {
-      /* Le bloc garde son texte d'origine : mieux vaut ça qu'un bloc vide. */
-    }
+  // Elles sont lues dans les NOTES de la version, pas dans la pièce jointe
+  // SHA256SUMS.txt : le téléchargement d'une pièce jointe passe par une
+  // redirection qui n'autorise pas les requêtes venues d'une autre origine,
+  // donc un navigateur ne peut pas la lire. Les notes, si.
+  function afficherEmpreintes(notes) {
+    const lignes = [...notes.matchAll(/^\s*([0-9a-f]{64})\s+\*?(\S+)\s*$/gim)].slice(0, 6);
+    if (!lignes.length) return; // Le bloc garde son texte d'origine.
+    const echapper = (t) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    $('empreintes').innerHTML = lignes
+      .map(([, empreinte, nom]) => `<div class="empreintes__ligne"><b>${echapper(nom)}</b><br>${empreinte}</div>`)
+      .join('');
   }
 
   remplirDepuisLaDerniereVersion();
