@@ -41,7 +41,7 @@ Profils relevés sur les 14 fichiers intégrés (analyse du signal décodé) :
 Les trois familles ne se recouvrent pas. Un nouveau fichier tombe donc presque
 toujours dans une seule d'entre elles, ce qui réduit d'emblée les candidats.
 
-## Les 19 sons attribués
+## Les 21 sons attribués
 
 | Fichier d'origine | Durée | Événement — unique |
 |---|---|---|
@@ -58,12 +58,25 @@ toujours dans une seule d'entre elles, ce qui réduit d'emblée les candidats.
 | `Skypepaused.mp3` | 0,90 s | appel mis en attente, ou repris |
 | `Skypecallnotconnected.mp3` | 1,35 s | appel sans réponse, refusé ou annulé |
 | `Skypecallfailed.mp3` | 1,29 s | micro ou caméra inaccessible |
-| `Skypenotification_.mp3` | 0,83 s | message texte reçu, conversation non ouverte |
+| `Skypemessage.mp3` | 0,91 s | message texte reçu, conversation non ouverte |
+| `Skypenotification_.mp3` | 0,83 s | notification : demande de contact, réaction |
+| `Skypelogout.mp3` | 2,01 s | déconnexion, à la demande de l'utilisateur |
 | `Skypefolderreceived.mp3` | 0,72 s | message reçu contenant une pièce jointe |
 | `Skypesendfolder.mp3` | 2,06 s | envoi d'un fichier, d'une image ou d'un GIF |
 | `Skypesendfolderfailed.mp3` | 2,70 s | l'envoi d'un fichier a échoué |
 | `Skypeforwindowsnew.mp3` | 0,99 s | envoi d'une carte de contact |
 | `Skypevoicemail.mp3` | 0,74 s | réception d'un message vocal |
+
+### Un second arbitrage : `Skypemessage` contre `Skypenotification_`
+
+`Skypenotification_.mp3` occupait « message reçu » : c'était le seul candidat
+disponible, et son nom parlait de notification, pas de message. L'arrivée d'un
+`Skypemessage.mp3` authentique règle la question — il prend le message reçu, et
+`Skypenotification_` rejoint la place que son nom désignait depuis le début :
+la **notification générale** (demande de contact, réaction), un emplacement
+qui était justement resté vide.
+
+Aucun son n'a été deviné : c'est un fichier mieux qualifié qui a libéré l'autre.
 
 ### Un cas d'arbitrage : `Skypesendfolder` contre `Skypeforwindowsnew`
 
@@ -88,7 +101,6 @@ corresponde à rien — auquel cas il reste non attribué.
 |---|---|---|
 | **Message envoyé** | le « pop » discret de l'envoi | < 0,3 s, très bref, aigu |
 | **Mention** | quelqu'un vous cite dans un groupe | 0,3 – 1 s, distinct du message ordinaire |
-| **Notification générale** | demande de contact, réaction | 0,5 – 1 s |
 | **Erreur** | action refusée, échec réseau | < 0,5 s, grave |
 
 Le pavé numérique (DTMF) reste synthétisé **définitivement** : ce sont des

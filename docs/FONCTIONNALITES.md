@@ -138,9 +138,19 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 ## 8. Téléphonie et crédit Skype
 
 - Pavé numérique avec vraies tonalités DTMF
+- **Composition vers n'importe quel pays** : 77 destinations, sélecteur de pays
+  qui préremplit l'indicatif, détection automatique du pays quand on tape un
+  indicatif à la main, numéro formaté en direct (`+33 6 12 34 56 78`)
+- Tarif à la minute affiché en direct, avec le nombre de minutes que le crédit
+  disponible représente vers cette destination
 - Composition avec `+` par appui long sur `0`
 - Appels vers les numéros fixes et mobiles, décomptés du crédit
-- Solde de crédit Skype, rechargement (5 €, 10 €, 25 €)
+- **Le tarif est calculé par le serveur à partir du numéro** : le client ne
+  choisit pas ce qu'il paie
+- Indicatif non reconnu : tarif international par défaut, jamais de gratuité
+- **Achat de crédit** (5 €, 10 €, 25 €, 50 €), chaque montant indiquant combien
+  de minutes il représente vers la destination composée
+- Solde de crédit Skype visible sur le pavé et dans les réglages
 - Grille tarifaire
 - Attribution d'un numéro Skype (France, Belgique, Suisse, Canada, Royaume-Uni, États-Unis)
 - Les appels téléphoniques apparaissent dans l'historique
@@ -198,7 +208,9 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
   | `Skypecallincall.mp3` | appel entrant pendant une communication |
   | `Skypecallnotconnected.mp3` | appel sans réponse, refusé ou annulé |
   | `Skypecallfailed.mp3` | micro ou caméra inaccessible |
-  | `Skypenotification_.mp3` | message texte reçu |
+  | `Skypemessage.mp3` | message texte reçu |
+  | `Skypenotification_.mp3` | demande de contact, réaction |
+  | `Skypelogout.mp3` | déconnexion |
   | `Skypefolderreceived.mp3` | fichier reçu |
   | `Skypeforwindowsnew.mp3` | carte de contact envoyée |
   | `Sonnerieskype2.mp3` | appel entrant (3ᵉ sonnerie, au choix) |
@@ -218,6 +230,9 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
   encore vides — est dans [`docs/SONS.md`](SONS.md).
 - Choix parmi cinq sonneries d'appel entrant dans les réglages, avec écoute ;
   la même sonnerie sert aux appels audio et vidéo
+- **Appel entrant dans la colonne de gauche** : pendant une communication, un
+  nouvel appel s'affiche dans le panneau latéral, avec le nom de l'appelant,
+  le type d'appel, et de quoi répondre en audio, en vidéo ou refuser
 - Bibliothèque de sons écoutable depuis les réglages
 - Le son de connexion ne retentit qu'à une vraie connexion, pas à chaque
   rechargement de la page

@@ -6,6 +6,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { db, save, id, FILES_DIR, hashPassword, verifyPassword } from './store.js';
 import * as M from './models.js';
+import { paysDuNumero, tarifDuNumero } from '../public/js/lib/pays.js';
 
 const { httpError } = M;
 
@@ -513,7 +514,9 @@ export function createApi(hub) {
   router.post('/api/calls/pstn', async (ctx) => {
     const user = requireUser(ctx);
     const { number, minutes = 1 } = await readJson(ctx.req);
-    const rate = 0.021; // tarif de démonstration : 0,021 €/min
+    // Le tarif est déduit du numéro par le serveur : le client ne le choisit pas.
+    const rate = tarifDuNumero(number);
+    const pays = paysDuNumero(number);
     const cost = Number((rate * minutes).toFixed(3));
     if (user.credit < cost) throw httpError(402, 'Crédit Skype insuffisant. Rechargez pour appeler ce numéro.');
     user.credit = Number((user.credit - cost).toFixed(3));
@@ -527,8 +530,9 @@ export function createApi(hub) {
       endedAt: Date.now(),
     });
     call.number = number;
+    call.country = pays?.code ?? null;
     save();
-    return { call, credit: user.credit, cost };
+    return { call, credit: user.credit, cost, rate, country: pays?.nom ?? 'Destination inconnue' };
   });
 
   router.post('/api/credit/topup', async (ctx) => {

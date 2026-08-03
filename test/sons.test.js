@@ -39,8 +39,8 @@ function bibliotheque() {
 const LIB = bibliotheque();
 
 describe('Bibliothèque de sons', () => {
-  test('les dix-neuf sons sont déclarés', () => {
-    assert.equal(Object.keys(LIB).length, 19, `clés : ${Object.keys(LIB).join(', ')}`);
+  test('les vingt-et-un sons sont déclarés', () => {
+    assert.equal(Object.keys(LIB).length, 21, `clés : ${Object.keys(LIB).join(', ')}`);
   });
 
   test('deux sons ne portent jamais le même libellé', () => {
@@ -224,10 +224,39 @@ describe('Documentation de la correspondance', () => {
 
   test('un emplacement libre n’est branché sur aucun fichier', () => {
     // Les événements listés comme « encore vides » doivent rester synthétisés.
-    for (const nom of ['messageOut', 'mention', 'error', 'notify']) {
+    for (const nom of ['messageOut', 'mention', 'error']) {
       assert.match(sons, new RegExp(`export const ${nom} = \\(\\) =>\\s*\\n?\\s*play\\(`),
         `${nom} est annoncé comme emplacement libre : il doit rester synthétisé`);
     }
+  });
+});
+
+describe('Message, notification et déconnexion', () => {
+  test('le message reçu et la notification sont deux sons distincts', () => {
+    assert.equal(LIB.message?.source, 'Skypemessage.mp3');
+    assert.equal(LIB.notify?.source, 'Skypenotification_.mp3');
+    assert.notEqual(LIB.message?.file, LIB.notify?.file);
+    assert.match(sons, /export const notify = \(\) => sound\('notify'\);/);
+  });
+
+  test('la notification sert aux demandes de contact et aux réactions', () => {
+    const points = [...app.matchAll(/sounds\.notify\(\)/g)];
+    assert.ok(points.length >= 2, `notify appelé ${points.length} fois`);
+    assert.equal([...`${appels}${compose}`.matchAll(/sounds\.notify\(\)/g)].length, 0,
+      'la notification générale ne concerne ni les appels ni le composeur');
+  });
+
+  test('le son de déconnexion ne sert QU’à la déconnexion', () => {
+    const reglages = lire('public/js/ui/settings.js');
+    assert.match(sons, /export const logout = \(\) => sound\('logout'\);/);
+    const points = [...`${app}${appels}${compose}${reglages}`.matchAll(/sounds\.logout\(\)/g)];
+    assert.equal(points.length, 1, `sounds.logout() appelé ${points.length} fois, attendu 1`);
+    assert.match(reglages, /sounds\.logout\(\);[\s\S]{0,200}await api\.signout\(\)/,
+      'le son doit accompagner la déconnexion réelle');
+  });
+
+  test('connexion et déconnexion sont deux sons différents', () => {
+    assert.notEqual(LIB.login?.file, LIB.logout?.file);
   });
 });
 

@@ -11,7 +11,8 @@ import { shortTime, presenceLabel, relative, dateTimeOf } from '../lib/time.js';
 import { plainPreview, formatDuration } from '../lib/format.js';
 import { openChatMenu } from './conversation.js';
 import { openNewChatDialog, openNewGroupDialog, openProfileCard, openAddContactDialog } from './modals.js';
-import { startCall, startPhoneCall } from './calls.js';
+import { startCall, startPhoneCall, answerCall, declineCall, openCreditPurchase } from './calls.js';
+import { PAYS, paysTries, paysDuNumero, tarifDuNumero, formatNumero } from '../lib/pays.js';
 import * as sounds from '../lib/sounds.js';
 
 export function renderSidebar() {
@@ -20,7 +21,47 @@ export function renderSidebar() {
   const searchNode = el('div.sidebar__search');
   const filtersNode = el('div.sidebar__filters');
 
-  const root = el('div.sidebar', {}, [headerNode, searchNode, filtersNode, listNode]);
+  const incomingNode = el('div.sidebar__incoming.hidden');
+  const root = el('div.sidebar', {}, [headerNode, incomingNode, searchNode, filtersNode, listNode]);
+
+  /**
+   * Appel entrant dans la colonne de gauche. Skype le montrait ici quand on
+   * était déjà en communication : la fenêtre d'appel occupe l'écran, mais la
+   * liste reste accessible dès qu'on la réduit.
+   */
+  function renderIncoming() {
+    clear(incomingNode);
+    const call = state.incomingCall;
+    incomingNode.classList.toggle('hidden', !call);
+    if (!call) return;
+
+    const from = call.from;
+    const estGroupe = call.chat?.type === 'group';
+    incomingNode.append(
+      el('div.sidebar__incoming-row', { role: 'alert' }, [
+        avatar(from, { size: 'md', presence: false }),
+        el('div.sidebar__incoming-text', {}, [
+          el('div.sidebar__incoming-name', { text: estGroupe ? call.chat.topic : from?.displayName || 'Appel entrant' }),
+          el('div.sidebar__incoming-type', {
+            text: `${call.video ? 'Appel vidéo' : 'Appel audio'} entrant${estGroupe && from ? ` · de ${from.displayName}` : ''}`,
+          }),
+        ]),
+        el('div.sidebar__incoming-actions', {}, [
+          el('button.sidebar__incoming-btn.sidebar__incoming-btn--decline', {
+            title: 'Refuser', 'aria-label': 'Refuser l’appel', onclick: () => declineCall(call),
+          }, icon('hangup', 'icon icon--sm')),
+          el('button.sidebar__incoming-btn.sidebar__incoming-btn--accept', {
+            title: 'Répondre', 'aria-label': 'Répondre à l’appel', onclick: () => answerCall(call, { video: false }),
+          }, icon('call', 'icon icon--sm')),
+          call.video
+            ? el('button.sidebar__incoming-btn.sidebar__incoming-btn--video', {
+              title: 'Répondre en vidéo', 'aria-label': 'Répondre en vidéo', onclick: () => answerCall(call, { video: true }),
+            }, icon('video', 'icon icon--sm'))
+            : null,
+        ]),
+      ])
+    );
+  }
 
   const searchInput = searchBox('Personnes, groupes et messages', debounce((value) => {
     setState({ search: value });
@@ -477,8 +518,27 @@ export function renderSidebar() {
   // ── Pavé numérique ─────────────────────────────────────────────────────────
 
   function renderDialpad() {
-    let number = '';
+    // Le pays choisi préremplit l'indicatif ; taper un « + » suivi d'un autre
+    // indicatif change le pays automatiquement.
+    let pays = paysDuNumero(state.user.dialCountry) || PAYS.find((p) => p.code === 'FR');
+    let number = pays ? pays.indicatif : '';
+
     const display = el('div.dialpad__display', { text: '' });
+    const tarifNode = el('div.dialpad__rate.dim');
+    const selectPays = el('select.select.dialpad__country', {
+      'aria-label': 'Pays à appeler',
+      onchange: (e) => {
+        const choisi = PAYS.find((p) => p.code === e.target.value);
+        if (!choisi) return;
+        const ancien = paysDuNumero(number);
+        const reste = ancien ? number.slice(ancien.indicatif.length) : '';
+        pays = choisi;
+        number = choisi.indicatif + reste;
+        update();
+      },
+    }, paysTries().map((p) =>
+      el('option', { value: p.code, text: `${p.nom} (+${p.indicatif})`, selected: p.code === pays?.code })
+    ));
     const keys = [
       ['1', ''], ['2', 'ABC'], ['3', 'DEF'],
       ['4', 'GHI'], ['5', 'JKL'], ['6', 'MNO'],
@@ -486,7 +546,21 @@ export function renderSidebar() {
       ['*', ''], ['0', '+'], ['#', ''],
     ];
 
-    const update = () => (display.textContent = number || '');
+    const update = () => {
+      display.textContent = formatNumero(number) || '+';
+      const detecte = paysDuNumero(number);
+      if (detecte && detecte.code !== selectPays.value) {
+        pays = detecte;
+        selectPays.value = detecte.code;
+      }
+      const tarif = tarifDuNumero(number);
+      const nom = detecte?.nom || 'destination inconnue';
+      const credit = state.user.credit ?? 0;
+      const minutes = tarif > 0 ? Math.floor(credit / tarif) : 0;
+      tarifNode.textContent = number.length > 2
+        ? `${nom} · ${tarif.toFixed(3)} €/min · ${minutes} min avec votre crédit`
+        : `${nom} · ${tarif.toFixed(3)} €/min`;
+    };
 
     const grid = el('div.dialpad__grid');
     for (const [digit, letters] of keys) {
@@ -517,21 +591,14 @@ export function renderSidebar() {
             el('div.credit-banner__amount', { text: `${(state.user.credit ?? 0).toFixed(2)} €` }),
           ]),
           el('button.btn.btn--sm', {
-            text: 'Recharger',
+            text: 'Acheter du crédit',
             style: { background: 'rgba(255,255,255,.25)', color: '#fff' },
-            onclick: async () => {
-              try {
-                const { credit } = await api.topUp(10);
-                state.user.credit = credit;
-                toast('10 € ajoutés à votre crédit Skype');
-                renderList();
-              } catch (err) {
-                toast(err.message, { type: 'error' });
-              }
-            },
+            onclick: () => openCreditPurchase(paysDuNumero(number), renderList),
           }),
         ]),
+        selectPays,
         display,
+        tarifNode,
         grid,
         el('div.row.gap-16', {}, [
           el('button.icon-btn', {
@@ -544,7 +611,9 @@ export function renderSidebar() {
           el('button.dialpad__call', {
             'aria-label': 'Appeler',
             onclick: () => {
-              if (number.length < 3) return toast('Saisissez un numéro valide', { type: 'error' });
+              const national = paysDuNumero(number);
+              const utile = national ? number.slice(national.indicatif.length) : number;
+              if (utile.length < 4) return toast('Saisissez un numéro complet', { type: 'error' });
               startPhoneCall(number);
             },
           }, icon('call', 'icon icon--lg')),
@@ -562,7 +631,7 @@ export function renderSidebar() {
         ]),
         el('p.dim.center', {
           style: { fontSize: '0.8em', maxWidth: '260px', lineHeight: '1.5' },
-          text: 'Appels vers les fixes et mobiles avec le crédit Skype. Tarif de démonstration : 0,021 €/min.',
+          text: 'Appels vers les fixes et mobiles du monde entier, avec le crédit Skype. Tarifs de démonstration : aucun appel réel n’est passé.',
         }),
         state.user.skypeNumber
           ? el('p.center', { style: { fontSize: '0.85em' } }, [el('strong', { text: 'Votre numéro Skype : ' }), state.user.skypeNumber])
@@ -669,13 +738,14 @@ export function renderSidebar() {
 
   const render = () => {
     renderHeader();
+    renderIncoming();
     renderSearch();
     renderFilters();
     renderList();
     computeUnread();
   };
 
-  subscribe(['chats', 'view', 'filter', 'search', 'activeChatId', 'contacts', 'requests', 'calls', 'presence', 'user'], render);
+  subscribe(['chats', 'view', 'filter', 'search', 'activeChatId', 'contacts', 'requests', 'calls', 'presence', 'user', 'incomingCall'], render);
   render();
 
   return root;

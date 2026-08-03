@@ -10,6 +10,7 @@ import { state, setState, getChat, getUser, chatTitle, otherMember, notify } fro
 import { avatar, toast, menu, modal, confirm } from './common.js';
 import { formatDuration } from '../lib/format.js';
 import * as sounds from '../lib/sounds.js';
+import { paysDuNumero, tarifDuNumero, formatNumero, TARIF_PAR_DEFAUT } from '../lib/pays.js';
 
 const ICE_SERVERS = [
   { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] },
@@ -780,7 +781,9 @@ export function showIncomingCall({ call, from, chat }) {
     else sounds.startRinging();
   }
 
-  setState({ incomingCall: call });
+  // On conserve l'appelant et la conversation : la colonne de gauche en a
+  // besoin pour afficher l'appel entrant pendant une communication.
+  setState({ incomingCall: { ...call, from, chat } });
 
   const isGroup = chat?.type === 'group';
   const node = el('div.incoming-call', { role: 'dialog', 'aria-label': 'Appel entrant' }, [
@@ -842,20 +845,65 @@ export const hangupActiveCall = () => session?.hangup();
 
 // ── Appel téléphonique (Skype Credit) ────────────────────────────────────────
 
+/**
+ * Achat de crédit Skype. Montrer combien de minutes chaque montant représente
+ * vers la destination visée rend le choix concret.
+ */
+export function openCreditPurchase(pays = null, onDone = null) {
+  const tarif = pays?.tarif ?? TARIF_PAR_DEFAUT;
+  const solde = () => state.user.credit ?? 0;
+
+  const soldeNode = el('div.credit-banner__amount', { text: `${solde().toFixed(2)} €` });
+  const montants = [5, 10, 25, 50];
+
+  const instance = modal({
+    title: 'Acheter du crédit Skype',
+    size: 'narrow',
+    body: el('div', {}, [
+      el('div.credit-banner', {}, [
+        icon('wallet', 'icon icon--xl'),
+        el('div', { style: { flex: '1' } }, [
+          el('div', { style: { fontSize: '0.85em', opacity: '0.9' }, text: 'Solde actuel' }),
+          soldeNode,
+        ]),
+      ]),
+      el('p.dim', { style: { fontSize: '0.86em', margin: '14px 0 8px' },
+        text: pays
+          ? `Vers ${pays.nom} : ${tarif.toFixed(3)} €/min.`
+          : `Tarif appliqué à une destination inconnue : ${tarif.toFixed(3)} €/min.` }),
+      el('div.credit-choices', {}, montants.map((montant) =>
+        el('button.btn.btn--outline.credit-choice', {
+          onclick: async () => {
+            try {
+              const { credit } = await api.topUp(montant);
+              state.user.credit = credit;
+              soldeNode.textContent = `${credit.toFixed(2)} €`;
+              toast(`${montant} € ajoutés à votre crédit Skype`);
+              onDone?.();
+            } catch (err) {
+              toast(err.message, { type: 'error' });
+            }
+          },
+        }, [
+          el('span.credit-choice__amount', { text: `${montant} €` }),
+          el('span.credit-choice__minutes', { text: `≈ ${Math.floor(montant / tarif)} min` }),
+        ])
+      )),
+      el('p.dim', { style: { fontSize: '0.8em', marginTop: '12px' },
+        text: 'Achat de démonstration : aucun paiement réel n’est effectué.' }),
+    ]),
+    footer: [el('button.btn', { text: 'Fermer', onclick: () => instance.close() })],
+  });
+  return instance;
+}
+
 export async function startPhoneCall(number) {
-  const rate = 0.021;
+  const pays = paysDuNumero(number);
+  const rate = tarifDuNumero(number);
   const credit = state.user.credit ?? 0;
   if (credit < rate) {
-    const topUp = await confirm({
-      title: 'Crédit insuffisant',
-      message: 'Rechargez votre crédit Skype pour appeler ce numéro.',
-      confirmLabel: 'Recharger 10 €',
-    });
-    if (topUp) {
-      const { credit: updated } = await api.topUp(10);
-      state.user.credit = updated;
-      toast('Crédit rechargé');
-    }
+    openCreditPurchase(pays);
+    toast('Crédit insuffisant pour appeler ce numéro', { type: 'error' });
     return;
   }
 
@@ -875,10 +923,11 @@ export async function startPhoneCall(number) {
     closable: false,
     body: el('div.center', {}, [
       el('div.avatar.avatar--xl', { style: { margin: '0 auto 14px', background: 'var(--accent)' } }, icon('call', 'icon icon--xl')),
-      el('div', { style: { fontSize: '1.2em', fontWeight: '700' }, text: number }),
-      el('div.dim', { style: { fontSize: '0.85em' }, text: 'Appel via le crédit Skype' }),
+      el('div', { style: { fontSize: '1.2em', fontWeight: '700' }, text: formatNumero(number) }),
+      el('div.dim', { style: { fontSize: '0.85em' }, text: pays ? `${pays.nom} · via le crédit Skype` : 'Appel via le crédit Skype' }),
       timer,
       el('div.dim', { style: { fontSize: '0.8em' }, text: `Tarif : ${rate.toFixed(3)} €/min` }),
+      el('div.dim', { style: { fontSize: '0.8em' }, text: `Crédit : ${credit.toFixed(2)} €` }),
     ]),
     footer: [
       el('button.btn.btn--danger', {

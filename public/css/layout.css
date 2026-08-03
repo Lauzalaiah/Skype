@@ -125,6 +125,58 @@
 }
 .search-box .icon { color: var(--text-tertiary); }
 
+/* ── Appel entrant dans la colonne de gauche ─────────────────────────────── */
+.sidebar__incoming {
+  padding: 8px 12px;
+  /* Au-dessus de la fenêtre d'appel (450) : pendant une communication, elle
+     couvre toute la page et masquerait autrement la bannière. On reste sous
+     la carte d'appel entrant plein écran (470). */
+  position: relative;
+  z-index: 460;
+}
+.sidebar__incoming-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow-2, 0 4px 14px rgba(0, 0, 0, 0.2));
+  animation: sidebar-incoming-pulse 1.6s ease-in-out infinite;
+}
+@keyframes sidebar-incoming-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 175, 240, 0.5); }
+  50% { box-shadow: 0 0 0 8px rgba(0, 175, 240, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sidebar__incoming-row { animation: none; }
+}
+.sidebar__incoming-text { flex: 1; min-width: 0; }
+.sidebar__incoming-name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sidebar__incoming-type { font-size: 0.78em; opacity: 0.9; }
+.sidebar__incoming-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.sidebar__incoming-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.22);
+}
+.sidebar__incoming-btn:hover { background: rgba(255, 255, 255, 0.34); }
+.sidebar__incoming-btn--accept { background: var(--presence-online); }
+.sidebar__incoming-btn--video { background: var(--presence-online); }
+.sidebar__incoming-btn--decline { background: #c50f1f; }
+
 .sidebar__filters {
   display: flex;
   gap: 6px;

@@ -52,13 +52,35 @@ export const isSoundEnabled = () => enabled;
 export const BIBLIOTHEQUE = {
   message: {
     file: 'skype-message.mp3',
-    source: 'Skypenotification_.mp3',
+    source: 'Skypemessage.mp3',
     usage: 'Message texte reçu, conversation non ouverte',
     label: 'Message reçu',
     eager: true,
     secours: [
       { freq: 660, duration: 0.09, gain: 0.18 },
       { freq: 880, start: 0.07, duration: 0.13, gain: 0.2 },
+    ],
+  },
+  notify: {
+    file: 'skype-notification.mp3',
+    source: 'Skypenotification_.mp3',
+    usage: 'Notification : demande de contact, réaction à un message',
+    label: 'Notification',
+    eager: true,
+    secours: [
+      { freq: 1046, duration: 0.08, gain: 0.16 },
+      { freq: 1318, start: 0.08, duration: 0.12, gain: 0.14 },
+    ],
+  },
+  logout: {
+    file: 'skype-logout.mp3',
+    source: 'Skypelogout.mp3',
+    usage: 'Déconnexion de Skype, à la demande de l’utilisateur',
+    label: 'Déconnexion',
+    secours: [
+      { freq: 784, duration: 0.12, gain: 0.16 },
+      { freq: 659, start: 0.11, duration: 0.12, gain: 0.16 },
+      { freq: 523, start: 0.22, duration: 0.22, gain: 0.16 },
     ],
   },
   ring: {
@@ -436,16 +458,11 @@ export const contactSent = () => sound('contactSent');
 /** Connexion réussie. */
 export const login = () => sound('login');
 
-/**
- * Notification générale : demande de contact, réaction…
- * Synthétisée : aucun fichier officiel n'a encore été rattaché à cet
- * événement. Emplacement libre, voir docs/SONS.md.
- */
-export const notify = () =>
-  play([
-    { freq: 1046, duration: 0.08, gain: 0.16 },
-    { freq: 1318, start: 0.08, duration: 0.12, gain: 0.14 },
-  ]);
+/** Notification : demande de contact, réaction à un message. */
+export const notify = () => sound('notify');
+
+/** Déconnexion, à la demande de l'utilisateur. */
+export const logout = () => sound('logout');
 
 /** Second appel entrant pendant un appel en cours. */
 export const callWaiting = () => sound('callWaiting');

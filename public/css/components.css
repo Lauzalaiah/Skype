@@ -443,6 +443,32 @@
 }
 .credit-banner__amount { font-size: 1.5em; font-weight: 700; }
 
+/* ── Achat de crédit ─────────────────────────────────────────────────────── */
+.credit-choices {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.credit-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 12px 8px;
+  height: auto;
+}
+.credit-choice__amount { font-size: 1.15em; font-weight: 700; }
+.credit-choice__minutes { font-size: 0.78em; opacity: 0.7; }
+
+/* ── Pavé : pays et tarif ────────────────────────────────────────────────── */
+.dialpad__country { width: 100%; margin-bottom: 4px; }
+.dialpad__rate {
+  font-size: 0.78em;
+  text-align: center;
+  min-height: 1.2em;
+  margin-bottom: 6px;
+}
+
 /* ── Squelettes de chargement ────────────────────────────────────────────── */
 .skeleton {
   background: linear-gradient(90deg, var(--bg-hover) 25%, var(--bg-active) 50%, var(--bg-hover) 75%);

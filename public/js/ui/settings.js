@@ -261,6 +261,7 @@ export function openSettings(section = 'profile') {
   async function signOut() {
     const ok = await confirm({ title: 'Se déconnecter ?', message: 'Vous devrez saisir à nouveau votre mot de passe.', confirmLabel: 'Se déconnecter', danger: true });
     if (!ok) return;
+    sounds.logout();
     try {
       await api.signout();
     } catch {
@@ -268,6 +269,8 @@ export function openSettings(section = 'profile') {
     }
     socket.disconnect();
     setToken(null);
+    // On laisse le son de déconnexion se terminer avant de recharger.
+    await new Promise((resolve) => setTimeout(resolve, 900));
     location.reload();
   }
 
