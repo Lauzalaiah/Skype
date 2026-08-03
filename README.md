@@ -204,7 +204,19 @@ installable en PWA et s'adapte aux écrans mobiles.
 
 <div align="center">
 
-Projet indépendant de restauration, sans lien avec Microsoft.
+Projet indépendant de restauration, **créé par un fan**, sans aucun lien avec
+Microsoft ni avec les équipes de Skype. « Skype » est une marque de Microsoft,
+citée ici pour désigner le logiciel d'origine.
+
+## Sur iPhone
+
+L'application s'installe sur l'écran d'accueil depuis Safari (Partager → Sur
+l'écran d'accueil) : plein écran, icône, ouverture hors ligne. Il faut servir
+le site en HTTPS — iOS refuse le micro et la caméra sans cela.
+
+Un `.ipa` ne peut pas être produit ailleurs que sur macOS avec Xcode et un
+certificat Apple. Le projet Capacitor et le workflow de build sont fournis dans
+[`ios/README.md`](ios/README.md).
 Fait pour ceux qui n'ont jamais voulu changer. 💙
 
 </div>

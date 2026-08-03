@@ -1,0 +1,115 @@
+# Construit l'application iOS sur un exécuteur macOS.
+#
+# Sans secrets de signature, la sortie est une archive NON SIGNÉE : elle sert à
+# vérifier que le projet compile, elle ne s'installe sur aucun iPhone. Pour une
+# archive installable, définissez ces secrets dans le dépôt :
+#
+#   IOS_CERTIFICATE_P12       certificat de distribution, encodé en base64
+#   IOS_CERTIFICATE_PASSWORD  mot de passe du .p12
+#   IOS_PROVISIONING_PROFILE  profil de provisionnement, encodé en base64
+#   IOS_TEAM_ID               identifiant d'équipe Apple Developer
+#
+# Ces valeurs ne sont jamais écrites dans le dépôt ni dans les journaux.
+
+name: iOS
+
+on:
+  workflow_dispatch:
+    inputs:
+      server_url:
+        description: "Adresse du serveur Skype que l'application doit charger"
+        required: false
+        default: ""
+
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 40
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Vérifier l'application web
+        run: npm test
+
+      - name: Installer Capacitor
+        working-directory: ios
+        run: npm install
+
+      - name: Pointer vers le serveur demandé
+        if: inputs.server_url != ''
+        working-directory: ios
+        run: |
+          node -e "
+            const fs = require('fs');
+            const c = JSON.parse(fs.readFileSync('capacitor.config.json', 'utf8'));
+            c.server = { ...c.server, url: process.env.URL };
+            fs.writeFileSync('capacitor.config.json', JSON.stringify(c, null, 2));
+          "
+        env:
+          URL: ${{ inputs.server_url }}
+
+      - name: Générer le projet Xcode
+        working-directory: ios
+        run: |
+          npx cap add ios || npx cap sync ios
+          npx cap sync ios
+
+      - name: Construire (archive non signée)
+        if: ${{ !secrets.IOS_CERTIFICATE_P12 }}
+        working-directory: ios/ios/App
+        run: |
+          xcodebuild -workspace App.xcworkspace -scheme App \
+            -configuration Release -sdk iphoneos \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" archive \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+      - name: Construire (archive signée)
+        if: ${{ secrets.IOS_CERTIFICATE_P12 != '' }}
+        working-directory: ios/ios/App
+        env:
+          P12: ${{ secrets.IOS_CERTIFICATE_P12 }}
+          P12_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+          PROFILE: ${{ secrets.IOS_PROVISIONING_PROFILE }}
+          TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
+        run: |
+          # Trousseau temporaire, détruit avec l'exécuteur.
+          security create-keychain -p "" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          echo "$P12" | base64 --decode > /tmp/cert.p12
+          security import /tmp/cert.p12 -k build.keychain -P "$P12_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
+          rm /tmp/cert.p12
+
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo "$PROFILE" | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/profil.mobileprovision
+
+          xcodebuild -workspace App.xcworkspace -scheme App \
+            -configuration Release -sdk iphoneos \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" archive \
+            DEVELOPMENT_TEAM="$TEAM_ID"
+
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -exportOptionsPlist ../../ExportOptions.plist
+
+      - name: Emballer l'archive non signée
+        if: ${{ !secrets.IOS_CERTIFICATE_P12 }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/export/Payload"
+          cp -r "$RUNNER_TEMP/App.xcarchive/Products/Applications/App.app" "$RUNNER_TEMP/export/Payload/"
+          cd "$RUNNER_TEMP/export"
+          zip -qry SkypeReborn-non-signe.ipa Payload
+          rm -rf Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: skype-reborn-ios
+          path: ${{ runner.temp }}/export/*.ipa
+          if-no-files-found: error

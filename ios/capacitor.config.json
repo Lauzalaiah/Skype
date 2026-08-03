@@ -1,0 +1,21 @@
+{
+  "appId": "app.skypereborn.fan",
+  "appName": "Skype Reborn",
+  "webDir": "../public",
+  "ios": {
+    "contentInset": "always",
+    "limitsNavigationsToAppBoundDomains": false
+  },
+  "server": {
+    "androidScheme": "https",
+    "iosScheme": "https",
+    "cleartext": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "backgroundColor": "#0078D4",
+      "launchAutoHide": true,
+      "launchShowDuration": 800
+    }
+  }
+}

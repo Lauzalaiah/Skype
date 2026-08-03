@@ -205,7 +205,15 @@
   transition: opacity var(--fast);
   z-index: 5;
 }
-.message:hover .message__actions,
+/* Le survol n'existe pas au doigt : sur tactile la barre resterait figée
+   par-dessus le message après une simple pression. L'appui long prend le
+   relais (voir messages.js). */
+@media (hover: hover) and (pointer: fine) {
+  .message:hover .message__actions { opacity: 1; pointer-events: auto; }
+}
+@media (hover: none) {
+  .message__actions { display: none; }
+}
 .message__actions:focus-within { opacity: 1; pointer-events: auto; }
 .message--own .message__actions { right: 42px; }
 .message:not(.message--own) .message__actions { left: 42px; }

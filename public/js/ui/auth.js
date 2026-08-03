@@ -47,8 +47,8 @@ export function showAuth() {
 
     function signinCard() {
       const error = errorBox();
-      const identifier = el('input.input', { placeholder: 'Pseudo Skype ou e-mail', autocomplete: 'username', autofocus: true, name: 'identifier' });
-      const password = el('input.input', { type: 'password', placeholder: 'Mot de passe', autocomplete: 'current-password', name: 'password' });
+      const identifier = el('input.input', { id: 'si-identifier', placeholder: 'Pseudo Skype ou e-mail', autocomplete: 'username', autofocus: true, name: 'identifier', autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false' });
+      const password = el('input.input', { id: 'si-password', type: 'password', placeholder: 'Mot de passe', autocomplete: 'current-password', name: 'password' });
       const submit = el('button.btn.btn--primary.btn--block.btn--lg', { type: 'submit', text: 'Se connecter' });
 
       const form = el('form', {
@@ -68,8 +68,8 @@ export function showAuth() {
         },
       }, [
         error,
-        el('div.field', {}, [el('label.field__label', { text: 'Pseudo Skype, e-mail ou téléphone' }), identifier]),
-        el('div.field', {}, [el('label.field__label', { text: 'Mot de passe' }), password]),
+        el('div.field', {}, [el('label.field__label', { for: 'si-identifier', text: 'Pseudo Skype, e-mail ou téléphone' }), identifier]),
+        el('div.field', {}, [el('label.field__label', { for: 'si-password', text: 'Mot de passe' }), password]),
         submit,
       ]);
 
@@ -96,10 +96,10 @@ export function showAuth() {
 
     function signupCard() {
       const error = errorBox();
-      const displayName = el('input.input', { placeholder: 'Camille Durand', autocomplete: 'name', autofocus: true });
-      const skypeName = el('input.input', { placeholder: 'camille.durand', autocomplete: 'username' });
-      const email = el('input.input', { type: 'email', placeholder: 'vous@exemple.fr', autocomplete: 'email' });
-      const password = el('input.input', { type: 'password', placeholder: '6 caractères minimum', autocomplete: 'new-password' });
+      const displayName = el('input.input', { id: 'su-name', name: 'displayName', placeholder: 'Camille Durand', autocomplete: 'name', autofocus: true });
+      const skypeName = el('input.input', { id: 'su-skypename', name: 'skypeName', placeholder: 'camille.durand', autocomplete: 'username', autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false' });
+      const email = el('input.input', { id: 'su-email', name: 'email', type: 'email', placeholder: 'vous@exemple.fr', autocomplete: 'email', autocapitalize: 'none' });
+      const password = el('input.input', { id: 'su-password', name: 'password', type: 'password', placeholder: '6 caractères minimum', autocomplete: 'new-password' });
       const hint = el('div.field__hint', { text: '3 à 32 caractères : lettres, chiffres, point, tiret ou souligné.' });
       const submit = el('button.btn.btn--primary.btn--block.btn--lg', { type: 'submit', text: 'Créer mon compte' });
 
@@ -139,10 +139,10 @@ export function showAuth() {
         },
       }, [
         error,
-        el('div.field', {}, [el('label.field__label', { text: 'Nom complet' }), displayName]),
-        el('div.field', {}, [el('label.field__label', { text: 'Pseudo Skype' }), skypeName, hint]),
-        el('div.field', {}, [el('label.field__label', { text: 'E-mail (facultatif)' }), email]),
-        el('div.field', {}, [el('label.field__label', { text: 'Mot de passe' }), password]),
+        el('div.field', {}, [el('label.field__label', { for: 'su-name', text: 'Nom complet' }), displayName]),
+        el('div.field', {}, [el('label.field__label', { for: 'su-skypename', text: 'Pseudo Skype' }), skypeName, hint]),
+        el('div.field', {}, [el('label.field__label', { for: 'su-email', text: 'E-mail (facultatif)' }), email]),
+        el('div.field', {}, [el('label.field__label', { for: 'su-password', text: 'Mot de passe' }), password]),
         submit,
       ]);
 

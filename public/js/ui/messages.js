@@ -31,6 +31,31 @@ export function renderMessage(message, { chat, previous = null, isLast = false, 
     { dataset: { id: message.id, sender: message.senderId, ts: message.createdAt } }
   );
 
+  // Sur écran tactile, la barre d'actions au survol n'existe pas : l'appui
+  // long ouvre le menu du message, comme sur Skype mobile.
+  if (!message.deleted && matchMedia('(hover: none)').matches) {
+    let minuteur = null;
+    let depart = null;
+    const annuler = () => { clearTimeout(minuteur); minuteur = null; };
+    node.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse') return;
+      depart = { x: e.clientX, y: e.clientY };
+      minuteur = setTimeout(() => {
+        minuteur = null;
+        if (navigator.vibrate) navigator.vibrate(12);
+        openMessageMenu(e, message, chat, isOwn);
+      }, 450);
+    });
+    // Un défilement ne doit pas être pris pour un appui long.
+    node.addEventListener('pointermove', (e) => {
+      if (!minuteur || !depart) return;
+      if (Math.hypot(e.clientX - depart.x, e.clientY - depart.y) > 10) annuler();
+    });
+    for (const evt of ['pointerup', 'pointercancel', 'pointerleave']) node.addEventListener(evt, annuler);
+    // Le menu contextuel natif ferait doublon avec le nôtre.
+    node.addEventListener('contextmenu', (e) => e.preventDefault());
+  }
+
   node.append(avatar(sender, { size: 'sm', presence: false, className: 'message__avatar', onClick: () => hooks.onOpenProfile(sender.id) }));
 
   const column = el('div.message__column');

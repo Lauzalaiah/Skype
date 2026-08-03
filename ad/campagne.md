@@ -1,6 +1,26 @@
-# Campagne « Skype est de retour »
+# Campagne « Personne ne le ramenait »
 
-Objectif : faire revenir les gens qui ont quitté Skype par résignation, pas par choix.
+> ## À lire avant toute diffusion
+>
+> Cette campagne présente un **projet de fan, non officiel**. Aucune
+> communication ne doit laisser entendre que Microsoft relance Skype, ni qu'il
+> s'agit d'un retour officiel du produit.
+>
+> **La formulation juste** : « un fan a reconstruit l'ancien Skype ».
+> **À proscrire** : « Skype est de retour », « Skype revient », « le retour
+> officiel », tout emploi du logo Microsoft, toute mise en scène d'un
+> porte-parole de la marque.
+>
+> Chaque support porte la mention : *recréation indépendante, sans lien avec
+> Microsoft. « Skype » est une marque de Microsoft, citée pour désigner le
+> logiciel d'origine.*
+>
+> Aucun faux témoignage, aucune note d'utilisateur inventée, aucun chiffre
+> d'audience fabriqué. Le projet vient de sortir : la campagne parle de ce
+> qu'il fait, pas de ce qu'on en dirait.
+
+Objectif : parler aux gens qui ont quitté Skype par résignation, pas par choix,
+et leur montrer qu'un particulier en a reconstruit une version fidèle.
 Cible principale : 30–65 ans, particuliers, familles éclatées géographiquement, expatriés,
 indépendants. Cible secondaire : les 20–30 ans nostalgiques de leur adolescence en ligne.
 
@@ -8,6 +28,7 @@ indépendants. Cible secondaire : les 20–30 ans nostalgiques de leur adolescen
 été déplacé ailleurs, vers des outils conçus pour des entreprises, pas pour des gens.
 
 **Promesse** — Retrouvez la façon la plus simple au monde de parler à quelqu'un que vous aimez.
+Reconstruite à l'identique par quelqu'un à qui elle manquait.
 
 **Ton** — Chaleureux, un peu piquant, jamais méprisant. On ne se moque pas des utilisateurs
 des autres outils : on se moque gentiment de la complexité qu'on leur a imposée.
@@ -16,13 +37,15 @@ des autres outils : on se moque gentiment de la complexité qu'on leur a imposé
 
 ## Accroches (à décliner selon le support)
 
-1. **« Vous n'avez jamais eu besoin d'un nouvel outil. Vous aviez besoin du vôtre. »** *(principale)*
+1. **« Personne ne le ramenait. Alors je l'ai reconstruit. »** *(principale)*
 2. « Un pseudo. Un bouton vert. Ça vous revient ? »
 3. « Parler à sa mère ne devrait pas nécessiter un lien de réunion. »
-4. « Blop. » *(accroche minimaliste, affichage seul avec le logo)*
-5. « 22 ans de conversations vous attendent. »
-6. « Le seul outil de visio que votre grand-mère savait utiliser. Il est revenu. »
+4. « Blop. » *(accroche minimaliste, affichage seul)*
+5. « J'ai passé des mois à remettre un « blop » au bon endroit. »
+6. « Le seul outil de visio que votre grand-mère savait utiliser. Quelqu'un l'a refait. »
 7. « Ce n'est pas de la nostalgie. C'est juste que ça marchait mieux. »
+
+Chaque accroche est signée : *Skype Reborn — recréation indépendante par un fan.*
 
 ---
 
@@ -41,9 +64,12 @@ des autres outils : on se moque gentiment de la complexité qu'on leur a imposé
 | 0:16–0:19 | Elle clique. **Une seule fois.** | La sonnerie d'appel Skype — celle que tout le monde reconnaît. |
 | 0:19–0:25 | Plein écran : le visage de sa petite-fille apparaît. « Mamie ! » — le rire de la vieille dame déborde du cadre. | Rires, voix qui se chevauchent. |
 | 0:25–0:28 | Plan large : le salon, la lumière de l'écran sur son visage. Elle sourit toute seule. | La conversation continue, étouffée. |
-| 0:28–0:30 | Fond blanc. Logo Skype. | *Voix off, calme :* « Skype. Vous n'avez jamais eu besoin d'autre chose. » |
+| 0:28–0:30 | Fond blanc. Le mot « Skype Reborn » et, en dessous, « recréation indépendante par un fan ». | *Voix off, calme :* « Vous n'avez jamais eu besoin d'autre chose. Alors quelqu'un l'a reconstruit. » |
 
-**Carton final** : `Skype est de retour. Gratuit. Ouvrez-le.`
+**Carton final** : `Skype Reborn — projet de fan, non officiel. Gratuit. Essayez-le.`
+
+> Mention obligatoire à l'écran pendant les 3 dernières secondes : *recréation
+> indépendante, sans lien avec Microsoft.*
 
 ---
 
@@ -74,7 +100,7 @@ une roue de chargement, une réunion à 9 participants où personne ne parle.*
 
 > « Skype, c'était : un pseudo. Un clic. Une voix.
 > Pas de lien. Pas de code. Pas de réunion à planifier.
-> Ça marchait. Et ça remarche. »
+> Ça marchait. Alors quelqu'un l'a reconstruit, à l'identique. »
 
 *Images : ajout d'un contact par pseudo → point vert → clic sur le bouton d'appel → visage
 qui apparaît. Puis, en rafale : partage d'écran, `(y)` qui se transforme en pouce levé,

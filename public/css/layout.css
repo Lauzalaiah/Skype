@@ -384,7 +384,14 @@
   .rail__button.is-active::before { left: 50%; top: -1px; transform: translateX(-50%); width: 24px; height: 3px; }
 
   .sidebar { width: 100%; border-right: none; }
-  .main { position: absolute; inset: 0; bottom: 58px; z-index: 20; }
+  /* La barre du bas est décalée par l'indicateur d'accueil de l'iPhone :
+     le contenu doit s'arrêter au-dessus, sinon le composeur passe dessous. */
+  .main { position: absolute; inset: 0; bottom: calc(58px + env(safe-area-inset-bottom)); z-index: 20; }
+
+  /* En mode plein écran installé, la page passe sous la barre d'état :
+     les en-têtes descendent d'autant. */
+  .sidebar__header,
+  .main__header { padding-top: calc(10px + env(safe-area-inset-top)); }
 
   body[data-mobile-view='list'] .main { display: none; }
   body[data-mobile-view='chat'] .sidebar { display: none; }

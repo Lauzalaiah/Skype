@@ -319,3 +319,19 @@ Contacts, Confidentialité, Crédit Skype, Général, Aide et retours.
 - Nettoyage des appels en cours à la déconnexion d'un participant
 - Résolution des collisions d'offres WebRTC
 - Mise en tampon des candidats ICE reçus trop tôt
+
+
+## 15. Installation et mobile
+
+- Application installable sur l'écran d'accueil (iOS via Safari, Android via
+  Chrome) : plein écran, icône dédiée, sans barre d'adresse
+- Icônes PNG 180/192/512 px, dont une version *maskable*
+- Service worker : l'interface s'ouvre sans réseau ; les données (API,
+  fichiers, WebSocket) ne sont jamais mises en cache
+- Encoche et indicateur d'accueil de l'iPhone pris en compte (`safe-area`)
+- Sur écran tactile, l'appui long sur un message ouvre son menu — la barre
+  d'actions au survol est réservée à la souris
+- Champs de connexion nommés et reliés à leur libellé : le remplissage
+  automatique et les gestionnaires de mots de passe fonctionnent
+- Partage d'écran indisponible sur iOS : le système ne l'expose à aucun
+  navigateur
