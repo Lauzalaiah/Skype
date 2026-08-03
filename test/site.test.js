@@ -176,6 +176,22 @@ describe('Publication des fichiers téléchargeables', () => {
     assert.match(workflow, /run: npm test/);
   });
 
+  test('tout workflow qui exécute la suite de tests demande Node 22 au moins', () => {
+    // La suite se connecte au serveur avec le client WebSocket natif, apparu
+    // en Node 22 : sur un exécuteur plus ancien, deux tests échouent et rien
+    // ne se publie. Le serveur, lui, tourne dès Node 18.
+    const dossier = path.join(ROOT, '.github/workflows');
+    for (const nom of fs.readdirSync(dossier)) {
+      const contenu = fs.readFileSync(path.join(dossier, nom), 'utf8');
+      if (!/npm test/.test(contenu)) continue;
+      const versions = [...contenu.matchAll(/node-version: '(\d+)'/g)].map((m) => Number(m[1]));
+      assert.ok(versions.length, `${nom} exécute les tests sans fixer de version de Node`);
+      for (const version of versions) {
+        assert.ok(version >= 22, `${nom} demande Node ${version} : trop ancien pour la suite de tests`);
+      }
+    }
+  });
+
   test('une nouvelle publication remplace les fichiers au lieu d’échouer', () => {
     assert.match(workflow, /gh release upload "\$TAG" publication\/\* --clobber/);
   });

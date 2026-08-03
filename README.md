@@ -40,7 +40,7 @@ La publicité de lancement est servie sur **http://localhost:3000/pub**.
 ```bash
 npm run dev       # démarrage avec rechargement automatique
 npm run reset     # remet la base à zéro et recrée les comptes de démonstration
-npm test          # 43 tests de bout en bout (API, temps réel, sécurité)
+npm test          # 156 tests de bout en bout (API, temps réel, sécurité, sons) — Node 22+
 PORT=8080 npm start
 ```
 
@@ -166,12 +166,16 @@ votre machine. Aucun traceur, aucun service tiers, aucune police ni script dista
 npm test
 ```
 
-43 tests couvrent l'inscription et la connexion, le rejet des identifiants invalides,
+157 tests couvrent l'inscription et la connexion, le rejet des identifiants invalides,
 les demandes de contact, les permissions de conversation, l'édition et la suppression
 de messages, les réactions, les sondages, les rôles d'administrateur, les liens
 d'invitation, le blocage, la fusion des réglages imbriqués, le crédit Skype, l'envoi
 et le téléchargement de fichiers, la diffusion WebSocket et le refus des jetons
-invalides.
+invalides, la correspondance de chaque son avec son événement, l'honnêteté de la page
+de campagne et du site de téléchargement.
+
+La suite demande **Node 22 ou plus** : elle se connecte au serveur avec le client
+WebSocket natif, absent des versions antérieures. Le serveur, lui, tourne dès Node 18.
 
 L'interface a été validée dans Chromium sur 30 scénarios de bout en bout, y compris un
 appel vidéo réellement établi entre deux sessions.

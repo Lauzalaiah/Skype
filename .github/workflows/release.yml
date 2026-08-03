@@ -33,7 +33,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # Node 22 au minimum : la suite de tests se connecte au serveur avec
+          # le client WebSocket natif, qui n'existe pas avant. Le serveur, lui,
+          # tourne dès Node 18.
+          node-version: '22'
 
       - run: npm test
 
@@ -66,7 +69,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # Node 22 au minimum : la suite de tests se connecte au serveur avec
+          # le client WebSocket natif, qui n'existe pas avant. Le serveur, lui,
+          # tourne dès Node 18.
+          node-version: '22'
 
       - name: Installer les dépendances de l'enveloppe de bureau
         working-directory: desktop
