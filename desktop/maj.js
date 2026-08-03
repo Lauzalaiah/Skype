@@ -85,7 +85,10 @@ async function verifierSansInstaller() {
 function brancherAutoUpdater() {
   autoUpdater.autoDownload = true;
   autoUpdater.autoInstallOnAppQuit = true;
-  autoUpdater.logger = null;
+  // Silencieux par défaut ; SKYPE_MAJ_DEBUG=1 fait dire à electron-updater ce
+  // qu'il a lu et pourquoi il conclut ce qu'il conclut. Sans cela, une mise à
+  // jour qui ne part pas est indiscernable d'une absence de mise à jour.
+  autoUpdater.logger = process.env.SKYPE_MAJ_DEBUG ? console : null;
 
   autoUpdater.on('checking-for-update', () => publier({ phase: 'recherche' }));
 
@@ -105,10 +108,18 @@ function brancherAutoUpdater() {
     });
   });
 
-  autoUpdater.on('error', (err) => {
-    publier({ phase: 'inactif', version: null, notes: null });
-    console.warn('[skype] mise à jour impossible :', err?.message || err);
-  });
+  autoUpdater.on('error', signalerEchec);
+}
+
+/**
+ * Une mise à jour qui échoue doit se voir dans le journal, même si elle ne se
+ * voit pas à l'écran. Un `catch` muet ici rendrait un updater définitivement
+ * silencieux impossible à diagnostiquer : on ne saurait pas distinguer « rien
+ * de neuf » de « la vérification n'a jamais abouti ».
+ */
+function signalerEchec(err) {
+  publier({ phase: 'inactif', version: null, notes: null });
+  console.warn('[skype] mise à jour impossible :', err?.message || err);
 }
 
 /**
@@ -138,7 +149,7 @@ export function surveillerMisesAJour(fenetrePrincipale) {
   if (!app.isPackaged) return;
 
   const verifier = MISE_A_JOUR_AUTOMATIQUE_POSSIBLE
-    ? () => autoUpdater.checkForUpdates().catch(() => { /* géré par l'événement « error » */ })
+    ? () => autoUpdater.checkForUpdates().catch(signalerEchec)
     : verifierSansInstaller;
 
   if (MISE_A_JOUR_AUTOMATIQUE_POSSIBLE) brancherAutoUpdater();
