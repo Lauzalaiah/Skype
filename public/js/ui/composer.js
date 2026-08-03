@@ -118,7 +118,9 @@ export function createComposer(chat, { onSent = () => {} } = {}) {
     el('div.composer__tools', {}, [formatButton, micButton, sendButton]),
   ]);
 
-  const root = el('div.composer', {}, [replyBar, attachmentBar, recorderBar, formatBar, box]);
+  // fileInput est rattaché au DOM : un input détaché ne peut pas ouvrir le
+  // sélecteur de fichiers dans tous les navigateurs.
+  const root = el('div.composer', {}, [replyBar, attachmentBar, recorderBar, formatBar, box, fileInput]);
 
   // ── Envoi ──────────────────────────────────────────────────────────────────
 
@@ -225,6 +227,7 @@ export function createComposer(chat, { onSent = () => {} } = {}) {
         progress.style.width = '100%';
         progress.style.background = 'var(--presence-online)';
       } catch (err) {
+        sounds.fileSendFailed();
         toast(`Échec de l'envoi de ${file.name}`, { type: 'error' });
         attachments = attachments.filter((a) => a !== entry);
         node.remove();
@@ -694,7 +697,7 @@ function openContactPicker(chat) {
               content: `Carte de contact : ${contact.displayName}`,
               contactCard: { id: contact.id, displayName: contact.displayName, skypeName: contact.skypeName, avatar: contact.avatar },
             });
-            sounds.fileSent();
+            sounds.contactSent();
           } catch (err) {
             toast(err.message, { type: 'error' });
           }

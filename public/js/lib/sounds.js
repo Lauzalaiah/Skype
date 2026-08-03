@@ -108,6 +108,16 @@ export const BIBLIOTHEQUE = {
     secoursRepris: 'ring',
     secoursBoucle: 2600,
   },
+  ringAlt3: {
+    file: 'skype-ringtone-4.mp3',
+    source: 'Skypesonnerie3.mp3',
+    usage: 'Appel entrant — variante choisie dans les réglages',
+    label: 'Sonnerie — variante 3',
+    loop: true,
+    secours: null,
+    secoursRepris: 'ring',
+    secoursBoucle: 2600,
+  },
   callStart: {
     file: 'skype-call-start.mp3',
     source: 'Skypestartcall.mp3',
@@ -146,7 +156,7 @@ export const BIBLIOTHEQUE = {
     file: 'skype-call-waiting.mp3',
     source: 'Skypecallincall.mp3',
     usage: 'Appel entrant alors qu’une communication est déjà en cours',
-    label: 'Appel en attente',
+    label: 'Second appel entrant',
     secours: [
       { freq: 880, duration: 0.12, gain: 0.2 },
       { freq: 880, start: 0.24, duration: 0.12, gain: 0.2 },
@@ -193,12 +203,52 @@ export const BIBLIOTHEQUE = {
   },
   fileSent: {
     file: 'skype-file-sent.mp3',
-    source: 'Skypeforwindowsnew.mp3',
-    usage: 'Envoi d’un fichier ou d’une carte de contact depuis la conversation',
+    source: 'Skypesendfolder.mp3',
+    usage: 'Envoi d’un fichier, d’une image ou d’un GIF depuis la conversation',
     label: 'Fichier envoyé',
     secours: [
       { freq: 1046, duration: 0.08, gain: 0.16 },
       { freq: 1318, start: 0.08, duration: 0.12, gain: 0.14 },
+    ],
+  },
+  fileSendFailed: {
+    file: 'skype-file-send-failed.mp3',
+    source: 'Skypesendfolderfailed.mp3',
+    usage: 'L’envoi d’un fichier a échoué',
+    label: 'Échec de l’envoi',
+    secours: [
+      { freq: 392, duration: 0.18, gain: 0.16 },
+      { freq: 294, start: 0.2, duration: 0.32, gain: 0.16 },
+    ],
+  },
+  contactSent: {
+    file: 'skype-contact-sent.mp3',
+    source: 'Skypeforwindowsnew.mp3',
+    usage: 'Envoi d’une carte de contact depuis la conversation',
+    label: 'Contact envoyé',
+    secours: [
+      { freq: 1046, duration: 0.08, gain: 0.16 },
+      { freq: 1318, start: 0.08, duration: 0.12, gain: 0.14 },
+    ],
+  },
+  callEnd: {
+    file: 'skype-call-end.mp3',
+    source: 'Skyperaccroche_.mp3',
+    usage: 'Raccrochage : la communication se termine',
+    label: 'Fin d’appel',
+    secours: [
+      { freq: 587, duration: 0.12, gain: 0.18 },
+      { freq: 392, start: 0.11, duration: 0.22, gain: 0.18 },
+    ],
+  },
+  callHold: {
+    file: 'skype-call-hold.mp3',
+    source: 'Skypepaused.mp3',
+    usage: 'L’appel est mis en attente, ou repris',
+    label: 'Mise en attente',
+    secours: [
+      { freq: 494, duration: 0.14, gain: 0.14 },
+      { freq: 415, start: 0.16, duration: 0.2, gain: 0.14 },
     ],
   },
 };
@@ -374,8 +424,14 @@ export const messageIn = () => sound('message');
 /** Fichier ou photo reçu. */
 export const fileReceived = () => sound('fileReceived');
 
-/** Fichier ou carte de contact envoyé depuis la conversation. */
+/** Fichier, image ou GIF envoyé depuis la conversation. */
 export const fileSent = () => sound('fileSent');
+
+/** L'envoi d'un fichier a échoué. */
+export const fileSendFailed = () => sound('fileSendFailed');
+
+/** Carte de contact envoyée depuis la conversation. */
+export const contactSent = () => sound('contactSent');
 
 /** Connexion réussie. */
 export const login = () => sound('login');
@@ -417,19 +473,18 @@ export const callConnect = () => sound('callStart');
 /** Message vocal reçu. */
 export const voicemail = () => sound('voicemail');
 
-/** Raccrochage. */
-export const callEnd = () =>
-  play([
-    { freq: 587, duration: 0.12, gain: 0.18 },
-    { freq: 392, start: 0.11, duration: 0.22, gain: 0.18 },
-  ]);
+/** Raccrochage : la communication se termine. */
+export const callEnd = () => sound('callEnd');
+
+/** L'appel est mis en attente, ou repris. */
+export const callHold = () => sound('callHold');
 
 export const error = () => play([{ freq: 220, duration: 0.22, gain: 0.18, type: 'sawtooth', sweepTo: 160 }]);
 
 // ── Sonneries (en boucle) ─────────────────────────────────────────────────────
 
 /** Sonneries proposées à l'utilisateur dans les réglages. */
-export const SONNERIES = ['ring', 'ringLong', 'ringAlt', 'ringAlt2'];
+export const SONNERIES = ['ring', 'ringLong', 'ringAlt', 'ringAlt2', 'ringAlt3'];
 
 let ringtone = 'ring';
 export const setRingtone = (key) => {

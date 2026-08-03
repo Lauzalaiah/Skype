@@ -28,6 +28,7 @@ function bibliotheque() {
       file: corps.match(/file: '([^']+)'/)?.[1],
       source: corps.match(/source: '([^']+)'/)?.[1],
       usage: corps.match(/usage: '([^']+)/)?.[1],
+      label: corps.match(/label: '([^']+)'/)?.[1],
       orphelin: /orphelin: true/.test(corps),
       loop: /loop: true/.test(corps),
     };
@@ -38,8 +39,14 @@ function bibliotheque() {
 const LIB = bibliotheque();
 
 describe('Bibliothèque de sons', () => {
-  test('les quatorze sons sont déclarés', () => {
-    assert.equal(Object.keys(LIB).length, 14, `clés : ${Object.keys(LIB).join(', ')}`);
+  test('les dix-neuf sons sont déclarés', () => {
+    assert.equal(Object.keys(LIB).length, 19, `clés : ${Object.keys(LIB).join(', ')}`);
+  });
+
+  test('deux sons ne portent jamais le même libellé', () => {
+    const libelles = Object.values(LIB).map((e) => e.label);
+    assert.equal(new Set(libelles).size, libelles.length,
+      'un libellé en double rendrait la bibliothèque des réglages ambiguë');
   });
 
   test('chaque son déclare son fichier, sa provenance et son usage', () => {
@@ -95,7 +102,34 @@ describe('Correspondance son ↔ événement', () => {
     assert.match(sons, /export function startRinging\(\) \{[\s\S]*?ringHandle = sound\(ringtone, \{ loop: true \}\);/,
       'la sonnerie ne doit pas dépendre du type d’appel');
     assert.doesNotMatch(sons, /ringVideo/, 'plus de sonnerie propre à la vidéo');
-    assert.match(sons, /export const SONNERIES = \['ring', 'ringLong', 'ringAlt', 'ringAlt2'\];/);
+    assert.match(sons, /export const SONNERIES = \['ring', 'ringLong', 'ringAlt', 'ringAlt2', 'ringAlt3'\];/);
+  });
+
+  test('le raccrochage et la mise en attente sont deux sons distincts', () => {
+    assert.match(sons, /export const callEnd = \(\) => sound\('callEnd'\);/);
+    assert.match(sons, /export const callHold = \(\) => sound\('callHold'\);/);
+    assert.notEqual(LIB.callEnd?.file, LIB.callHold?.file);
+
+    // Le raccrochage ne sonne qu'à la fin d'une communication réellement établie.
+    assert.match(appels, /if \(startedAt\) sounds\.callEnd\(\);/,
+      'un appel jamais établi ne doit pas jouer le son de raccrochage');
+  });
+
+  test('la mise en attente sonne des deux côtés, et nulle part ailleurs', () => {
+    const points = [...appels.matchAll(/sounds\.callHold\(\)/g)];
+    assert.equal(points.length, 2, 'attendu : mise en attente locale + celle du correspondant');
+    assert.match(appels, /if \(peerState\.hold !== undefined && peerState\.hold !== peer\.state\.hold\) sounds\.callHold\(\);/,
+      'le son ne doit se déclencher que sur un vrai changement d’état');
+  });
+
+  test('envoi de fichier, de contact et échec sont trois sons distincts', () => {
+    const trio = [LIB.fileSent?.file, LIB.contactSent?.file, LIB.fileSendFailed?.file];
+    assert.ok(trio.every(Boolean), 'les trois entrées doivent exister');
+    assert.equal(new Set(trio).size, 3);
+
+    assert.equal([...compose.matchAll(/sounds\.fileSent\(\)/g)].length, 2, 'attendu : pièce jointe + GIF');
+    assert.equal([...compose.matchAll(/sounds\.contactSent\(\)/g)].length, 1, 'attendu : carte de contact');
+    assert.equal([...compose.matchAll(/sounds\.fileSendFailed\(\)/g)].length, 1, 'attendu : échec du téléversement');
   });
 
   test('le son de début d’appel ne sert qu’à l’établissement de la communication', () => {
@@ -116,7 +150,7 @@ describe('Correspondance son ↔ événement', () => {
   test('les sonneries au choix sont bien des sons en boucle', () => {
     const proposees = sons.match(/export const SONNERIES = \[([^\]]+)\]/)[1]
       .split(',').map((s) => s.trim().replace(/'/g, ''));
-    assert.equal(proposees.length, 4);
+    assert.equal(proposees.length, 5);
     for (const cle of proposees) {
       assert.ok(LIB[cle]?.loop, `${cle} doit être déclaré en boucle`);
       assert.match(LIB[cle].usage, /^Appel entrant/, `${cle} doit servir à un appel entrant`);
@@ -134,17 +168,13 @@ describe('Correspondance son ↔ événement', () => {
     assert.equal(points.length, 1);
   });
 
-  test('le son « fichier envoyé » ne sert qu’aux envois de fichier ou de contact', () => {
-    // Composeur : pièce jointe, carte de contact, GIF. Nulle part ailleurs.
-    const dansCompose = [...compose.matchAll(/sounds\.fileSent\(\)/g)];
-    assert.equal(dansCompose.length, 3, 'attendu : pièce jointe, carte de contact, GIF');
-
+  test('le son « fichier envoyé » ne sert qu’aux envois depuis le composeur', () => {
     assert.match(compose, /if \(pending\.length\) sounds\.fileSent\(\);\s*\n\s*else sounds\.messageOut\(\);/,
       'un message texte ne doit pas jouer le son de fichier envoyé');
 
     for (const source of [app, appels]) {
-      assert.equal([...source.matchAll(/sounds\.fileSent\(\)/g)].length, 0,
-        'le son de fichier envoyé ne doit servir que dans le composeur');
+      assert.equal([...source.matchAll(/sounds\.(fileSent|contactSent|fileSendFailed)\(\)/g)].length, 0,
+        'les sons d’envoi ne doivent servir que dans le composeur');
     }
   });
 
@@ -194,7 +224,7 @@ describe('Documentation de la correspondance', () => {
 
   test('un emplacement libre n’est branché sur aucun fichier', () => {
     // Les événements listés comme « encore vides » doivent rester synthétisés.
-    for (const nom of ['messageOut', 'mention', 'callEnd', 'error', 'notify']) {
+    for (const nom of ['messageOut', 'mention', 'error', 'notify']) {
       assert.match(sons, new RegExp(`export const ${nom} = \\(\\) =>\\s*\\n?\\s*play\\(`),
         `${nom} est annoncé comme emplacement libre : il doit rester synthétisé`);
     }

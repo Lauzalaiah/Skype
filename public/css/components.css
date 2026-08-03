@@ -51,7 +51,10 @@
 /* ── Menus contextuels ───────────────────────────────────────────────────── */
 .menu {
   position: fixed;
-  z-index: 300;
+  /* Au-dessus de tout ce qui peut l'ouvrir : fenêtre d'appel (450),
+     appel entrant (470), modales (500). Un menu ouvert derrière son
+     déclencheur est un menu inutilisable. */
+  z-index: 520;
   min-width: 200px;
   max-width: 320px;
   padding: 6px;

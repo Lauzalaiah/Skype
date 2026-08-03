@@ -115,9 +115,13 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 - Activation de la caméra à la volée pendant un appel audio
 - Partage d'écran, avec retour automatique à la caméra à l'arrêt
 - Main levée
+- **Mise en attente** : on cesse d'émettre son et image sans quitter l'appel.
+  Les deux côtés l'entendent, la vignette s'estompe et affiche « En attente ».
+  À la reprise, micro et caméra retrouvent l'état qu'ils avaient avant
+  (un micro coupé le reste)
 - Vue grille (jusqu'à 9 participants) ou vue intervenant
 - Détection de la personne qui parle (contour vert)
-- Badges micro coupé / partage d'écran par participant
+- Badges micro coupé / partage d'écran / mise en attente par participant
 - Sous-titres en direct (reconnaissance vocale du navigateur)
 - Liste des participants
 - Pavé numérique DTMF en cours d'appel
@@ -196,9 +200,14 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
   | `Skypecallfailed.mp3` | micro ou caméra inaccessible |
   | `Skypenotification_.mp3` | message texte reçu |
   | `Skypefolderreceived.mp3` | fichier reçu |
-  | `Skypeforwindowsnew.mp3` | fichier ou contact envoyé |
+  | `Skypeforwindowsnew.mp3` | carte de contact envoyée |
   | `Sonnerieskype2.mp3` | appel entrant (3ᵉ sonnerie, au choix) |
   | `Skypevideocall.mp3` | appel entrant (4ᵉ sonnerie, au choix) |
+  | `Skypesonnerie3.mp3` | appel entrant (5ᵉ sonnerie, au choix) |
+  | `Skyperaccroche_.mp3` | raccrochage d'une communication établie |
+  | `Skypepaused.mp3` | appel mis en attente, ou repris |
+  | `Skypesendfolder.mp3` | fichier, image ou GIF envoyé |
+  | `Skypesendfolderfailed.mp3` | l'envoi d'un fichier a échoué |
   | `Skypestartcall.mp3` | l'appel est établi, la communication démarre |
   | `Skypevoicemail.mp3` | réception d'un message vocal |
 
@@ -207,7 +216,7 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
   un son se retrouve branché ailleurs que sur son événement.
   La règle qui décide où va un nouveau son — et la liste des emplacements
   encore vides — est dans [`docs/SONS.md`](SONS.md).
-- Choix parmi quatre sonneries d'appel entrant dans les réglages, avec écoute ;
+- Choix parmi cinq sonneries d'appel entrant dans les réglages, avec écoute ;
   la même sonnerie sert aux appels audio et vidéo
 - Bibliothèque de sons écoutable depuis les réglages
 - Le son de connexion ne retentit qu'à une vraie connexion, pas à chaque

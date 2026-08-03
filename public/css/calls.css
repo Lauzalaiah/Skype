@@ -116,6 +116,23 @@
   backdrop-filter: blur(6px);
 }
 .call-tile__badge--muted { background: rgba(197, 15, 31, 0.85); }
+.call-tile__badge--hold { background: rgba(255, 170, 68, 0.9); color: #201a10; }
+
+/* Mise en attente : la vignette s'estompe, la communication est suspendue. */
+.call-tile.is-held { filter: grayscale(1) brightness(0.55); }
+.call-tile.is-held::before {
+  content: 'En attente';
+  position: absolute;
+  inset: auto 0 42% 0;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #fff;
+  filter: none;
+  z-index: 2;
+}
+.call-screen.is-held .call-screen__timer::after { content: ' · en attente'; opacity: 0.75; }
 .call-tile.is-speaking { outline: 3px solid var(--presence-online); outline-offset: -3px; }
 .call-tile.is-hand::after {
   content: '✋';

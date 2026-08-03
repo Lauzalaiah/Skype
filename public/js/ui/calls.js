@@ -121,6 +121,7 @@ function createSession({ chat, video, stream, outgoing }) {
     muted: false,
     video,
     screen: false,
+    hold: false,
   };
 
   // ── Interface ──────────────────────────────────────────────────────────────
@@ -160,6 +161,14 @@ function createSession({ chat, video, stream, outgoing }) {
       el('span.call-controls__label', { text: label }),
     ]);
     wrapper.button = button;
+    // Renomme la commande partout à la fois : libellé visible, infobulle et
+    // nom accessible. Sans cela, un lecteur d'écran annonce encore « Micro »
+    // alors que le bouton sert désormais à réactiver le son.
+    wrapper.rename = (texte) => {
+      wrapper.querySelector('.call-controls__label').textContent = texte;
+      button.title = texte;
+      button.setAttribute('aria-label', texte);
+    };
     return wrapper;
   };
 
@@ -184,6 +193,7 @@ function createSession({ chat, video, stream, outgoing }) {
             updateStage();
           },
         },
+        { label: self.hold ? 'Reprendre l’appel' : 'Mettre en attente', icon: 'pause', onClick: toggleHold },
         { label: captionsOn ? 'Masquer les sous-titres' : 'Sous-titres en direct', icon: 'translate', onClick: toggleCaptions },
         { label: 'Participants', icon: 'people', onClick: showParticipants },
         { label: 'Discussion pendant l’appel', icon: 'chat', onClick: showCallChat },
@@ -254,8 +264,10 @@ function createSession({ chat, video, stream, outgoing }) {
     tile.placeholder.style.display = hasVideo ? 'none' : '';
     tile.classList.toggle('is-screen', !!info.screen);
     tile.classList.toggle('is-hand', !!info.hand);
+    tile.classList.toggle('is-held', !!info.hold);
 
     clear(tile.badges);
+    if (info.hold) tile.badges.append(el('div.call-tile__badge.call-tile__badge--hold', {}, icon('pause', 'icon icon--sm')));
     if (info.muted) tile.badges.append(el('div.call-tile__badge.call-tile__badge--muted', {}, icon('mic-off', 'icon icon--sm')));
     if (info.screen) tile.badges.append(el('div.call-tile__badge', {}, icon('screen', 'icon icon--sm')));
   }
@@ -318,9 +330,25 @@ function createSession({ chat, video, stream, outgoing }) {
     localStream.getAudioTracks().forEach((track) => (track.enabled = !self.muted));
     micControl.button.classList.toggle('is-off', self.muted);
     micControl.button.replaceChild(icon(self.muted ? 'mic-off' : 'mic', 'icon icon--lg'), micControl.button.firstChild);
-    micControl.querySelector('.call-controls__label').textContent = self.muted ? 'Réactiver' : 'Micro';
+    micControl.rename(self.muted ? 'Réactiver' : 'Micro');
     broadcastState();
     updateTile(state.user.id);
+  }
+
+  /**
+   * Mise en attente : on cesse d'émettre, son et image, sans quitter l'appel.
+   * À la reprise, micro et caméra retrouvent l'état qu'ils avaient avant.
+   */
+  function toggleHold() {
+    self.hold = !self.hold;
+    localStream.getAudioTracks().forEach((track) => (track.enabled = !self.hold && !self.muted));
+    localStream.getVideoTracks().forEach((track) => (track.enabled = !self.hold && self.video));
+    sounds.callHold();
+    screenNode.classList.toggle('is-held', self.hold);
+    toast(self.hold ? 'Appel mis en attente' : 'Appel repris');
+    broadcastState();
+    updateTile(state.user.id);
+    updateStage();
   }
 
   async function toggleVideo() {
@@ -377,7 +405,7 @@ function createSession({ chat, video, stream, outgoing }) {
 
     self.screen = true;
     screenControl.button.classList.add('is-on');
-    screenControl.querySelector('.call-controls__label').textContent = 'Arrêter';
+    screenControl.rename('Arrêter');
     broadcastState();
 
     const tile = tiles.get(state.user.id);
@@ -402,7 +430,7 @@ function createSession({ chat, video, stream, outgoing }) {
     }
 
     screenControl.button.classList.remove('is-on');
-    screenControl.querySelector('.call-controls__label').textContent = 'Partager';
+    screenControl.rename('Partager');
     broadcastState();
 
     const tile = tiles.get(state.user.id);
@@ -531,7 +559,7 @@ function createSession({ chat, video, stream, outgoing }) {
 
   function broadcastState() {
     if (!callId) return;
-    socket.send({ type: 'call:state', callId, state: { muted: self.muted, video: self.video, screen: self.screen, hand: self.hand } });
+    socket.send({ type: 'call:state', callId, state: { muted: self.muted, video: self.video, screen: self.screen, hand: self.hand, hold: self.hold } });
   }
 
   // ── WebRTC ─────────────────────────────────────────────────────────────────
@@ -685,6 +713,8 @@ function createSession({ chat, video, stream, outgoing }) {
     socket.on('call:state', ({ userId, state: peerState }) => {
       const peer = peers.get(userId);
       if (!peer) return;
+      // La mise en attente du correspondant s'entend, comme dans Skype.
+      if (peerState.hold !== undefined && peerState.hold !== peer.state.hold) sounds.callHold();
       Object.assign(peer.state, peerState);
       updateTile(userId);
       updateStage();
