@@ -120,6 +120,10 @@ corresponde à rien — auquel cas il reste non attribué.
 Le pavé numérique (DTMF) reste synthétisé **définitivement** : ce sont des
 fréquences normalisées, qui doivent être générées et non rejouées.
 
+Le bip du service d'écho (`sounds.beep`) reste lui aussi synthétisé
+définitivement, pour la même raison : c'est un signal utilitaire, pas une
+notification Skype à identifier parmi les fichiers d'origine.
+
 ### Deux sons qui révèlent une fonctionnalité manquante
 
 **`Skypepaused`.**

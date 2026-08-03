@@ -160,7 +160,9 @@ describe('Correspondance son ↔ événement', () => {
   test('le son de début d’appel ne sert qu’à l’établissement de la communication', () => {
     assert.match(sons, /export const callConnect = \(\) => sound\('callStart'\);/);
     const points = [...appels.matchAll(/sounds\.callConnect\(\)/g)];
-    assert.ok(points.length >= 1 && points.length <= 3, `callConnect appelé ${points.length} fois`);
+    // Répondre à un appel entrant, un pair WebRTC qui se connecte, le service
+    // d'écho qui « décroche », et un appel téléphonique simulé qui aboutit.
+    assert.equal(points.length, 4, `callConnect appelé ${points.length} fois`);
   });
 
   test('un message vocal reçu a son propre son, distinct du fichier ordinaire', () => {

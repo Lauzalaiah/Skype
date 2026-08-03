@@ -113,6 +113,8 @@ export function createApi(hub) {
     const user = M.createUser(body);
     const token = M.createSession(user.id, ctx.req.headers['user-agent'] || '');
     user.status = user.manualStatus;
+    // Disponible dès l'inscription, comme dans Skype.
+    M.connectToEchoBot(user);
     save();
     return { token, user: M.publicUser(user, user.id) };
   });

@@ -68,6 +68,9 @@ for (const a of all) {
     if (a.id !== b.id && !a.contacts.includes(b.id)) a.contacts.push(b.id);
   }
 }
+
+// Service d'écho (test du micro), disponible pour tout le monde dès le départ.
+for (const user of all) M.connectToEchoBot(user);
 users['camille.durand'].favorites = [users['mamie.jeanne'].id, users['thomas.leroy'].id];
 
 // ── Conversations ─────────────────────────────────────────────────────────────

@@ -498,6 +498,9 @@ export const callHold = () => sound('callHold');
 
 export const error = () => play([{ freq: 220, duration: 0.22, gain: 0.18, type: 'sawtooth', sweepTo: 160 }]);
 
+/** Bip du service d'écho, avant l'enregistrement. */
+export const beep = () => play([{ freq: 1000, duration: 0.3, gain: 0.22 }]);
+
 // ── Sonneries (en boucle) ─────────────────────────────────────────────────────
 
 /** Sonneries proposées à l'utilisateur dans les réglages. */

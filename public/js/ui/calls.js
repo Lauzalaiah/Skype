@@ -27,6 +27,12 @@ export async function startCall(chat, { video = false, join = null } = {}) {
     return;
   }
 
+  // Le service d'écho ne décroche jamais réellement à l'autre bout : c'est un
+  // test local du micro et des haut-parleurs, pas un appel vers un pair.
+  if (!join && otherMember(chat)?.isBot) {
+    return startEchoTest(chat);
+  }
+
   const media = await acquireMedia({ video });
   if (!media) return;
 
@@ -98,6 +104,139 @@ async function acquireMedia({ video }) {
     toast('Micro ou caméra inaccessible. Vérifiez les autorisations du navigateur.', { type: 'error' });
     return null;
   }
+}
+
+// ── Service d'écho (test du micro) ──────────────────────────────────────────
+//
+// Contact « echo123 » : il décroche instantanément et renvoie la voix de
+// l'utilisateur, comme le faisait historiquement Skype. Personne ne répond
+// réellement à l'autre bout — tout se joue en local, dans le navigateur —
+// donc aucune signalisation WebRTC n'est utilisée ici.
+
+function startEchoTest(chat) {
+  const bot = otherMember(chat);
+  const stream = { current: null };
+  let audioCtx = null;
+  let source = null;
+  let delay = null;
+  let boucle = null;
+  let muted = false;
+  let startedAt = null;
+  let timerInterval = null;
+
+  const timerLabel = el('span.call-screen__timer', { text: 'Connexion…' });
+  const titleLabel = el('span.call-screen__title', { text: bot?.displayName || 'Echo / Test de son' });
+  const statusLabel = el('p.echo-test__status', { text: 'Connexion au service d’écho…' });
+
+  const micIcon = icon('mic', 'icon icon--lg');
+  const micButton = el('button.icon-btn', {
+    title: 'Micro', 'aria-label': 'Micro',
+    onclick: () => toggleMute(),
+  }, micIcon);
+  const micLabel = el('span.call-controls__label', { text: 'Micro' });
+
+  const hangupButton = el('button.icon-btn', { title: 'Raccrocher', 'aria-label': 'Raccrocher', onclick: () => hangup() }, icon('hangup'));
+
+  const controls = el('div.call-controls', {}, [
+    el('div.call-control', {}, [micButton, micLabel]),
+    el('div.call-control.call-control--hangup', {}, [hangupButton, el('span.call-controls__label', { text: 'Raccrocher' })]),
+  ]);
+
+  const tile = el('div.call-tile', {}, [
+    avatar(bot, { size: 'xl', presence: false }),
+    el('div.echo-test__caption', {}, [statusLabel]),
+  ]);
+  const stage = el('div.call-stage', { dataset: { count: '1' } }, [tile]);
+
+  const screenNode = el('div.call-screen', {}, [
+    el('div.call-screen__header', {}, [
+      el('button.icon-btn', { style: { color: '#fff' }, title: 'Réduire', 'aria-label': 'Réduire', onclick: () => screenNode.classList.toggle('is-minimized') }, icon('minimize')),
+      el('div', {}, [titleLabel, el('div', {}, timerLabel)]),
+      el('span.spacer'),
+    ]),
+    stage,
+    controls,
+  ]);
+
+  function renommerMicro(texte) {
+    micButton.title = texte;
+    micButton.setAttribute('aria-label', texte);
+    micLabel.textContent = texte;
+  }
+
+  function toggleMute() {
+    muted = !muted;
+    stream.current?.getAudioTracks().forEach((t) => (t.enabled = !muted));
+    micButton.classList.toggle('is-off', muted);
+    micButton.replaceChild(icon(muted ? 'mic-off' : 'mic', 'icon icon--lg'), micButton.firstChild);
+    renommerMicro(muted ? 'Réactiver' : 'Micro');
+  }
+
+  function parler(texte, onFin) {
+    if (!('speechSynthesis' in window)) {
+      onFin?.();
+      return;
+    }
+    try {
+      const dit = new SpeechSynthesisUtterance(texte);
+      dit.lang = 'fr-FR';
+      dit.onend = onFin;
+      dit.onerror = onFin;
+      speechSynthesis.speak(dit);
+    } catch {
+      onFin?.();
+    }
+  }
+
+  function demarrerBoucle() {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    source = audioCtx.createMediaStreamSource(stream.current);
+    delay = audioCtx.createDelay(1.5);
+    delay.delayTime.value = 0.6;         // le décalage rend l'écho reconnaissable
+    boucle = audioCtx.createGain();
+    boucle.gain.value = 0.9;
+    source.connect(delay).connect(boucle).connect(audioCtx.destination);
+  }
+
+  function connecter() {
+    startedAt = Date.now();
+    sounds.callConnect();
+    statusLabel.textContent = 'Parlez après le bip : vous devez vous entendre, avec un léger décalage.';
+    timerInterval = setInterval(() => {
+      timerLabel.textContent = formatDuration((Date.now() - startedAt) / 1000);
+    }, 1000);
+    parler(
+      'Bienvenue au service d’écho de Skype. Après le bip, parlez, puis écoutez : vous devez vous entendre. Raccrochez quand vous avez terminé.',
+      () => {
+        sounds.beep();
+        demarrerBoucle();
+      }
+    );
+  }
+
+  function hangup() {
+    clearInterval(timerInterval);
+    try { speechSynthesis.cancel(); } catch { /* indisponible */ }
+    try { source?.disconnect(); delay?.disconnect(); boucle?.disconnect(); } catch { /* déjà déconnecté */ }
+    audioCtx?.close().catch(() => {});
+    stream.current?.getTracks().forEach((t) => t.stop());
+    sounds.callEnd();
+    screenNode.remove();
+    session = null;
+  }
+
+  session = {
+    callId: null,
+    hangup,
+    async render() {
+      document.getElementById('overlays').append(screenNode);
+      const media = await acquireMedia({ video: false });
+      if (!media) { hangup(); return; }
+      stream.current = media;
+      setTimeout(connecter, 500);      // décroche « instantanément », avec un court temps de connexion perceptible
+    },
+  };
+  session.render();
 }
 
 // ── Session d'appel ───────────────────────────────────────────────────────────

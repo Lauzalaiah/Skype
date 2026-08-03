@@ -108,6 +108,85 @@ export function createUser({ skypeName, displayName, password, email = '', avata
   return user;
 }
 
+// ── Service d'écho (test du micro) ──────────────────────────────────────────
+//
+// Contact spécial, permanent, identifié par un identifiant fixe : « appeler
+// echo123 » pour tester son micro et ses haut-parleurs est une fonctionnalité
+// historique de Skype. L'appel lui-même ne passe jamais par la signalisation
+// WebRTC normale — il est traité entièrement côté client (voir calls.js) — ce
+// contact n'existe ici que pour être cherchable, affiché, et pour porter un
+// message d'accueil dans sa conversation.
+
+export const ECHO_BOT_ID = 'bot_echo123';
+
+export function ensureEchoBot() {
+  let bot = db.users[ECHO_BOT_ID];
+  if (bot) return bot;
+
+  bot = {
+    id: ECHO_BOT_ID,
+    skypeName: 'echo123',
+    displayName: 'Echo / Test de son',
+    email: '',
+    passwordHash: null,
+    passwordSalt: null,
+    avatar: 'data:image/svg+xml;utf8,' + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">'
+      + '<rect width="96" height="96" rx="48" fill="#5B5FC7"/>'
+      + '<path d="M30 44a18 18 0 0136 0M38 44a10 10 0 0120 0M48 44v14m-6 6h12" '
+      + 'stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/></svg>'
+    ),
+    mood: 'Appelez-moi pour tester votre micro',
+    status: 'online',
+    manualStatus: 'online',
+    lastSeen: Date.now(),
+    about: 'Service automatisé : je réponds instantanément et vous renvoie votre voix, pour vérifier que votre micro et vos haut-parleurs fonctionnent.',
+    birthday: null,
+    country: '',
+    city: '',
+    phone: '',
+    website: '',
+    credit: 0,
+    skypeNumber: null,
+    contacts: [],
+    favorites: [],
+    blocked: [],
+    pinnedChats: [],
+    mutedChats: [],
+    archivedChats: [],
+    unreadOverride: [],
+    bookmarks: [],
+    drafts: {},
+    settings: structuredClone(DEFAULT_SETTINGS),
+    createdAt: Date.now(),
+    isBot: true,
+  };
+  db.users[bot.id] = bot;
+  save();
+  return bot;
+}
+
+/**
+ * Ajoute le service d'écho aux contacts d'un utilisateur et prépare sa
+ * conversation, avec un message d'accueil s'il n'en a pas déjà un. Appelé à
+ * l'inscription, pour que le contact soit immédiatement disponible — comme
+ * il l'était réellement dans Skype.
+ */
+export function connectToEchoBot(user) {
+  const bot = ensureEchoBot();
+  if (!user.contacts.includes(bot.id)) user.contacts.push(bot.id);
+  if (!bot.contacts.includes(user.id)) bot.contacts.push(user.id);
+
+  const chat = getOrCreateDirectChat(user.id, bot.id);
+  if (!db.messages[chat.id]?.length) {
+    addMessage(chat.id, bot.id, {
+      content: 'Bonjour ! Appelez-moi pour tester votre micro et vos haut-parleurs : je réponds tout de suite et vous renvoie votre voix.',
+    });
+  }
+  save();
+  return chat;
+}
+
 export const findUserByName = (name) =>
   Object.values(db.users).find((u) => u.skypeName === String(name).trim().toLowerCase());
 
@@ -116,7 +195,8 @@ export const findUserByEmail = (email) =>
 
 export function authenticate(identifier, password) {
   const user = findUserByName(identifier) || findUserByEmail(identifier);
-  if (!user || !verifyPassword(password, user.passwordHash, user.passwordSalt)) {
+  // Le service d'écho n'a pas de mot de passe : il ne se connecte jamais lui-même.
+  if (!user || user.isBot || !verifyPassword(password, user.passwordHash, user.passwordSalt)) {
     throw httpError(401, 'Pseudo Skype ou mot de passe incorrect.');
   }
   return user;
@@ -160,6 +240,7 @@ export function publicUser(user, viewerId = null) {
     email: isSelf ? user.email : '',
     website: user.website,
     skypeNumber: user.skypeNumber,
+    isBot: !!user.isBot,
     ...(isSelf ? { credit: user.credit, settings: user.settings, drafts: user.drafts } : {}),
   };
 }

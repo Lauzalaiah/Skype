@@ -155,15 +155,19 @@ describe('Contacts', () => {
     });
     assert.equal(accepted.data.request.status, 'accepted');
 
+    // Chaque compte a aussi le service d'écho parmi ses contacts dès
+    // l'inscription (voir « Service d'écho ») : on ne compte que les humains.
     const contacts = await call('GET', '/api/contacts', { token: users.alice.token });
-    assert.equal(contacts.data.contacts.length, 1);
-    assert.equal(contacts.data.contacts[0].id, bob.id);
+    const humains = contacts.data.contacts.filter((c) => !c.isBot);
+    assert.equal(humains.length, 1);
+    assert.equal(humains[0].id, bob.id);
   });
 
   test('crée automatiquement la conversation à l’acceptation', async () => {
     const { data } = await call('GET', '/api/chats', { token: users.alice.token });
-    assert.equal(data.chats.length, 1);
-    assert.equal(data.chats[0].type, 'direct');
+    const humains = data.chats.filter((c) => !c.members.some((m) => m.user?.isBot));
+    assert.equal(humains.length, 1);
+    assert.equal(humains[0].type, 'direct');
   });
 
   test('trouve un utilisateur par recherche', async () => {
@@ -506,6 +510,44 @@ describe('Fichiers', () => {
   test('refuse le téléchargement sans authentification', async () => {
     const response = await fetch(`${BASE}/api/files/inexistant`);
     assert.equal(response.status, 401);
+  });
+});
+
+describe('Service d’écho (test du micro)', () => {
+  test('le contact echo123 est proposé dès l’inscription', async () => {
+    const denise = await createUser('denise', 'denise');
+    const { data } = await call('GET', '/api/contacts', { token: denise.token });
+    const bot = data.contacts.find((c) => c.isBot);
+    assert.ok(bot, 'aucun contact marqué isBot après l’inscription');
+    assert.equal(bot.skypeName, 'echo123');
+  });
+
+  test('sa conversation contient un message d’accueil', async () => {
+    const { data: contacts } = await call('GET', '/api/contacts', { token: users.denise.token });
+    const bot = contacts.contacts.find((c) => c.isBot);
+
+    const { data: chats } = await call('GET', '/api/chats', { token: users.denise.token });
+    const chat = chats.chats.find((c) => c.members.some((m) => m.userId === bot.id));
+    assert.ok(chat, 'aucune conversation avec le service d’écho');
+
+    const { data: messages } = await call('GET', `/api/chats/${chat.id}/messages`, { token: users.denise.token });
+    assert.equal(messages.messages.length, 1);
+    assert.equal(messages.messages[0].senderId, bot.id);
+    assert.match(messages.messages[0].content, /tester votre micro/i);
+  });
+
+  test('le pseudo echo123 ne peut pas être pris à l’inscription', async () => {
+    const { status, data } = await call('POST', '/api/auth/signup', {
+      body: { skypeName: 'echo123', displayName: 'Imposteur', password: 'motdepasse123' },
+    });
+    assert.equal(status, 409, JSON.stringify(data));
+  });
+
+  test('le service d’écho ne peut pas se connecter (il n’a pas de mot de passe)', async () => {
+    const { status } = await call('POST', '/api/auth/signin', {
+      body: { identifier: 'echo123', password: '' },
+    });
+    assert.equal(status, 401);
   });
 });
 

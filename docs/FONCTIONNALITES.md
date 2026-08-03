@@ -35,6 +35,8 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 
 ## 3. Contacts
 
+- Le service d'écho (« echo123 ») est ajouté automatiquement à l'inscription,
+  avec sa conversation et un message d'accueil — voir section Appels
 - Recherche par pseudo, nom complet, e-mail ou numéro de téléphone
 - Envoi d'une demande de contact avec message d'accompagnement
 - Acceptation ou refus des demandes
@@ -103,6 +105,15 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 
 ## 7. Appels
 
+- **Service d'écho — test du micro** : le contact « echo123 » est proposé dès
+  l'inscription, avec un message d'accueil. L'appeler décroche instantanément,
+  fait entendre un message d'accueil (synthèse vocale locale), un bip, puis
+  renvoie la voix de l'utilisateur avec un léger décalage — de quoi vérifier
+  micro et haut-parleurs avant un vrai appel, exactement comme dans Skype.
+  Ne passe par aucune signalisation WebRTC : personne ne répond réellement à
+  l'autre bout, tout se joue dans le navigateur
+- Coupure/réactivation du micro en cours d'appel, y compris pendant le test
+  avec le service d'écho
 - Appels audio et vidéo en tête-à-tête
 - Appels de groupe (maillage WebRTC complet)
 - Sonnerie entrante avec la mélodie caractéristique de Skype
