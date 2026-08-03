@@ -1,0 +1,182 @@
+/**
+ * Le site de téléchargement est la première chose que verra quelqu'un qui
+ * cherche « revenir sur Skype ». Deux catégories d'erreurs y seraient graves :
+ *
+ *  - laisser croire à un retour officiel de Skype (c'est un projet de fan) ;
+ *  - proposer un bouton de téléchargement qui ne mène nulle part.
+ *
+ * Ces tests verrouillent les deux, plus la cohérence entre ce que le workflow
+ * publie et ce que la page va chercher.
+ */
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.join(__dirname, '..');
+const lire = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
+
+const site = lire('docs/index.html');
+const workflow = lire('.github/workflows/release.yml');
+const paquet = JSON.parse(lire('package.json'));
+
+const DEPOT = 'Lauzalaiah/Skype';
+
+describe('Site de téléchargement — honnêteté', () => {
+  test('la mention « projet de fan, non officiel » précède tout le reste', () => {
+    assert.match(site, /Projet de fan, non officiel/);
+    assert.ok(site.indexOf('Projet de fan, non officiel') < site.indexOf('<header>'),
+      'la mention doit être visible avant l’en-tête, pas reléguée en bas');
+  });
+
+  test('l’absence de lien avec Microsoft est dite explicitement', () => {
+    assert.match(site, /Aucun lien\s+avec Microsoft|sans lien avec Microsoft/i);
+    assert.match(site, /marque de Microsoft/i,
+      'l’usage nominatif de la marque doit être précisé');
+    assert.match(site, /ni développé, ni soutenu, ni approuvé par Microsoft/i,
+      'la mention légale du pied de page a disparu');
+  });
+
+  test('la page n’annonce pas un retour officiel de Skype', () => {
+    const interdits = [
+      /Skype est de retour/i,
+      /Skype revient/i,
+      /le retour officiel/i,
+      /Microsoft relance/i,
+      /officiellement de retour/i,
+      /version officielle/i,
+    ];
+    for (const motif of interdits) {
+      assert.doesNotMatch(site, motif, `formulation trompeuse : ${motif}`);
+    }
+  });
+
+  test('aucun avis ni témoignage inventés', () => {
+    assert.doesNotMatch(site, /★/, 'des notes en étoiles laissent croire à de vrais avis');
+    assert.doesNotMatch(site, /téléchargements? (?:déjà )?\d/i,
+      'aucun compteur de téléchargements inventé');
+  });
+
+  test('les conversations illustrées sont signalées comme fictives', () => {
+    assert.match(site, /comptes de démonstration/i);
+  });
+
+  test('l’absence de signature est annoncée, pas cachée', () => {
+    assert.match(site, /SmartScreen|Windows a protégé votre ordinateur/,
+      'le visiteur doit savoir à quoi s’attendre en ouvrant le fichier');
+    assert.match(site, /Exécuter quand même/);
+  });
+
+  test('la page ne promet pas d’appels réels vers des téléphones', () => {
+    assert.match(site, /aucun paiement réel/i);
+    assert.match(site, /aucun appel\s+n'est réellement passé/i);
+  });
+});
+
+describe('Site de téléchargement — liens et cohérence', () => {
+  test('tous les liens GitHub visent le bon dépôt', () => {
+    const liens = site.match(/https:\/\/github\.com\/[\w.-]+\/[\w.-]+/g) || [];
+    assert.ok(liens.length >= 5, 'la page doit renvoyer vers le dépôt');
+    for (const lien of liens) {
+      assert.equal(lien, `https://github.com/${DEPOT}`, `dépôt inattendu : ${lien}`);
+    }
+  });
+
+  test('aucun lien ne pointe vers une branche « main » qui n’existe pas', () => {
+    assert.doesNotMatch(site, /\/blob\/main\//,
+      'la branche par défaut du dépôt n’est pas « main » : utiliser /blob/HEAD/');
+    const fichiers = site.match(/\/blob\/HEAD\/([\w./-]+)/g) || [];
+    assert.ok(fichiers.length >= 3, 'les liens vers la documentation ont disparu');
+    for (const lien of fichiers) {
+      const chemin = lien.replace('/blob/HEAD/', '');
+      assert.ok(fs.existsSync(path.join(ROOT, chemin)), `fichier lié absent : ${chemin}`);
+    }
+  });
+
+  test('la version affichée est celle du projet', () => {
+    assert.match(site, new RegExp(`const VERSION = '${paquet.version.replace(/\./g, '\\.')}'`),
+      'la constante VERSION du site a divergé de package.json');
+    const desktop = JSON.parse(lire('desktop/package.json'));
+    assert.equal(desktop.version, paquet.version,
+      'l’enveloppe de bureau et le projet doivent porter le même numéro');
+  });
+
+  test('les boutons ont toujours une destination valide avant tout appel réseau', () => {
+    // Chaque bouton de téléchargement est écrit dans le HTML avec la page des
+    // versions comme destination : si l'API GitHub ne répond pas, on atterrit
+    // sur une page réelle plutôt que sur un lien mort.
+    const boutons = site.match(/data-role="lien" href="([^"]+)"/g) || [];
+    assert.equal(boutons.length, 3, 'trois systèmes doivent être proposés');
+    for (const bouton of boutons) {
+      assert.match(bouton, new RegExp(`https://github\\.com/${DEPOT}/releases`));
+    }
+    assert.match(site, /id="btnPrincipal"[\s\S]{0,120}releases/,
+      'le bouton principal doit aussi avoir une destination de repli');
+  });
+
+  test('l’absence de version publiée est annoncée au visiteur', () => {
+    assert.match(site, /id="avertissementIndispo"/);
+    assert.match(site, /ne sont pas encore publiés/i);
+    assert.match(site, /avertissementIndispo'\)\.hidden = false/,
+      'l’avertissement doit être révélé quand l’API ne renvoie aucun fichier');
+  });
+
+  test('la page est autonome : aucune ressource tierce chargée', () => {
+    assert.doesNotMatch(site, /<script[^>]+src=/i, 'aucun script externe');
+    assert.doesNotMatch(site, /<link[^>]+stylesheet/i, 'aucune feuille de style externe');
+    const distants = site.match(/https?:\/\/(?!github\.com|api\.github\.com|www\.w3\.org|localhost)[\w.-]+/g) || [];
+    assert.deepEqual(distants, [], `ressource distante inattendue : ${distants.join(', ')}`);
+  });
+
+  test('GitHub Pages ne passera pas la page à Jekyll', () => {
+    assert.ok(fs.existsSync(path.join(ROOT, 'docs/.nojekyll')),
+      'docs/.nojekyll est nécessaire pour servir le HTML tel quel');
+  });
+});
+
+describe('Publication des fichiers téléchargeables', () => {
+  test('le workflow construit les trois systèmes', () => {
+    for (const systeme of ['windows-latest', 'macos-latest', 'ubuntu-latest']) {
+      assert.ok(workflow.includes(systeme), `exécuteur manquant : ${systeme}`);
+    }
+    for (const cible of ['build:win', 'build:mac', 'build:linux']) {
+      assert.ok(workflow.includes(cible), `cible manquante : ${cible}`);
+    }
+  });
+
+  test('ce que le workflow publie est ce que la page cherche', () => {
+    // Le lien entre les deux fichiers : si l'un change d'extension sans
+    // l'autre, la page proposera un bouton vide sans que rien ne le signale.
+    for (const [extension, motif] of [
+      ['exe', /\/\\\.exe\$\/i/],
+      ['dmg', /\/\\\.dmg\$\/i/],
+      ['AppImage', /\/\\\.AppImage\$\/i/],
+    ]) {
+      assert.ok(workflow.includes(`*.${extension}`), `le workflow ne publie pas de .${extension}`);
+      assert.match(site, motif, `la page ne sait pas reconnaître un .${extension}`);
+    }
+  });
+
+  test('les empreintes SHA-256 sont produites puis affichées', () => {
+    assert.match(workflow, /sha256sum \* > SHA256SUMS\.txt/);
+    assert.match(site, /SHA256SUMS/i, 'la page doit aller chercher le fichier d’empreintes');
+  });
+
+  test('les notes de version portent la mention de projet de fan', () => {
+    assert.match(workflow, /Projet de fan, non officiel/);
+    assert.match(workflow, /ne sont pas signés/i,
+      'les notes doivent prévenir que les fichiers ne sont pas signés');
+  });
+
+  test('la publication ne part jamais sans que les tests soient passés', () => {
+    assert.match(workflow, /needs: \[verifier, construire\]/);
+    assert.match(workflow, /needs: verifier/);
+    assert.match(workflow, /run: npm test/);
+  });
+
+  test('une nouvelle publication remplace les fichiers au lieu d’échouer', () => {
+    assert.match(workflow, /gh release upload "\$TAG" publication\/\* --clobber/);
+  });
+});

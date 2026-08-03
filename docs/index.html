@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Télécharger Skype Reborn — l'ancien Skype, reconstruit par un fan</title>
+<meta name="description" content="Téléchargez Skype Reborn pour Windows, macOS et Linux. Recréation indépendante de l'ancien Skype, sans aucun lien avec Microsoft. Gratuit, sans publicité, code source ouvert." />
+<meta name="theme-color" content="#00AFF0" />
+<meta property="og:title" content="Télécharger Skype Reborn" />
+<meta property="og:description" content="L'ancien Skype, reconstruit de zéro par un fan. Windows, macOS, Linux. Projet indépendant, sans lien avec Microsoft." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%2300AFF0'/%3E%3Ctext x='16' y='23' font-family='Segoe UI,Arial' font-size='19' font-weight='700' fill='white' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E" />
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --blue: #00AFF0;
+    --blue-dark: #0078A8;
+    --blue-deep: #003C55;
+    --ink: #0F1C24;
+    --ink-soft: #47606E;
+    --paper: #ffffff;
+    --mist: #F2FAFE;
+    --line: rgba(0, 60, 85, .13);
+    --green: #6BB700;
+    --amber: #B26B00;
+    --radius: 18px;
+    --font: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Roboto, Arial, sans-serif;
+    --mono: 'Cascadia Mono', Consolas, 'SF Mono', Menlo, monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    color: var(--ink);
+    background: var(--paper);
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3 { line-height: 1.12; margin: 0; letter-spacing: -.025em; font-weight: 700; }
+  p { margin: 0; }
+  img, svg { display: block; max-width: 100%; }
+  a { color: inherit; }
+  code, kbd { font-family: var(--mono); font-size: .92em; }
+
+  .wrap { width: min(1080px, 92vw); margin-inline: auto; }
+  .center { text-align: center; }
+  section { padding: 74px 0; }
+  .tint { background: var(--mist); border-block: 1px solid var(--line); }
+
+  .section__head { max-width: 660px; margin: 0 auto 42px; text-align: center; }
+  .section__head h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
+  .section__head p { color: var(--ink-soft); margin-top: 14px; font-size: 1.04rem; }
+
+  /* ── Boutons ─────────────────────────────────────────────────────── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 11px;
+    padding: 15px 30px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    font-family: inherit; font-size: 1.02rem; font-weight: 700;
+    text-decoration: none; cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .btn--primary { background: var(--blue); color: #fff; box-shadow: 0 10px 30px rgba(0, 175, 240, .36); }
+  .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0, 175, 240, .48); }
+  .btn--dark { background: var(--ink); color: #fff; }
+  .btn--dark:hover { transform: translateY(-2px); }
+  .btn--line { border-color: var(--line); color: var(--ink); background: #fff; }
+  .btn--line:hover { border-color: var(--blue); color: var(--blue-dark); }
+  .btn--big { padding: 19px 42px; font-size: 1.14rem; }
+
+  /* ── Bandeau de clarification ────────────────────────────────────── */
+  .avis {
+    background: var(--blue-deep); color: rgba(255, 255, 255, .93);
+    font-size: .86rem; line-height: 1.5;
+  }
+  .avis__inner { padding: 11px 0; }
+  .avis strong { color: #fff; }
+
+  /* ── En-tête ─────────────────────────────────────────────────────── */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(14px);
+    background: rgba(255, 255, 255, .86);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { display: flex; align-items: center; gap: 14px; padding: 13px 0; }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 300; text-decoration: none; }
+  .logo__mark {
+    width: 33px; height: 33px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+    color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 17px;
+  }
+  .logo em { font-style: normal; font-weight: 600; opacity: .55; font-size: .62em; letter-spacing: .04em; text-transform: uppercase; }
+  .nav__links { display: flex; gap: 24px; margin-left: auto; font-size: .93rem; font-weight: 600; }
+  .nav__links a { text-decoration: none; color: var(--ink-soft); transition: color .15s; }
+  .nav__links a:hover { color: var(--blue); }
+  @media (max-width: 900px) { .nav__links { display: none; } .nav .btn { margin-left: auto; } }
+
+  /* ── Héros ───────────────────────────────────────────────────────── */
+  .hero {
+    padding: 76px 0 84px;
+    background:
+      radial-gradient(1000px 520px at 12% -10%, rgba(0, 175, 240, .28), transparent 62%),
+      radial-gradient(760px 440px at 104% 10%, rgba(0, 175, 240, .16), transparent 60%),
+      linear-gradient(180deg, #fff 0%, var(--mist) 100%);
+  }
+  .hero__grid { display: grid; grid-template-columns: 1.02fr .98fr; gap: 54px; align-items: center; }
+  @media (max-width: 940px) { .hero__grid { grid-template-columns: 1fr; gap: 40px; } }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 7px 16px; border-radius: 999px;
+    background: rgba(0, 175, 240, .12); color: var(--blue-dark);
+    font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em;
+    margin-bottom: 20px;
+  }
+  .eyebrow__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+  .hero h1 { font-size: clamp(2.4rem, 5.6vw, 3.9rem); }
+  .hero h1 em { font-style: normal; color: var(--blue); }
+  .hero__lead { font-size: clamp(1.02rem, 2vw, 1.22rem); color: var(--ink-soft); margin-top: 20px; max-width: 38ch; }
+
+  .telecharger { margin-top: 32px; }
+  .telecharger__cta { display: flex; flex-wrap: wrap; gap: 13px; align-items: center; }
+  .telecharger__meta { margin-top: 15px; font-size: .88rem; color: var(--ink-soft); }
+  .telecharger__meta b { color: var(--ink); font-weight: 600; }
+  .telecharger__meta .sep { opacity: .4; margin: 0 8px; }
+  .telecharger__alt { margin-top: 9px; font-size: .88rem; }
+  .telecharger__alt a { color: var(--blue-dark); font-weight: 600; }
+
+  .indispo {
+    margin-top: 18px; padding: 14px 18px;
+    border: 1px solid rgba(178, 107, 0, .3); background: rgba(255, 184, 77, .12);
+    border-radius: 13px; font-size: .9rem; color: var(--amber);
+  }
+  .indispo a { color: inherit; font-weight: 700; }
+  [hidden] { display: none !important; }
+
+  /* ── Fenêtre illustrée ───────────────────────────────────────────── */
+  .mock {
+    border-radius: 14px; overflow: hidden;
+    box-shadow: 0 34px 80px rgba(0, 60, 85, .26);
+    border: 1px solid rgba(0, 60, 85, .13);
+    background: #fff;
+  }
+  .mock__bar { display: flex; align-items: center; gap: 7px; padding: 10px 13px; background: #F6F8FA; border-bottom: 1px solid var(--line); }
+  .mock__dot { width: 11px; height: 11px; border-radius: 50%; }
+  .mock__title { margin-left: 10px; font-size: .76rem; color: var(--ink-soft); font-weight: 600; }
+  .mock__body { display: grid; grid-template-columns: 38% 62%; min-height: 300px; }
+  .mock__side { background: var(--blue); padding: 13px 11px; display: grid; gap: 9px; align-content: start; }
+  .mock__contact { display: flex; gap: 9px; align-items: center; padding: 7px; border-radius: 9px; background: rgba(255, 255, 255, .13); }
+  .mock__ava { width: 26px; height: 26px; border-radius: 50%; flex: none; }
+  .mock__lines { display: grid; gap: 5px; flex: 1; }
+  .mock__line { height: 5px; border-radius: 3px; background: rgba(255, 255, 255, .55); }
+  .mock__chat { padding: 17px; display: grid; gap: 10px; align-content: start; background: #fff; }
+  .bubble { max-width: 82%; padding: 9px 13px; border-radius: 13px; font-size: .8rem; }
+  .bubble--in { background: #EEF3F6; border-bottom-left-radius: 4px; }
+  .bubble--out { background: var(--blue); color: #fff; justify-self: end; border-bottom-right-radius: 4px; }
+
+  /* ── Cartes plateformes ──────────────────────────────────────────── */
+  .plateformes { display: grid; grid-template-columns: repeat(auto-fit, minmax(238px, 1fr)); gap: 20px; }
+  .plateforme {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 26px 24px; display: flex; flex-direction: column; gap: 11px;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .plateforme:hover { transform: translateY(-3px); box-shadow: 0 18px 44px rgba(0, 60, 85, .11); border-color: rgba(0, 175, 240, .4); }
+  .plateforme__icone { font-size: 1.9rem; line-height: 1; }
+  .plateforme h3 { font-size: 1.18rem; }
+  .plateforme__desc { color: var(--ink-soft); font-size: .92rem; flex: 1; }
+  .plateforme__fichier { font-family: var(--mono); font-size: .76rem; color: var(--ink-soft); word-break: break-all; }
+  .plateforme .btn { width: 100%; padding: 12px 18px; font-size: .95rem; }
+  .plateforme--vedette { border-color: var(--blue); box-shadow: 0 14px 40px rgba(0, 175, 240, .16); }
+  .badge {
+    align-self: flex-start; padding: 4px 11px; border-radius: 999px;
+    font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+    background: rgba(0, 175, 240, .13); color: var(--blue-dark);
+  }
+  .badge--gris { background: rgba(71, 96, 110, .12); color: var(--ink-soft); }
+
+  /* ── Étapes ──────────────────────────────────────────────────────── */
+  .etapes { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; counter-reset: etape; }
+  .etape { position: relative; padding-left: 56px; }
+  .etape::before {
+    counter-increment: etape; content: counter(etape);
+    position: absolute; left: 0; top: 0;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--blue); color: #fff;
+    display: grid; place-items: center; font-weight: 700; font-size: 1.05rem;
+  }
+  .etape h3 { font-size: 1.1rem; margin-bottom: 7px; }
+  .etape p { color: var(--ink-soft); font-size: .94rem; }
+
+  .encart {
+    margin-top: 34px; padding: 22px 26px;
+    background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--blue);
+    border-radius: 12px;
+  }
+  .encart h3 { font-size: 1.06rem; margin-bottom: 8px; }
+  .encart p { color: var(--ink-soft); font-size: .94rem; }
+  .encart p + p { margin-top: 9px; }
+
+  /* ── Ce que vous installez ───────────────────────────────────────── */
+  .points { display: grid; grid-template-columns: repeat(auto-fit, minmax(268px, 1fr)); gap: 26px 34px; }
+  .point { display: flex; gap: 14px; }
+  .point__tick {
+    flex: none; width: 26px; height: 26px; border-radius: 50%;
+    background: rgba(107, 183, 0, .15); color: #4C8300;
+    display: grid; place-items: center; font-size: .82rem; font-weight: 700;
+  }
+  .point h3 { font-size: 1.02rem; margin-bottom: 5px; }
+  .point p { color: var(--ink-soft); font-size: .92rem; }
+
+  /* ── Empreintes ──────────────────────────────────────────────────── */
+  .empreintes {
+    background: var(--ink); color: rgba(255, 255, 255, .88);
+    border-radius: var(--radius); padding: 24px 26px;
+    font-family: var(--mono); font-size: .82rem;
+    overflow-x: auto;
+  }
+  .empreintes__ligne { white-space: nowrap; }
+  .empreintes__ligne + .empreintes__ligne { margin-top: 7px; }
+  .empreintes b { color: var(--blue); font-weight: 600; }
+
+  /* ── FAQ ─────────────────────────────────────────────────────────── */
+  .faq { max-width: 780px; margin-inline: auto; display: grid; gap: 12px; }
+  details {
+    background: #fff; border: 1px solid var(--line); border-radius: 13px;
+    padding: 17px 22px;
+  }
+  details[open] { border-color: rgba(0, 175, 240, .45); }
+  summary { cursor: pointer; font-weight: 700; font-size: 1.02rem; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; float: right; color: var(--blue); font-size: 1.3rem; line-height: 1; }
+  details[open] summary::after { content: '−'; }
+  details p { color: var(--ink-soft); font-size: .95rem; margin-top: 11px; }
+  details p + p { margin-top: 9px; }
+
+  /* ── Pied de page ────────────────────────────────────────────────── */
+  footer { background: var(--ink); color: rgba(255, 255, 255, .72); padding: 52px 0 40px; font-size: .9rem; }
+  .footer__grid { display: flex; flex-wrap: wrap; gap: 26px; align-items: flex-start; justify-content: space-between; }
+  .footer__links { display: flex; flex-wrap: wrap; gap: 20px; font-weight: 600; }
+  .footer__links a { color: rgba(255, 255, 255, .8); text-decoration: none; }
+  .footer__links a:hover { color: #fff; }
+  .footer__legal { margin-top: 30px; padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, .13); font-size: .82rem; line-height: 1.7; opacity: .78; max-width: 76ch; }
+</style>
+</head>
+<body>
+
+<!-- Bandeau de clarification : visible avant toute autre chose. -->
+<div class="avis">
+  <div class="wrap avis__inner">
+    <strong>Projet de fan, non officiel.</strong>
+    Skype Reborn est une recréation indépendante réalisée par passion. Aucun lien
+    avec Microsoft ni avec les équipes de Skype, et aucune affiliation. « Skype »
+    est une marque de Microsoft, citée ici pour désigner le logiciel d'origine.
+  </div>
+</div>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#top"><span class="logo__mark">S</span> Skype <em>Reborn</em></a>
+    <nav class="nav__links">
+      <a href="#plateformes">Plateformes</a>
+      <a href="#installer">Installation</a>
+      <a href="#contenu">Ce que ça contient</a>
+      <a href="#confiance">Sécurité</a>
+      <a href="#faq">Questions</a>
+    </nav>
+    <a class="btn btn--primary" href="https://github.com/Lauzalaiah/Skype" style="padding: 10px 22px; font-size: .92rem;">Code source</a>
+  </div>
+</header>
+
+<!-- ══ HÉROS ══════════════════════════════════════════════════════ -->
+<div class="hero" id="top">
+  <div class="wrap hero__grid">
+    <div>
+      <span class="eyebrow"><span class="eyebrow__dot"></span> Version <span id="etiquetteVersion">8.130.0</span> · gratuit</span>
+      <h1>Téléchargez <em>l'ancien Skype</em>.</h1>
+      <p class="hero__lead">
+        Celui d'avant : un pseudo, une liste de contacts, un bouton vert.
+        Reconstruit de zéro, installé comme un vrai logiciel — icône, menu
+        Démarrer, sa propre fenêtre.
+      </p>
+
+      <div class="telecharger">
+        <div class="telecharger__cta">
+          <a class="btn btn--primary btn--big" id="btnPrincipal"
+             href="https://github.com/Lauzalaiah/Skype/releases/latest">
+            <span id="btnPrincipalTexte">Télécharger</span>
+          </a>
+          <a class="btn btn--line" href="#plateformes">Autres systèmes</a>
+        </div>
+
+        <p class="telecharger__meta" id="metaFichier">
+          <b id="metaSysteme">Windows</b><span class="sep">·</span><span id="metaTaille">—</span><span class="sep">·</span><span id="metaDate">—</span>
+        </p>
+        <p class="telecharger__alt">
+          Pas envie d'installer&nbsp;? <a href="#navigateur">Essayez directement dans le navigateur ↓</a>
+        </p>
+
+        <div class="indispo" id="avertissementIndispo" hidden>
+          <b>Les fichiers d'installation ne sont pas encore publiés.</b>
+          Le bouton renvoie vers la page des versions du dépôt. Vous pouvez aussi
+          <a href="https://github.com/Lauzalaiah/Skype/blob/HEAD/desktop/README.md">construire l'installateur vous-même</a>
+          en une commande.
+        </div>
+      </div>
+    </div>
+
+    <div class="mock" aria-hidden="true">
+      <div class="mock__bar">
+        <span class="mock__dot" style="background:#FF5F57"></span>
+        <span class="mock__dot" style="background:#FEBC2E"></span>
+        <span class="mock__dot" style="background:#28C840"></span>
+        <span class="mock__title">Skype</span>
+      </div>
+      <div class="mock__body">
+        <div class="mock__side">
+          <div class="mock__contact"><span class="mock__ava" style="background:#F59E0B"></span><span class="mock__lines"><span class="mock__line" style="width:70%"></span><span class="mock__line" style="width:45%"></span></span></div>
+          <div class="mock__contact"><span class="mock__ava" style="background:#7B68EE"></span><span class="mock__lines"><span class="mock__line" style="width:60%"></span><span class="mock__line" style="width:52%"></span></span></div>
+          <div class="mock__contact"><span class="mock__ava" style="background:#20C997"></span><span class="mock__lines"><span class="mock__line" style="width:75%"></span><span class="mock__line" style="width:40%"></span></span></div>
+          <div class="mock__contact"><span class="mock__ava" style="background:#EC4899"></span><span class="mock__lines"><span class="mock__line" style="width:55%"></span><span class="mock__line" style="width:48%"></span></span></div>
+        </div>
+        <div class="mock__chat">
+          <div class="bubble bubble--in">Coucou ma puce, tu es là ? 😊</div>
+          <div class="bubble bubble--out">Oui Mamie ! On s'appelle en vidéo ?</div>
+          <div class="bubble bubble--in">Avec plaisir (y)</div>
+          <div class="bubble bubble--out">Je t'appelle dans 2 minutes ❤️</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PLATEFORMES ════════════════════════════════════════════════ -->
+<section id="plateformes">
+  <div class="wrap">
+    <div class="section__head">
+      <h2>Choisissez votre système</h2>
+      <p>Le même logiciel partout, construit à partir du même code source, publié automatiquement à chaque version.</p>
+    </div>
+
+    <div class="plateformes">
+      <div class="plateforme plateforme--vedette" data-plateforme="windows">
+        <div class="plateforme__icone">🪟</div>
+        <span class="badge">Le plus courant</span>
+        <h3>Windows 10 et 11</h3>
+        <p class="plateforme__desc">
+          Programme d'installation classique : il vous laisse choisir le dossier,
+          crée le raccourci du bureau et l'entrée du menu Démarrer, et s'ajoute
+          à la liste des programmes installés.
+        </p>
+        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-Setup-8.130.0.exe · 64 bits</p>
+        <a class="btn btn--primary" data-role="lien" href="https://github.com/Lauzalaiah/Skype/releases/latest">Télécharger le .exe</a>
+      </div>
+
+      <div class="plateforme" data-plateforme="mac">
+        <div class="plateforme__icone">🍎</div>
+        <span class="badge badge--gris">Non signé</span>
+        <h3>macOS</h3>
+        <p class="plateforme__desc">
+          Image disque à glisser dans le dossier Applications. Sans certificat
+          Apple, macOS demandera de l'autoriser une fois dans
+          Réglages Système › Confidentialité et sécurité.
+        </p>
+        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-8.130.0.dmg</p>
+        <a class="btn btn--line" data-role="lien" href="https://github.com/Lauzalaiah/Skype/releases/latest">Télécharger le .dmg</a>
+      </div>
+
+      <div class="plateforme" data-plateforme="linux">
+        <div class="plateforme__icone">🐧</div>
+        <span class="badge badge--gris">Portable</span>
+        <h3>Linux</h3>
+        <p class="plateforme__desc">
+          Un AppImage : un seul fichier, rien à installer. Rendez-le exécutable
+          (<code>chmod +x</code>) et lancez-le. Fonctionne sur la plupart des
+          distributions récentes.
+        </p>
+        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-8.130.0.AppImage</p>
+        <a class="btn btn--line" data-role="lien" href="https://github.com/Lauzalaiah/Skype/releases/latest">Télécharger l'AppImage</a>
+      </div>
+
+      <div class="plateforme" data-plateforme="mobile">
+        <div class="plateforme__icone">📱</div>
+        <span class="badge badge--gris">Sans magasin d'applications</span>
+        <h3>iPhone et Android</h3>
+        <p class="plateforme__desc">
+          Ouvrez l'adresse de votre serveur dans Safari ou Chrome, puis
+          « Ajouter à l'écran d'accueil ». L'icône, le plein écran et les
+          notifications se comportent comme une application installée.
+        </p>
+        <p class="plateforme__fichier">Aucun compte développeur nécessaire</p>
+        <a class="btn btn--line" href="#mobile">Voir la marche à suivre</a>
+      </div>
+    </div>
+
+    <div class="encart" id="navigateur">
+      <h3>Ou simplement dans un navigateur</h3>
+      <p>
+        L'application de bureau n'est qu'une enveloppe autour du même logiciel web.
+        Si vous préférez ne rien installer, lancez le serveur du projet et ouvrez-le
+        dans Chrome, Edge, Firefox ou Safari : tout y fonctionne, y compris les
+        appels vidéo et le partage d'écran.
+      </p>
+      <p>
+        <code>git clone https://github.com/Lauzalaiah/Skype &amp;&amp; cd Skype &amp;&amp; node server/index.js</code>
+        — puis <code>http://localhost:3000</code>. Aucune dépendance à installer :
+        Node.js 18 suffit.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ INSTALLATION ═══════════════════════════════════════════════ -->
+<section class="tint" id="installer">
+  <div class="wrap">
+    <div class="section__head">
+      <h2>L'installation, en trois minutes</h2>
+      <p>Exactement comme on installait le vrai Skype : on double-clique, on suit, c'est fini.</p>
+    </div>
+
+    <div class="etapes">
+      <div class="etape">
+        <h3>Téléchargez le fichier</h3>
+        <p>Environ 80 Mo. Il contient l'application complète : rien d'autre ne sera téléchargé ensuite, et rien n'a besoin d'Internet pour fonctionner une fois installé.</p>
+      </div>
+      <div class="etape">
+        <h3>Double-cliquez dessus</h3>
+        <p>L'assistant s'ouvre. Choisissez le dossier si vous le souhaitez, laissez cocher les raccourcis, cliquez sur Installer.</p>
+      </div>
+      <div class="etape">
+        <h3>Lancez Skype</h3>
+        <p>L'icône est sur le bureau et dans le menu Démarrer. Créez votre compte à la première ouverture, et vous y êtes.</p>
+      </div>
+    </div>
+
+    <div class="encart">
+      <h3>⚠️ Windows va afficher un avertissement. C'est normal.</h3>
+      <p>
+        « Windows a protégé votre ordinateur » — cet écran bleu apparaît pour
+        <strong>tout logiciel dont l'éditeur n'a pas acheté de certificat de
+        signature de code</strong>, ce qui coûte plusieurs centaines d'euros par an.
+        Ce projet est gratuit et fait par une seule personne : il n'en a pas.
+      </p>
+      <p>
+        Cliquez sur <strong>« Informations complémentaires »</strong> puis sur
+        <strong>« Exécuter quand même »</strong>. Si vous préférez vérifier avant,
+        les empreintes des fichiers publiés sont plus bas, et
+        <a href="https://github.com/Lauzalaiah/Skype">tout le code source est lisible</a>.
+      </p>
+    </div>
+
+    <div class="encart" id="mobile">
+      <h3>📱 Sur iPhone et Android</h3>
+      <p>
+        Il n'y a pas de version sur l'App Store : y publier demande un compte
+        développeur payant et la validation d'Apple. À la place, l'application
+        s'installe depuis le navigateur, et le résultat est le même à l'usage.
+      </p>
+      <p>
+        <strong>iPhone :</strong> ouvrez l'adresse de votre serveur dans
+        <strong>Safari</strong> (pas Chrome), touchez le bouton Partager, puis
+        « Sur l'écran d'accueil ».
+        <strong>Android :</strong> menu ⋮ de Chrome, puis « Installer l'application ».
+      </p>
+      <p>
+        L'adresse doit être en <strong>HTTPS</strong> : sans cela, iOS refuse le
+        micro et la caméra, donc les appels.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CE QUE ÇA CONTIENT ═════════════════════════════════════════ -->
+<section id="contenu">
+  <div class="wrap">
+    <div class="section__head">
+      <h2>Ce que vous installez</h2>
+      <p>Pas une démonstration ni une maquette : le logiciel complet, fonctionnalité par fonctionnalité.</p>
+    </div>
+
+    <div class="points">
+      <div class="point"><span class="point__tick">✓</span><div><h3>Messagerie complète</h3><p>Réponses citées, modification, suppression, transfert, mentions, accusés de lecture, « est en train d'écrire… », recherche dans tout l'historique.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Appels audio et vidéo</h3><p>En tête-à-tête ou en groupe, en pair-à-pair. Mise en attente, coupure du micro, changement de caméra.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Partage d'écran</h3><p>Écran entier ou fenêtre précise, pendant l'appel, comme avant.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Les sons d'origine</h3><p>La sonnerie, le « blop » du message, la tonalité d'appel, le son de connexion. Les vrais fichiers, à leur place exacte.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Le service d'écho</h3><p><code>echo123</code> répond immédiatement, enregistre votre voix et vous la rejoue — pour tester le micro avant d'appeler quelqu'un.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Groupes et sondages</h3><p>Administrateurs, photo de groupe, lien d'invitation, ajout et retrait de membres, sondages intégrés.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Fichiers et messages vocaux</h3><p>Glisser-déposer jusqu'à 64 Mo, galerie d'images, messages vocaux avec forme d'onde, messagerie vocale en cas d'absence.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Pavé numérique international</h3><p>77 destinations avec leur tarif, crédit Skype, tonalités DTMF réelles.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Émoticônes d'époque</h3><p><code>(y)</code>, <code>(rofl)</code>, <code>(cool)</code>… plus de 80 classiques, et les émojis modernes.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Statuts de présence</h3><p>En ligne, Absent, Ne pas déranger, Invisible. Le petit point vert, retrouvé.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Thème Skype Classic</h3><p>Le bleu d'origine, plus les thèmes clair, sombre et contraste élevé.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Fonctionne hors ligne</h3><p>L'application de bureau embarque son propre serveur : elle démarre et s'utilise sans connexion Internet.</p></div></div>
+    </div>
+
+    <p class="center" style="margin-top: 40px;">
+      <a class="btn btn--line" href="https://github.com/Lauzalaiah/Skype/blob/HEAD/docs/FONCTIONNALITES.md">Voir la liste exhaustive des fonctionnalités</a>
+    </p>
+  </div>
+</section>
+
+<!-- ══ CONFIANCE ══════════════════════════════════════════════════ -->
+<section class="tint" id="confiance">
+  <div class="wrap">
+    <div class="section__head">
+      <h2>Pourquoi vous pouvez ouvrir ce fichier</h2>
+      <p>Un exécutable téléchargé sur Internet mérite de la méfiance. Voici de quoi la lever.</p>
+    </div>
+
+    <div class="points" style="margin-bottom: 34px;">
+      <div class="point"><span class="point__tick">✓</span><div><h3>Construit par GitHub, pas sur ma machine</h3><p>Chaque fichier publié est compilé automatiquement par GitHub Actions, à partir du code source public, dans un environnement neuf. Le journal de construction est consultable par tout le monde.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Code source intégralement lisible</h3><p>Rien n'est caché ni minifié. Le serveur n'a aucune dépendance externe : il n'y a pas de bibliothèque tierce dans laquelle dissimuler quoi que ce soit.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Vos données restent chez vous</h3><p>L'application range ses données dans votre dossier utilisateur. Aucun compte à créer chez qui que ce soit, aucun traceur, aucune publicité, aucune télémétrie.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Empreintes vérifiables</h3><p>Chaque version publiée est accompagnée des empreintes SHA-256 de ses fichiers. Comparez-les avant d'ouvrir quoi que ce soit.</p></div></div>
+    </div>
+
+    <div class="empreintes" id="empreintes">
+      <div class="empreintes__ligne" id="empreintesEtat"><b>SHA-256</b> — publiées avec chaque version, dans le fichier <b>SHA256SUMS.txt</b>.</div>
+    </div>
+    <p class="center" style="margin-top: 16px; font-size: .86rem; color: var(--ink-soft);">
+      Sous Windows : <code>certutil -hashfile Skype-Reborn-Setup-8.130.0.exe SHA256</code> —
+      sous macOS et Linux : <code>shasum -a 256 &lt;fichier&gt;</code>
+    </p>
+  </div>
+</section>
+
+<!-- ══ FAQ ════════════════════════════════════════════════════════ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="section__head">
+      <h2>Les questions que tout le monde pose</h2>
+    </div>
+
+    <div class="faq">
+      <details open>
+        <summary>Est-ce le vrai Skype ? Microsoft est-il derrière ?</summary>
+        <p>
+          Non, et c'est important. Skype Reborn est une <strong>recréation
+          indépendante, faite par un fan</strong>, écrite de zéro. Il n'y a aucun
+          lien, aucune affiliation et aucun partenariat avec Microsoft ni avec les
+          équipes de Skype. Le nom « Skype » est une marque de Microsoft, employée
+          ici uniquement pour désigner le logiciel d'origine dont ce projet
+          s'inspire.
+        </p>
+      </details>
+
+      <details>
+        <summary>Pourquoi Windows dit-il que le fichier est dangereux ?</summary>
+        <p>
+          Parce qu'il n'est pas signé. Un certificat de signature de code coûte
+          plusieurs centaines d'euros par an ; ce projet est gratuit et sans revenu.
+          SmartScreen affiche donc l'avertissement réservé aux éditeurs qu'il ne
+          connaît pas — le même que pour n'importe quel petit logiciel indépendant.
+          « Informations complémentaires » puis « Exécuter quand même ».
+        </p>
+      </details>
+
+      <details>
+        <summary>Puis-je parler avec quelqu'un qui utilise le vrai Skype ?</summary>
+        <p>
+          Non. Les deux réseaux sont totalement séparés : ce projet ne se connecte
+          à aucun service de Microsoft. Vos correspondants doivent utiliser la même
+          installation que vous, sur le même serveur.
+        </p>
+      </details>
+
+      <details>
+        <summary>Où sont stockées mes conversations ?</summary>
+        <p>
+          Dans votre dossier utilisateur — <code>%APPDATA%\Skype\data</code> sous
+          Windows, <code>~/Library/Application Support/Skype</code> sous macOS,
+          <code>~/.config/Skype</code> sous Linux. Ce dossier contient tout :
+          sauvegardez-le, et vous avez sauvegardé votre Skype.
+        </p>
+      </details>
+
+      <details>
+        <summary>Faut-il payer quelque chose ?</summary>
+        <p>
+          Non. Le logiciel est gratuit, sans publicité et sans abonnement. Le
+          « crédit Skype » reconstruit dans l'application est une reproduction de
+          l'interface d'origine : aucun paiement réel n'a lieu, et aucun appel
+          n'est réellement passé vers le réseau téléphonique.
+        </p>
+      </details>
+
+      <details>
+        <summary>Ça marche sans connexion Internet ?</summary>
+        <p>
+          L'application de bureau démarre et fonctionne sans Internet : elle
+          embarque son propre serveur, sur votre machine. Pour parler à quelqu'un
+          d'autre, en revanche, il faut évidemment un réseau qui relie vos deux
+          machines — le vôtre, ou Internet si vous hébergez le serveur en ligne.
+        </p>
+      </details>
+
+      <details>
+        <summary>Comment le désinstaller ?</summary>
+        <p>
+          Comme n'importe quel programme : Paramètres › Applications sous Windows,
+          ou la corbeille sous macOS. Le dossier de données n'est pas supprimé
+          automatiquement — vos conversations survivent à une réinstallation,
+          et vous pouvez l'effacer à la main si vous le souhaitez.
+        </p>
+      </details>
+
+      <details>
+        <summary>Puis-je héberger le serveur pour ma famille ?</summary>
+        <p>
+          Oui, c'est l'usage prévu. Une machine, Node.js 18, et
+          <code>node server/index.js</code> — aucune dépendance à installer. Il
+          faut ensuite un certificat HTTPS pour que les navigateurs autorisent le
+          micro et la caméra. La marche à suivre complète est dans
+          <a href="https://github.com/Lauzalaiah/Skype/blob/HEAD/docs/HEBERGEMENT.md">la documentation d'hébergement</a>.
+        </p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <a class="logo" href="#top" style="color:#fff"><span class="logo__mark">S</span> Skype <em>Reborn</em></a>
+        <p style="margin-top: 12px; max-width: 40ch; opacity: .78;">
+          L'ancien Skype, reconstruit de zéro par nostalgie. Gratuit, ouvert,
+          sans publicité.
+        </p>
+      </div>
+      <div class="footer__links">
+        <a href="#plateformes">Télécharger</a>
+        <a href="#installer">Installation</a>
+        <a href="#faq">Questions</a>
+        <a href="https://github.com/Lauzalaiah/Skype">Code source</a>
+        <a href="https://github.com/Lauzalaiah/Skype/releases">Toutes les versions</a>
+      </div>
+    </div>
+
+    <p class="footer__legal">
+      Skype Reborn est un projet de fan, non officiel et sans but lucratif. Il n'est
+      ni développé, ni soutenu, ni approuvé par Microsoft Corporation. « Skype » et
+      le logo Skype sont des marques déposées de Microsoft ; elles sont citées ici
+      de façon strictement nominative, pour désigner le logiciel d'origine que ce
+      projet cherche à recréer. Aucun service de Microsoft n'est utilisé, contacté
+      ni imité techniquement. Les conversations montrées sur cette page proviennent
+      de comptes de démonstration : ce sont des exemples, pas de vraies personnes.
+      Code source publié sous licence MIT.
+    </p>
+  </div>
+</footer>
+
+<script>
+  // ── Configuration ──────────────────────────────────────────────────
+  // Le dépôt est la seule source de vérité : les fichiers proposés ici
+  // sont ceux que GitHub Actions a publiés, jamais des liens écrits à la main.
+  const DEPOT = 'Lauzalaiah/Skype';
+  const VERSION = '8.130.0';
+  const PAGE_VERSIONS = `https://github.com/${DEPOT}/releases`;
+
+  // Comment reconnaître le fichier de chaque système parmi ceux publiés.
+  const SYSTEMES = {
+    windows: { nom: 'Windows',  motif: /\.exe$/i,      verbe: 'Télécharger pour Windows' },
+    mac:     { nom: 'macOS',    motif: /\.dmg$/i,      verbe: 'Télécharger pour macOS' },
+    linux:   { nom: 'Linux',    motif: /\.AppImage$/i, verbe: 'Télécharger pour Linux' },
+  };
+
+  // ── Quel système utilise le visiteur ? ─────────────────────────────
+  function systemeDuVisiteur() {
+    const ua = navigator.userAgent;
+    const plateforme = navigator.userAgentData?.platform || navigator.platform || '';
+    if (/iPhone|iPad|iPod/i.test(ua) || (plateforme === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'ios';
+    if (/Android/i.test(ua)) return 'android';
+    if (/Win/i.test(plateforme) || /Windows/i.test(ua)) return 'windows';
+    if (/Mac/i.test(plateforme) || /Mac OS X/i.test(ua)) return 'mac';
+    if (/Linux|X11|CrOS/i.test(plateforme + ua)) return 'linux';
+    return 'windows';
+  }
+
+  const detecte = systemeDuVisiteur();
+  const mobile = detecte === 'ios' || detecte === 'android';
+  const principal = mobile ? 'windows' : detecte;
+
+  const $ = (id) => document.getElementById(id);
+  const btn = $('btnPrincipal');
+
+  // Mise en avant de la carte correspondante.
+  document.querySelectorAll('.plateforme').forEach((carte) => {
+    const cible = mobile ? 'mobile' : principal;
+    carte.classList.toggle('plateforme--vedette', carte.dataset.plateforme === cible);
+  });
+
+  if (mobile) {
+    // Proposer un .exe à un téléphone n'aurait aucun sens.
+    $('btnPrincipalTexte').textContent = 'Installer sur ' + (detecte === 'ios' ? 'iPhone' : 'Android');
+    btn.href = '#mobile';
+    $('metaFichier').innerHTML = 'Depuis le navigateur, sans passer par un magasin d’applications.';
+  } else {
+    $('btnPrincipalTexte').textContent = SYSTEMES[principal].verbe;
+    $('metaSysteme').textContent = SYSTEMES[principal].nom;
+  }
+
+  const octets = (n) => (n / 1048576).toFixed(1).replace('.', ',') + ' Mo';
+  const laDate = (iso) => new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  // ── Les fichiers réellement publiés ────────────────────────────────
+  // On interroge la dernière version publiée du dépôt. Tant qu'il n'y en a
+  // pas, les boutons renvoient vers la page des versions : jamais vers un
+  // fichier inexistant.
+  async function remplirDepuisLaDerniereVersion() {
+    let version;
+    try {
+      const reponse = await fetch(`https://api.github.com/repos/${DEPOT}/releases/latest`, {
+        headers: { Accept: 'application/vnd.github+json' },
+      });
+      if (!reponse.ok) throw new Error(String(reponse.status));
+      version = await reponse.json();
+    } catch {
+      $('avertissementIndispo').hidden = false;
+      if (!mobile) $('metaFichier').hidden = true;
+      return;
+    }
+
+    const fichiers = version.assets || [];
+    const trouver = (motif) => fichiers.find((f) => motif.test(f.name));
+
+    const etiquette = (version.tag_name || '').replace(/^v/, '');
+    if (etiquette) $('etiquetteVersion').textContent = etiquette;
+
+    let auMoinsUn = false;
+
+    for (const [cle, systeme] of Object.entries(SYSTEMES)) {
+      const fichier = trouver(systeme.motif);
+      const carte = document.querySelector(`.plateforme[data-plateforme="${cle}"]`);
+      if (!fichier) {
+        if (carte) {
+          carte.querySelector('[data-role="fichier"]').textContent = 'Pas encore publié pour cette version';
+          carte.querySelector('[data-role="lien"]').href = PAGE_VERSIONS;
+        }
+        continue;
+      }
+      auMoinsUn = true;
+
+      if (carte) {
+        carte.querySelector('[data-role="lien"]').href = fichier.browser_download_url;
+        carte.querySelector('[data-role="fichier"]').textContent = `${fichier.name} · ${octets(fichier.size)}`;
+      }
+
+      if (!mobile && cle === principal) {
+        btn.href = fichier.browser_download_url;
+        $('metaTaille').textContent = octets(fichier.size);
+        $('metaDate').textContent = laDate(version.published_at);
+      }
+    }
+
+    if (!auMoinsUn) {
+      $('avertissementIndispo').hidden = false;
+      if (!mobile) $('metaFichier').hidden = true;
+      return;
+    }
+
+    // Si le système détecté n'a pas de fichier, on le dit plutôt que de
+    // laisser un bouton qui ne mène nulle part.
+    if (!mobile && !trouver(SYSTEMES[principal].motif)) {
+      $('btnPrincipalTexte').textContent = 'Voir les versions publiées';
+      $('metaFichier').hidden = true;
+      $('avertissementIndispo').hidden = false;
+    }
+
+    afficherEmpreintes(fichiers);
+  }
+
+  // ── Empreintes SHA-256 ─────────────────────────────────────────────
+  async function afficherEmpreintes(fichiers) {
+    const somme = fichiers.find((f) => /SHA256SUMS/i.test(f.name));
+    if (!somme) return;
+    try {
+      const texte = await (await fetch(somme.browser_download_url)).text();
+      const lignes = texte.trim().split('\n').filter(Boolean).slice(0, 6);
+      if (!lignes.length) return;
+      $('empreintes').innerHTML = lignes
+        .map((ligne) => {
+          const [empreinte, ...reste] = ligne.trim().split(/\s+/);
+          const nom = reste.join(' ').replace(/^\*/, '');
+          return `<div class="empreintes__ligne"><b>${nom}</b><br>${empreinte}</div>`;
+        })
+        .join('');
+    } catch {
+      /* Le bloc garde son texte d'origine : mieux vaut ça qu'un bloc vide. */
+    }
+  }
+
+  remplirDepuisLaDerniereVersion();
+</script>
+</body>
+</html>

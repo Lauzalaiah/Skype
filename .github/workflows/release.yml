@@ -1,0 +1,173 @@
+# Publie une version téléchargeable : construit l'application pour Windows,
+# macOS et Linux, puis attache les trois fichiers à une « release » GitHub.
+#
+# C'est ce que le site de téléchargement (docs/index.html) interroge : il lit
+# la dernière version publiée par ce workflow et remplit ses boutons avec les
+# fichiers réellement présents. Aucun lien n'est écrit à la main.
+#
+# Les fichiers ne sont pas signés (aucun certificat n'a été acheté pour ce
+# projet de fan) : Windows affichera SmartScreen, macOS demandera une
+# autorisation. C'est attendu, et expliqué sur le site comme dans les notes
+# de version.
+
+name: Publier une version
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  # On ne publie jamais une version dont la suite de tests échoue.
+  verifier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm test
+
+      - id: version
+        name: Lire le numéro de version
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+  construire:
+    needs: verifier
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - systeme: windows
+            os: windows-latest
+            cible: build:win
+            fichiers: desktop/dist/*.exe
+          - systeme: macos
+            os: macos-latest
+            cible: build:mac
+            fichiers: desktop/dist/*.dmg
+          - systeme: linux
+            os: ubuntu-latest
+            cible: build:linux
+            fichiers: desktop/dist/*.AppImage
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Installer les dépendances de l'enveloppe de bureau
+        working-directory: desktop
+        run: npm install
+
+      - name: Construire
+        working-directory: desktop
+        # Sans certificat Apple, la découverte automatique d'identité fait
+        # échouer la construction au lieu de produire un .dmg non signé.
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+        run: npm run ${{ matrix.cible }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: skype-reborn-${{ matrix.systeme }}
+          path: ${{ matrix.fichiers }}
+          if-no-files-found: error
+
+  publier:
+    needs: [verifier, construire]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VERSION: ${{ needs.verifier.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: recolte
+
+      - name: Rassembler les fichiers
+        run: |
+          mkdir -p publication
+          find recolte -type f \( -name '*.exe' -o -name '*.dmg' -o -name '*.AppImage' \) \
+            -exec cp {} publication/ \;
+          ls -lh publication
+          test -n "$(ls -A publication)" || { echo "aucun fichier à publier"; exit 1; }
+
+      - name: Calculer les empreintes SHA-256
+        working-directory: publication
+        run: sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt
+
+      - name: Rédiger les notes de version
+        run: |
+          cat > notes.md <<'FIN'
+          **Projet de fan, non officiel.** Skype Reborn est une recréation
+          indépendante de l'ancien Skype, réalisée par passion. Aucun lien avec
+          Microsoft ni avec les équipes de Skype, aucune affiliation. « Skype »
+          est une marque de Microsoft, citée ici pour désigner le logiciel
+          d'origine.
+
+          ## Télécharger
+
+          | Système | Fichier |
+          | --- | --- |
+          | Windows 10 / 11 | `Skype-Reborn-Setup-*.exe` |
+          | macOS | `Skype-Reborn-*.dmg` |
+          | Linux | `Skype-Reborn-*.AppImage` (`chmod +x`, puis lancer) |
+
+          Page de téléchargement : https://lauzalaiah.github.io/Skype/
+
+          ## À savoir avant d'ouvrir le fichier
+
+          Ces fichiers **ne sont pas signés** : aucun certificat de signature de
+          code n'a été acheté pour ce projet gratuit.
+
+          - **Windows** affichera « Windows a protégé votre ordinateur » →
+            *Informations complémentaires* → *Exécuter quand même*.
+          - **macOS** refusera l'ouverture au premier lancement → Réglages
+            Système › Confidentialité et sécurité › *Ouvrir quand même*.
+
+          Les empreintes SHA-256 de chaque fichier sont dans `SHA256SUMS.txt`,
+          et tout a été construit automatiquement par GitHub Actions à partir du
+          code source de ce dépôt — le journal de construction est public.
+
+          ## Ce qui est inclus
+
+          Messagerie complète, appels audio et vidéo, partage d'écran, mise en
+          attente, groupes et sondages, fichiers, messages vocaux, messagerie
+          vocale, service d'écho (`echo123`), pavé numérique international,
+          statuts de présence, thèmes dont *Skype Classic*, et les sons
+          d'origine. L'application embarque son propre serveur : elle fonctionne
+          sans connexion Internet et range ses données dans votre dossier
+          utilisateur.
+          FIN
+          echo "--- notes ---" && cat notes.md
+
+      - name: Publier la version
+        run: |
+          TAG="v${VERSION}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "La version $TAG existe déjà : mise à jour des fichiers."
+            gh release edit "$TAG" --title "Skype Reborn $VERSION" --notes-file notes.md
+            gh release upload "$TAG" publication/* --clobber
+          else
+            gh release create "$TAG" publication/* \
+              --title "Skype Reborn $VERSION" \
+              --notes-file notes.md \
+              --latest
+          fi
+          echo "Publié : https://github.com/${{ github.repository }}/releases/tag/$TAG"

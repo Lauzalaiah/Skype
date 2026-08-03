@@ -128,7 +128,7 @@ public/          Application web, modules ES natifs, aucun outil de build
   pub/           la publicité de lancement
 
 ad/campagne.md   films, spots radio, affichage, réseaux sociaux, e-mail de reconquête
-docs/            liste exhaustive des fonctionnalités
+docs/            documentation, et index.html : le site de téléchargement
 test/            tests de bout en bout
 data/            base JSON et fichiers envoyés (créé au premier lancement)
 ```
@@ -239,6 +239,17 @@ cd desktop && npm install && npm run build:win
 Ou depuis GitHub Actions (onglet **Actions** → **Windows** → **Run
 workflow**), qui construit sur un exécuteur Windows réel. Détails dans
 [`desktop/README.md`](desktop/README.md).
+
+## Le site de téléchargement
+
+`docs/index.html` est une page de téléchargement complète, servie gratuitement
+par GitHub Pages sur **https://lauzalaiah.github.io/Skype/**. Elle ne contient
+aucun lien écrit à la main : elle lit la dernière version publiée par le
+workflow **Publier une version**, qui construit l'application sur Windows,
+macOS et Linux et attache les trois fichiers — plus leurs empreintes SHA-256 —
+à une *release* du dépôt.
+
+Mise en service et règles de la page : [`docs/SITE.md`](docs/SITE.md).
 
 Fait pour ceux qui n'ont jamais voulu changer. 💙
 
