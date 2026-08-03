@@ -17,7 +17,7 @@
  *     démarrage. On se contente donc de signaler la nouvelle version et de
  *     renvoyer vers la page de téléchargement.
  */
-import { app, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import electronUpdater from 'electron-updater';
 
 const { autoUpdater } = electronUpdater;
@@ -36,12 +36,17 @@ const PREMIER_DELAI = 8 * 1000;          // pas pendant le démarrage : l'ouvert
  * peut se recharger à n'importe quel moment et redemander où on en est.
  */
 let etat = { phase: 'inactif', version: null, notes: null };
-let fenetre = null;
 
+/**
+ * On diffuse à toutes les fenêtres ouvertes plutôt qu'à une référence gardée
+ * au démarrage : sur macOS, fermer la fenêtre puis rouvrir l'application en
+ * crée une nouvelle, et l'ancienne référence ne mènerait plus nulle part —
+ * le bandeau serait définitivement muet pour le reste de la session.
+ */
 function publier(nouvel) {
   etat = { ...etat, ...nouvel };
-  if (fenetre && !fenetre.isDestroyed()) {
-    fenetre.webContents.send('maj:etat', etat);
+  for (const fenetre of BrowserWindow.getAllWindows()) {
+    if (!fenetre.isDestroyed()) fenetre.webContents.send('maj:etat', etat);
   }
 }
 
@@ -123,13 +128,11 @@ function signalerEchec(err) {
 }
 
 /**
- * Branche la mise à jour sur une fenêtre. Sans effet hors application
- * empaquetée : en développement, il n'y a pas de version installée à
- * remplacer, et electron-updater refuserait de toute façon.
+ * Met en place la surveillance. Sans effet hors application empaquetée : en
+ * développement, il n'y a pas de version installée à remplacer, et
+ * electron-updater refuserait de toute façon.
  */
-export function surveillerMisesAJour(fenetrePrincipale) {
-  fenetre = fenetrePrincipale;
-
+export function surveillerMisesAJour() {
   // L'interface redemande l'état à chaque chargement : elle peut être
   // rechargée bien après que la mise à jour a été téléchargée.
   ipcMain.on('maj:etat-demande', (evenement) => evenement.sender.send('maj:etat', etat));

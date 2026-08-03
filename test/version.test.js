@@ -28,6 +28,9 @@ const ENDROITS = [
   ['docs/index.html', /const VERSION = '([^']+)'/],
   ['docs/index.html', /id="etiquetteVersion">([\d.]+)</],
   ['README.md', /^Version ([\d.]+) · Zéro dépendance/m],
+  // Le nom du cache du service worker : c'est lui qui décide si une version
+  // web repart d'un cache vide ou hérite de celui de la précédente.
+  ['public/sw.js', /const VERSION = 'skype-([\d.]+)'/],
 ];
 
 describe('Numéro de version', () => {

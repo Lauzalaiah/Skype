@@ -5,7 +5,7 @@
 **La messagerie, les appels audio et vidéo et le partage d'écran que vous aimiez.
 Recréés de A à Z, sans rien oublier.**
 
-Version 8.131.0 · Zéro dépendance · Node.js ≥ 18
+Version 8.132.0 · Zéro dépendance · Node.js ≥ 18
 
 </div>
 

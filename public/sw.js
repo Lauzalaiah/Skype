@@ -2,15 +2,26 @@
  * Service worker : rend l'application installable et lui permet de s'ouvrir
  * sans réseau.
  *
- * Stratégie volontairement prudente :
- *   — les ressources de l'interface (HTML, CSS, JS, sons, icônes) sont servies
- *     depuis le cache puis rafraîchies en arrière-plan ;
- *   — tout ce qui touche aux données (API, WebSocket, fichiers envoyés) n'est
- *     JAMAIS mis en cache : une conversation périmée serait pire que pas de
- *     conversation du tout.
+ * Trois régimes, et la distinction compte :
+ *
+ *   — le CODE (HTML, CSS, JS) part du réseau, et ne retombe sur le cache que
+ *     si le réseau ne répond pas. Servir du code périmé serait pire qu'inutile :
+ *     la page d'accueil arrivait déjà fraîche du réseau, mais les modules
+ *     JavaScript, eux, venaient du cache — une page neuve pilotée par du code
+ *     ancien, jusqu'au rechargement suivant ;
+ *
+ *   — les RESSOURCES qui ne changent pas d'une version à l'autre (sons,
+ *     icônes) partent du cache, rafraîchies en arrière-plan : c'est là que le
+ *     cache fait gagner du temps, sans risque ;
+ *
+ *   — les DONNÉES (API, WebSocket, fichiers envoyés) ne sont jamais mises en
+ *     cache : une conversation périmée serait pire que pas de conversation.
+ *
+ * Le nom du cache porte le numéro de version : une nouvelle version repart
+ * d'un cache vide, et l'ancien est effacé à l'activation.
  */
 
-const VERSION = 'skype-v1';
+const VERSION = 'skype-8.132.0';
 const COQUILLE = [
   '/',
   '/index.html',
@@ -49,6 +60,22 @@ const estDonnee = (url) =>
   || url.pathname.startsWith('/files/')
   || url.pathname.startsWith('/ws');
 
+/** Ce qui décide du comportement de l'application doit toujours être à jour. */
+const estCode = (url) => /\.(html|js|css|webmanifest)$/.test(url.pathname);
+
+/** Réseau d'abord ; le cache ne sert que si le réseau ne répond pas. */
+function reseauDAbord(request) {
+  return fetch(request)
+    .then((reponse) => {
+      if (reponse.ok) {
+        const copie = reponse.clone();
+        caches.open(VERSION).then((cache) => cache.put(request, copie));
+      }
+      return reponse;
+    })
+    .catch(() => caches.match(request).then((r) => r || Response.error()));
+}
+
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
@@ -71,7 +98,13 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Ressources : cache d'abord, rafraîchi en arrière-plan.
+  // Code : réseau d'abord, cache en secours hors ligne.
+  if (estCode(url)) {
+    event.respondWith(reseauDAbord(request));
+    return;
+  }
+
+  // Ressources stables (sons, icônes) : cache d'abord, rafraîchi en arrière-plan.
   event.respondWith(
     caches.match(request).then((enCache) => {
       const reseau = fetch(request)

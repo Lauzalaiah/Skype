@@ -19,6 +19,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
 const lire = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
 
+const paquet = JSON.parse(lire('package.json'));
 const paquetBureau = JSON.parse(lire('desktop/package.json'));
 const main = lire('desktop/main.js');
 const maj = lire('desktop/maj.js');
@@ -164,6 +165,65 @@ describe('Le bandeau dans l’interface', () => {
     const zIndex = Number(bloc.match(/z-index:\s*(\d+)/)[1]);
     assert.ok(zIndex > 470, 'il doit passer au-dessus de l’écran d’appel');
     assert.ok(zIndex < 500, 'mais jamais au-dessus d’une boîte de dialogue ouverte');
+  });
+});
+
+describe('Mise à jour de la version web (service worker)', () => {
+  const sw = lire('public/sw.js');
+
+  test('le code part du réseau, jamais du cache en premier', () => {
+    // Le défaut corrigé : la page d'accueil arrivait fraîche du réseau, mais
+    // les modules JavaScript venaient du cache — une page neuve pilotée par du
+    // code ancien jusqu'au rechargement suivant.
+    assert.match(sw, /const estCode = \(url\) => \/\\\.\(html\|js\|css\|webmanifest\)\$\//);
+    assert.match(sw, /if \(estCode\(url\)\) \{\s*event\.respondWith\(reseauDAbord\(request\)\)/);
+  });
+
+  test('hors ligne, le cache prend le relais', () => {
+    assert.match(sw, /\.catch\(\(\) => caches\.match\(request\)/,
+      'sans secours, l’application ne s’ouvrirait plus sans réseau');
+  });
+
+  test('les ressources stables restent servies depuis le cache', () => {
+    // Les sons et les icônes ne changent pas d'une version à l'autre : c'est
+    // là que le cache fait gagner du temps sans rien risquer.
+    assert.match(sw, /caches\.match\(request\)\.then\(\(enCache\)/);
+    assert.match(sw, /return enCache \|\| reseau;/,
+      'ce qui n’est pas du code doit toujours partir du cache');
+  });
+
+  test('une nouvelle version repart d’un cache vide', () => {
+    const version = sw.match(/const VERSION = '([^']+)'/)[1];
+    assert.equal(version, `skype-${paquet.version}`,
+      'le nom du cache doit porter le numéro de version');
+    assert.match(sw, /noms\.filter\(\(n\) => n !== VERSION\)\.map\(\(n\) => caches\.delete\(n\)\)/,
+      'les caches des versions précédentes doivent être effacés');
+  });
+
+  test('les données ne sont toujours jamais mises en cache', () => {
+    assert.match(sw, /if \(estDonnee\(url\)\) return;/);
+  });
+});
+
+describe('Robustesse de l’application de bureau', () => {
+  test('une erreur après le démarrage ne ferme plus l’application', () => {
+    // Fermer Skype parce qu'une promesse a échoué quelque part couperait une
+    // conversation en cours pour un incident qui ne concerne pas l'utilisateur.
+    assert.match(main, /if \(demarre\) \{[\s\S]{0,160}return;/);
+    assert.match(main, /demarre = true;/);
+  });
+
+  test('un démarrage qui échoue, lui, reste fatal et visible', () => {
+    assert.match(main, /dialog\.showErrorBox\('Skype n’a pas pu démarrer'/);
+    assert.match(main, /app\.quit\(\);/);
+  });
+
+  test('le bandeau atteint la fenêtre même après une réouverture', () => {
+    // Sur macOS, fermer la fenêtre puis rouvrir l'application en crée une
+    // nouvelle : une référence gardée au démarrage ne mènerait plus nulle part.
+    assert.match(maj, /for \(const fenetre of BrowserWindow\.getAllWindows\(\)\)/);
+    assert.doesNotMatch(maj, /^let fenetre = null;$/m,
+      'plus de référence figée vers une fenêtre unique');
   });
 });
 

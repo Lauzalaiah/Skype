@@ -45,6 +45,23 @@ const MIME = {
 const hub = new Hub();
 const { router, json } = createApi(hub);
 
+/**
+ * Combien de temps le navigateur a le droit de garder un fichier sans rien
+ * demander.
+ *
+ * Le code — HTML, JavaScript, CSS, manifeste — répond « no-cache » : le
+ * navigateur doit revalider à chaque fois. Ce n'est pas coûteux, l'ETag
+ * transforme la vérification en une réponse 304 sans contenu. Le laisser
+ * garder du code pendant une heure, comme c'était le cas, faisait tourner
+ * l'ancienne version pendant une heure après chaque mise à jour — parfois
+ * mélangée à une page déjà nouvelle.
+ *
+ * Le reste — sons, icônes, images — ne change pratiquement jamais d'une
+ * version à l'autre : c'est là que le cache sert vraiment.
+ */
+const CODE = new Set(['.html', '.js', '.mjs', '.css', '.webmanifest', '.json']);
+const cacheDe = (ext) => (CODE.has(ext) ? 'no-cache' : 'public, max-age=86400');
+
 function serveStatic(req, res, pathname) {
   // On reste strictement à l'intérieur de public/ : pas de traversée de répertoire.
   const relative = decodeURIComponent(pathname).replace(/^\/+/, '');
@@ -65,6 +82,7 @@ function serveStatic(req, res, pathname) {
   const ext = path.extname(filePath).toLowerCase();
   const etag = `W/"${stat.size}-${Number(stat.mtimeMs).toString(36)}"`;
 
+  // Le fichier n'a pas changé : on ne renvoie pas son contenu.
   if (req.headers['if-none-match'] === etag) {
     res.writeHead(304).end();
     return;
@@ -74,7 +92,7 @@ function serveStatic(req, res, pathname) {
     'Content-Type': MIME[ext] || 'application/octet-stream',
     'Content-Length': stat.size,
     ETag: etag,
-    'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=3600',
+    'Cache-Control': cacheDe(ext),
   });
   if (req.method === 'HEAD') return res.end();
   fs.createReadStream(filePath).pipe(res);
@@ -161,7 +179,7 @@ server.listen(PORT, HOST, () => {
   const port = server.address().port;
   console.log(`
   ╭──────────────────────────────────────────────╮
-  │   S k y p e   R e b o r n   ·   v8.131.0     │
+  │   S k y p e   R e b o r n   ·   v8.132.0     │
   ╰──────────────────────────────────────────────╯
 
   ▸ Application : http://localhost:${port}

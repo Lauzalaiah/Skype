@@ -102,9 +102,23 @@ function creerFenetre(port) {
  * Un démarrage qui échoue doit le dire. Sans cela, l'application se ferme
  * sans un mot : impossible à diagnostiquer pour qui l'utilise, et invisible
  * pour qui la teste.
+ *
+ * Mais une fois la fenêtre ouverte, la règle s'inverse : fermer Skype parce
+ * qu'une promesse a échoué quelque part — une vérification de mise à jour, une
+ * requête réseau perdue — couperait une conversation en cours pour un incident
+ * dont l'utilisateur n'a que faire. Après le démarrage, on journalise et on
+ * continue.
  */
+let demarre = false;
+
 function signalerEchec(err) {
   const message = String(err?.stack || err);
+
+  if (demarre) {
+    console.error('[skype] erreur ignorée après démarrage :', message);
+    return;
+  }
+
   console.error('[skype] démarrage impossible :', message);
   try {
     dialog.showErrorBox('Skype n’a pas pu démarrer', message);
@@ -128,7 +142,8 @@ app.whenReady().then(async () => {
 
   const port = await demarrerServeur();
   creerFenetre(port);
-  surveillerMisesAJour(mainWindow);
+  surveillerMisesAJour();
+  demarre = true;
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) creerFenetre(port);

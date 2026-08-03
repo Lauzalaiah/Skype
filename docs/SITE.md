@@ -48,7 +48,7 @@ Pour publier une version, il faut donc lancer le workflow
 `.github/workflows/release.yml` :
 
 - **Actions** › **Publier une version** › **Run workflow** ;
-- ou en poussant une étiquette : `git tag v8.131.0 && git push origin v8.131.0`.
+- ou en poussant une étiquette : `git tag v8.132.0 && git push origin v8.132.0`.
 
 Il exécute la suite de tests, construit l'application sur un vrai exécuteur
 Windows, macOS et Linux, calcule les empreintes SHA-256, puis crée la

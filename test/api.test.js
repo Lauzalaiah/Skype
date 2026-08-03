@@ -488,6 +488,41 @@ describe('Temps réel (WebSocket)', () => {
   });
 });
 
+describe('Cache des fichiers servis', () => {
+  /**
+   * Le serveur autorisait le navigateur à garder tout ce qui n'était pas du
+   * HTML pendant une heure sans rien demander — donc le JavaScript aussi.
+   * Après une mise à jour, l'ancienne version continuait de tourner jusqu'à
+   * une heure, parfois mélangée à une page d'accueil déjà nouvelle.
+   */
+  const entete = async (chemin) => {
+    const r = await fetch(BASE + chemin);
+    await r.arrayBuffer();
+    return { cache: r.headers.get('cache-control'), etag: r.headers.get('etag'), statut: r.status };
+  };
+
+  test('le code doit être revalidé à chaque fois', async () => {
+    for (const chemin of ['/', '/index.html', '/js/app.js', '/css/base.css', '/manifest.webmanifest']) {
+      const { cache, statut } = await entete(chemin);
+      assert.equal(statut, 200, chemin);
+      assert.equal(cache, 'no-cache', `${chemin} peut être gardé sans revalidation : ${cache}`);
+    }
+  });
+
+  test('revalider ne coûte rien : un fichier inchangé répond 304 sans contenu', async () => {
+    const { etag } = await entete('/js/app.js');
+    assert.ok(etag, 'sans ETag, « no-cache » ferait retélécharger le fichier entier');
+    const r = await fetch(`${BASE}/js/app.js`, { headers: { 'If-None-Match': etag } });
+    assert.equal(r.status, 304);
+    assert.equal((await r.text()).length, 0);
+  });
+
+  test('les sons et les icônes, eux, restent en cache', async () => {
+    const { cache } = await entete('/assets/sounds/skype-message.mp3');
+    assert.match(cache, /max-age=\d{4,}/, 'ce qui ne change pas doit rester en cache');
+  });
+});
+
 describe('Fichiers', () => {
   test('téléverse puis télécharge un fichier', async () => {
     const content = 'Bonjour depuis un fichier de test';
