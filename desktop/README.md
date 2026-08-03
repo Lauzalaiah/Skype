@@ -42,6 +42,24 @@ Le mécanisme repose sur trois pièces, et il est muet si l'une manque :
 
 `test/maj.test.js` vérifie que les trois restent attachées.
 
+### Pourquoi tout est vérifié avant publication
+
+Une mise à jour ratée ne se signale pas. L'application installée continue de
+tourner et reste sur son ancienne version, sans message d'erreur et sans que
+personne s'en plaigne — on ne l'apprendrait jamais. Le workflow refuse donc de
+publier tant que :
+
+- l'application construite n'a pas été **réellement démarrée** sur un
+  exécuteur, et son serveur embarqué interrogé (version servie, sons présents) ;
+- chaque `latest*.yml` n'annonce pas exactement la version construite ;
+- chaque fichier désigné n'existe pas, avec l'empreinte SHA-512 annoncée ;
+- la version n'est pas strictement plus récente que celle déjà publiée ;
+- un des trois systèmes n'a pas sa description.
+
+Le détail est dans `scripts/verifier-publication.mjs`, et
+`test/publication.test.js` fabrique chacune de ces publications défectueuses
+pour prouver qu'elles sont bien refusées.
+
 ### macOS fait exception
 
 macOS n'autorise une application à se remplacer elle-même que si elle est

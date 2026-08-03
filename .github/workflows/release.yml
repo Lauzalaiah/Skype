@@ -95,6 +95,45 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: false
         run: npm run ${{ matrix.cible }}
 
+      # Construire ne prouve rien. Les défauts d'empaquetage — modules ES
+      # perdus, package.json absent, ressources oubliées — ne se manifestent
+      # qu'au démarrage de l'application installée. On la lance donc pour de
+      # vrai, et on interroge le serveur qu'elle embarque.
+      - name: Vérifier que l'application construite démarre vraiment
+        if: matrix.systeme == 'linux'
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb
+          BINAIRE=desktop/dist/linux-unpacked/skype-reborn-desktop
+          xvfb-run -a "$BINAIRE" --no-sandbox --disable-gpu > /tmp/app.log 2>&1 &
+
+          for _ in $(seq 1 60); do
+            PORT=$(grep -oE 'localhost:[0-9]+' /tmp/app.log 2>/dev/null | head -1 | cut -d: -f2)
+            [ -n "$PORT" ] && break
+            sleep 1
+          done
+
+          if [ -z "$PORT" ]; then
+            echo "::error::l'application construite n'a pas démarré son serveur"
+            sed -n '1,60p' /tmp/app.log
+            exit 1
+          fi
+
+          SANTE=$(curl -fsS --max-time 10 "http://127.0.0.1:$PORT/api/health")
+          echo "santé : $SANTE"
+
+          SERVIE=$(node -p "JSON.parse(process.argv[1]).version" "$SANTE")
+          ATTENDUE=$(node -p "require('./package.json').version")
+          if [ "$SERVIE" != "$ATTENDUE" ]; then
+            echo "::error::l'application servie annonce $SERVIE, le dépôt est en $ATTENDUE"
+            exit 1
+          fi
+
+          # Les sons sont dans extraResources : leur absence ne se voit pas
+          # autrement qu'en les demandant.
+          curl -fsS --max-time 10 -o /dev/null "http://127.0.0.1:$PORT/assets/sounds/skype-ring.mp3"
+          echo "l'application démarre, sert son interface et ses sons en $SERVIE"
+          pkill -f skype-reborn-desktop || true
+
       - uses: actions/upload-artifact@v4
         with:
           name: skype-reborn-${{ matrix.systeme }}
@@ -209,6 +248,15 @@ jobs:
           } >> notes.md
 
           echo "--- notes ---" && cat notes.md
+
+      # Dernier filet avant que les fichiers ne partent chez les utilisateurs.
+      # Une mise à jour défectueuse ne se plaint jamais : elle laisse
+      # simplement tout le monde sur l'ancienne version, sans bruit.
+      - name: Vérifier la publication avant de l'envoyer
+        run: |
+          PRECEDENTE=$(gh release view --json tagName --jq '.tagName' 2>/dev/null | sed 's/^v//' || true)
+          echo "version déjà publiée : ${PRECEDENTE:-aucune}"
+          node scripts/verifier-publication.mjs publication "$VERSION" "$PRECEDENTE"
 
       - name: Publier la version
         run: |

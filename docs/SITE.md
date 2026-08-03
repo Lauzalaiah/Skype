@@ -48,7 +48,7 @@ Pour publier une version, il faut donc lancer le workflow
 `.github/workflows/release.yml` :
 
 - **Actions** › **Publier une version** › **Run workflow** ;
-- ou en poussant une étiquette : `git tag v8.132.0 && git push origin v8.132.0`.
+- ou en poussant une étiquette : `git tag v8.133.0 && git push origin v8.133.0`.
 
 Il exécute la suite de tests, construit l'application sur un vrai exécuteur
 Windows, macOS et Linux, calcule les empreintes SHA-256, puis crée la
@@ -71,6 +71,36 @@ d'échouer.
 > visible — les utilisateurs restent simplement bloqués sur leur vieille
 > version, sans le savoir. Le workflow échoue plutôt que de publier sans eux,
 > et `test/maj.test.js` verrouille la règle.
+
+---
+
+## 2 bis. Ce qui est vérifié avant que la publication ne parte
+
+Une mise à jour ratée **ne se plaint jamais**. L'application installée continue
+de tourner, ne dit rien, et reste sur son ancienne version pour toujours : pas
+de message d'erreur, pas de plainte d'utilisateur, juste un parc qui ne bouge
+plus. Tout se vérifie donc avant, jamais après.
+
+**Sur l'application construite** — elle est réellement démarrée sur l'exécuteur
+Linux, et son serveur embarqué interrogé. Construire ne prouve rien : les
+défauts d'empaquetage (modules ES perdus, `package.json` absent, sons oubliés)
+ne se manifestent qu'au démarrage de l'application installée. Sont vérifiés :
+le démarrage, la version servie, et la présence des sons.
+
+**Sur les fichiers à publier** — `scripts/verifier-publication.mjs` refuse la
+publication dans cinq cas, chacun correspondant à une panne silencieuse :
+
+| Défaut | Ce que vivrait l'utilisateur |
+| --- | --- |
+| La description annonce une autre version que l'application | mise à jour, redémarrage sur le même numéro, remise à jour… en boucle |
+| Elle désigne un fichier non publié | téléchargement en 404 |
+| L'empreinte ne correspond pas au fichier | l'application télécharge 100 Mo puis refuse d'installer, sans un mot |
+| La version n'est pas plus récente que la précédente | personne ne reçoit rien, et la page de téléchargement recule |
+| Un système n'a pas de description | ce système ne recevra plus jamais de mise à jour |
+
+`test/publication.test.js` fabrique chacune de ces publications défectueuses et
+exige qu'elle soit refusée — sans quoi rien ne prouverait que le vérificateur
+refuse quoi que ce soit.
 
 ---
 
