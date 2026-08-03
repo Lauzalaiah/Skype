@@ -64,8 +64,8 @@ toujours dans une seule d'entre elles, ce qui réduit d'emblée les candidats.
 | `Skypefolderreceived.mp3` | 0,72 s | message reçu contenant une pièce jointe |
 | `Skypesendfolder.mp3` | 2,06 s | envoi d'un fichier, d'une image ou d'un GIF |
 | `Skypesendfolderfailed.mp3` | 2,70 s | l'envoi d'un fichier a échoué |
-| `Skypeforwindowsnew.mp3` | 0,99 s | envoi d'une carte de contact |
-| `Skypevoicemail.mp3` | 0,74 s | réception d'un message vocal |
+| `Skypeforwindowsnew.mp3` | 0,99 s | message vocal reçu dans une conversation |
+| `Skypevoicemail.mp3` | 0,74 s | messagerie vocale : message laissé après un appel manqué |
 
 ### Un second arbitrage : `Skypemessage` contre `Skypenotification_`
 
@@ -78,18 +78,32 @@ qui était justement resté vide.
 
 Aucun son n'a été deviné : c'est un fichier mieux qualifié qui a libéré l'autre.
 
-### Un cas d'arbitrage : `Skypesendfolder` contre `Skypeforwindowsnew`
+### Le cas `Skypeforwindowsnew` : deux déductions, une réponse
 
-`Skypeforwindowsnew.mp3` occupait « fichier ou contact envoyé », sur indication
-explicite de l'utilisateur. L'arrivée de `Skypesendfolder.mp3` a créé un
-conflit : deux fichiers pour un même événement.
+C'est le seul fichier dont le nom ne dit rien de son usage, et il a changé de
+place deux fois — chaque fois faute d'information, jamais par acoustique.
+D'abord « fichier ou contact envoyé », puis, quand `Skypesendfolder` a pris
+l'envoi de fichier, la carte de contact seule. Les deux étaient des déductions.
 
-Il a été tranché par la **paire officielle** — `Skypefolderreceived` /
-`Skypesendfolder` sont manifestement le recto et le verso du même transfert,
-comme le confirme leur nommage symétrique. `Skypesendfolder` prend donc l'envoi
-de fichier. `Skypeforwindowsnew` conserve l'autre moitié de ce que
-l'utilisateur avait décrit : **la carte de contact**. Aucune des deux
-informations n'est écrasée.
+L'utilisateur a fini par trancher : **message vocal reçu**. C'est sa place.
+
+Cette réponse a révélé un conflit avec `Skypevoicemail.mp3`, qui occupait
+« réception d'un message vocal ». Les deux ne pouvaient pas coexister — et la
+distinction manquante est celle que Skype faisait :
+
+- **message vocal** : un enregistrement envoyé dans le fil de la conversation
+  → `Skypeforwindowsnew.mp3`
+- **messagerie vocale** : un message laissé par un appelant après un appel
+  sans réponse → `Skypevoicemail.mp3`
+
+L'envoi d'une carte de contact, qui n'a jamais eu de son propre dans Skype,
+retrouve le son d'envoi de fichier.
+
+### Un cas d'arbitrage : `Skypesendfolder` contre `Skypefolderreceived`
+
+La **paire officielle** — `Skypefolderreceived` / `Skypesendfolder` — est le
+recto et le verso du même transfert, comme le confirme leur nommage
+symétrique. `Skypesendfolder` prend donc l'envoi de fichier.
 
 ## Les emplacements encore vides
 
@@ -106,13 +120,20 @@ corresponde à rien — auquel cas il reste non attribué.
 Le pavé numérique (DTMF) reste synthétisé **définitivement** : ce sont des
 fréquences normalisées, qui doivent être générées et non rejouées.
 
-### Un son qui révèle une fonctionnalité manquante : `Skypepaused`
+### Deux sons qui révèlent une fonctionnalité manquante
+
+**`Skypepaused`.**
 
 L'application n'avait aucune notion de « mise en attente ». Plutôt que de
 brancher ce son sur un événement approchant, la fonctionnalité a été ajoutée :
 elle existait dans Skype, et l'existence même du fichier dans le jeu officiel
 l'atteste. Le canal `call:state` étant déjà générique, le serveur n'a pas
 bougé.
+
+**`Skypevoicemail`.** Une fois `Skypeforwindowsnew` installé sur le message
+vocal, ce fichier se retrouvait sans emploi : l'application n'avait pas de
+répondeur. Il a été construit — un appel sortant resté sans réponse propose
+désormais de laisser un message, qui arrive marqué « Messagerie vocale ».
 
 C'est le sens du critère nº 1 : quand un son officiel ne trouve pas sa place,
 l'hypothèse la plus probable n'est pas qu'il faille lui en inventer une, mais

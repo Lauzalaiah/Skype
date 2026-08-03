@@ -733,8 +733,14 @@ function createSession({ chat, video, stream, outgoing }) {
       // Appel jamais établi : on joue le son « appel non abouti » plutôt que
       // le raccrochage, comme le faisait Skype.
       const aboutit = !!startedAt;
+      const sortant = outgoing;
       destroy();
       if (!aboutit && ['missed', 'declined', 'cancelled'].includes(reason)) sounds.callNotConnected();
+      // Appel sortant resté sans réponse : on propose de laisser un message,
+      // comme le répondeur de Skype.
+      if (!aboutit && sortant && ['missed', 'declined'].includes(reason)) {
+        proposerMessagerieVocale(chat);
+      }
     }),
   ];
 
@@ -842,6 +848,111 @@ export function dismissIncomingCall(callId) {
 
 export const activeSession = () => session;
 export const hangupActiveCall = () => session?.hangup();
+
+// ── Messagerie vocale ────────────────────────────────────────────────────────
+
+/**
+ * Répondeur de Skype : quand un appel sortant reste sans réponse, l'appelant
+ * peut laisser un message vocal, qui arrive dans la conversation marqué comme
+ * tel — et déclenche chez le destinataire le son de messagerie vocale, distinct
+ * de celui d'un message vocal ordinaire.
+ */
+export async function proposerMessagerieVocale(chat) {
+  const ok = await confirm({
+    title: 'Laisser un message vocal ?',
+    message: 'Personne n’a répondu. Vous pouvez laisser un message sur la messagerie vocale.',
+    confirmLabel: 'Enregistrer',
+  });
+  if (!ok) return;
+  return enregistrerMessagerieVocale(chat);
+}
+
+export function enregistrerMessagerieVocale(chat) {
+  return new Promise((resolve) => {
+    let media = null;
+    let flux = null;
+    let minuteur = null;
+    let termine = false;
+    const morceaux = [];
+    const debut = Date.now();
+
+    const chrono = el('div', { style: { fontSize: '1.8em', fontWeight: '300', margin: '12px 0' }, text: '0:00' });
+    const etat = el('p.dim', { style: { fontSize: '0.85em' }, text: 'Préparation du micro…' });
+
+    const finir = async (envoyer) => {
+      if (termine) return;
+      termine = true;
+      clearInterval(minuteur);
+      if (media && media.state !== 'inactive') {
+        await new Promise((r) => { media.onstop = r; media.stop(); });
+      }
+      flux?.getTracks().forEach((t) => t.stop());
+      instance.close();
+
+      const secondes = Math.round((Date.now() - debut) / 1000);
+      if (!envoyer || !morceaux.length || secondes < 1) return resolve(null);
+
+      try {
+        const blob = new Blob(morceaux, { type: morceaux[0].type || 'audio/webm' });
+        blob.name = `messagerie-vocale-${Date.now()}.webm`;
+        blob.duration = secondes;
+        const meta = await api.upload(blob);
+        await api.send(chat.id, {
+          type: 'file',
+          content: '',
+          attachments: [meta],
+          voicemail: true,
+        });
+        toast('Message vocal déposé');
+        resolve(meta);
+      } catch (err) {
+        toast(err.message, { type: 'error' });
+        resolve(null);
+      }
+    };
+
+    const instance = modal({
+      title: 'Messagerie vocale',
+      size: 'narrow',
+      closable: false,
+      body: el('div.center', {}, [
+        el('div.avatar.avatar--xl', { style: { margin: '0 auto 6px', background: 'var(--accent)' } }, icon('mic', 'icon icon--xl')),
+        chrono,
+        etat,
+      ]),
+      footer: [
+        el('button.btn', { text: 'Annuler', onclick: () => finir(false) }),
+        el('button.btn.btn--primary', { text: 'Envoyer', onclick: () => finir(true) }),
+      ],
+    });
+
+    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } })
+      .then((stream) => {
+        if (termine) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
+        flux = stream;
+        const mime = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4']
+          .find((type) => MediaRecorder.isTypeSupported(type)) || '';
+        media = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+        media.ondataavailable = (e) => e.data.size && morceaux.push(e.data);
+        media.start(200);
+        etat.textContent = 'Enregistrement en cours…';
+        minuteur = setInterval(() => {
+          chrono.textContent = formatDuration((Date.now() - debut) / 1000);
+          // Le répondeur ne s'éternise pas.
+          if (Date.now() - debut > 120000) finir(true);
+        }, 500);
+      })
+      .catch(() => {
+        // Ce n'est pas un appel qui échoue, mais une action refusée.
+        sounds.error();
+        etat.textContent = 'Micro inaccessible.';
+        toast('Micro inaccessible. Vérifiez les autorisations du navigateur.', { type: 'error' });
+      });
+  });
+}
 
 // ── Appel téléphonique (Skype Credit) ────────────────────────────────────────
 

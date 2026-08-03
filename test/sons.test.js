@@ -149,14 +149,12 @@ describe('Correspondance son ↔ événement', () => {
       'le son ne doit se déclencher que sur un vrai changement d’état');
   });
 
-  test('envoi de fichier, de contact et échec sont trois sons distincts', () => {
-    const trio = [LIB.fileSent?.file, LIB.contactSent?.file, LIB.fileSendFailed?.file];
-    assert.ok(trio.every(Boolean), 'les trois entrées doivent exister');
-    assert.equal(new Set(trio).size, 3);
-
-    assert.equal([...compose.matchAll(/sounds\.fileSent\(\)/g)].length, 2, 'attendu : pièce jointe + GIF');
-    assert.equal([...compose.matchAll(/sounds\.contactSent\(\)/g)].length, 1, 'attendu : carte de contact');
-    assert.equal([...compose.matchAll(/sounds\.fileSendFailed\(\)/g)].length, 1, 'attendu : échec du téléversement');
+  test('envoi de fichier et échec d’envoi sont deux sons distincts', () => {
+    assert.notEqual(LIB.fileSent?.file, LIB.fileSendFailed?.file);
+    assert.equal([...compose.matchAll(/sounds\.fileSent\(\)/g)].length, 3,
+      'attendu : pièce jointe, carte de contact, GIF');
+    assert.equal([...compose.matchAll(/sounds\.fileSendFailed\(\)/g)].length, 1,
+      'attendu : échec du téléversement');
   });
 
   test('le son de début d’appel ne sert qu’à l’établissement de la communication', () => {
@@ -167,11 +165,32 @@ describe('Correspondance son ↔ événement', () => {
 
   test('un message vocal reçu a son propre son, distinct du fichier ordinaire', () => {
     assert.match(app, /const estVocal = message\.attachments\?\.some\(\(a\) => a\.mime\?\.startsWith\('audio\/'\)\);/);
-    assert.match(app, /else if \(estVocal\) sounds\.voicemail\(\);/);
-    assert.notEqual(LIB.voicemail?.file, LIB.fileReceived?.file);
+    assert.match(app, /else if \(estVocal\) sounds\.voiceMessage\(\);/);
+    assert.equal(LIB.voiceMessage?.source, 'Skypeforwindowsnew.mp3');
+    assert.notEqual(LIB.voiceMessage?.file, LIB.fileReceived?.file);
 
-    const points = [...app.matchAll(/sounds\.voicemail\(\)/g)];
+    const points = [...app.matchAll(/sounds\.voiceMessage\(\)/g)];
     assert.equal(points.length, 1, 'le son de message vocal ne doit servir qu’à la réception d’un vocal');
+  });
+
+  test('la messagerie vocale et le message vocal sont deux sons différents', () => {
+    assert.equal(LIB.voicemail?.source, 'Skypevoicemail.mp3');
+    assert.notEqual(LIB.voicemail?.file, LIB.voiceMessage?.file);
+    assert.match(sons, /export const voicemail = \(\) => sound\('voicemail'\);/);
+    assert.match(sons, /export const voiceMessage = \(\) => sound\('voiceMessage'\);/);
+
+    // Le son de messagerie vocale est réservé aux messages marqués comme tels,
+    // et il est testé AVANT le message vocal ordinaire : une messagerie vocale
+    // porte elle aussi une pièce jointe audio.
+    assert.match(app, /else if \(message\.voicemail\) sounds\.voicemail\(\);\s*\n\s*else if \(estVocal\) sounds\.voiceMessage\(\);/,
+      'la messagerie vocale doit être reconnue avant le message vocal ordinaire');
+    assert.equal([...app.matchAll(/sounds\.voicemail\(\)/g)].length, 1);
+  });
+
+  test('la messagerie vocale n’est proposée qu’après un appel sortant sans réponse', () => {
+    assert.match(appels, /if \(!aboutit && sortant && \['missed', 'declined'\]\.includes\(reason\)\) \{\s*\n\s*proposerMessagerieVocale\(chat\);/,
+      'ni un appel abouti, ni un appel entrant ne doivent proposer le répondeur');
+    assert.match(appels, /voicemail: true,/, 'le message déposé doit être marqué comme messagerie vocale');
   });
 
   test('les sonneries au choix sont bien des sons en boucle', () => {

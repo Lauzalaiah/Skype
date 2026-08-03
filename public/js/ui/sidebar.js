@@ -8,7 +8,7 @@ import {
 } from '../state.js';
 import { avatar, groupAvatar, menu, toast, confirm, searchBox, emptyState, personRow, sectionTitle, spinner, modal } from './common.js';
 import { shortTime, presenceLabel, relative, dateTimeOf } from '../lib/time.js';
-import { plainPreview, formatDuration } from '../lib/format.js';
+import { plainPreview, formatDuration, apercuPieceJointe } from '../lib/format.js';
 import { openChatMenu } from './conversation.js';
 import { openNewChatDialog, openNewGroupDialog, openProfileCard, openAddContactDialog } from './modals.js';
 import { startCall, startPhoneCall, answerCall, declineCall, openCreditPurchase } from './calls.js';
@@ -210,11 +210,7 @@ export function renderSidebar() {
     else if (last.type === 'call') preview = `📞 ${last.content}`;
     else if (last.type === 'poll') preview = `📊 ${last.poll?.question || 'Sondage'}`;
     else if (last.attachments?.length) {
-      const first = last.attachments[0];
-      preview = first.mime?.startsWith('image/') ? '📷 Photo'
-        : first.mime?.startsWith('audio/') ? '🎤 Message vocal'
-        : first.mime?.startsWith('video/') ? '🎬 Vidéo'
-        : `📎 ${first.name}`;
+      preview = apercuPieceJointe(last);
       if (last.content) preview += ` · ${plainPreview(last.content, 40)}`;
     } else preview = plainPreview(last.content);
 

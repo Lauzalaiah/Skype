@@ -401,7 +401,10 @@ function notifyIncoming(chat, message, sender) {
   if (settings.sound !== false) {
     const estVocal = message.attachments?.some((a) => a.mime?.startsWith('audio/'));
     if (mentionsMe) sounds.mention();
-    else if (estVocal) sounds.voicemail();
+    // La messagerie vocale a son propre son : elle se distingue d'un message
+    // vocal envoyé dans le fil de la conversation.
+    else if (message.voicemail) sounds.voicemail();
+    else if (estVocal) sounds.voiceMessage();
     else if (message.attachments?.length) sounds.fileReceived();
     else sounds.messageIn();
   }

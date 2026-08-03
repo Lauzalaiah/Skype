@@ -105,6 +105,21 @@ export function formatMessage(text, { mentions = [], currentUserName = '', emoti
 }
 
 /** Version texte brut, pour les aperçus de la liste de conversations. */
+/**
+ * Libellé d'aperçu d'une pièce jointe, pour la liste des conversations comme
+ * pour la citation d'un message. Défini ici une seule fois : la liste et le fil
+ * calculaient auparavant ce texte chacun de leur côté, et un ajout dans l'un
+ * ne se voyait pas dans l'autre.
+ */
+export function apercuPieceJointe(message) {
+  const first = message?.attachments?.[0];
+  if (!first) return '';
+  if (first.mime?.startsWith('image/')) return '📷 Photo';
+  if (first.mime?.startsWith('audio/')) return message.voicemail ? '📞 Messagerie vocale' : '🎤 Message vocal';
+  if (first.mime?.startsWith('video/')) return '🎬 Vidéo';
+  return `📎 ${first.name}`;
+}
+
 export function plainPreview(text, maxLength = 90) {
   let out = String(text ?? '')
     .replace(/```[\s\S]*?```/g, '[code]')

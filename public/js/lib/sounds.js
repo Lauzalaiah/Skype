@@ -153,8 +153,8 @@ export const BIBLIOTHEQUE = {
   voicemail: {
     file: 'skype-voicemail.mp3',
     source: 'Skypevoicemail.mp3',
-    usage: 'Réception d’un message vocal',
-    label: 'Message vocal reçu',
+    usage: 'Messagerie vocale : un appelant a laissé un message après un appel manqué',
+    label: 'Messagerie vocale',
     secours: [
       { freq: 698, duration: 0.1, gain: 0.18 },
       { freq: 880, start: 0.1, duration: 0.18, gain: 0.18 },
@@ -243,11 +243,11 @@ export const BIBLIOTHEQUE = {
       { freq: 294, start: 0.2, duration: 0.32, gain: 0.16 },
     ],
   },
-  contactSent: {
-    file: 'skype-contact-sent.mp3',
+  voiceMessage: {
+    file: 'skype-voice-message.mp3',
     source: 'Skypeforwindowsnew.mp3',
-    usage: 'Envoi d’une carte de contact depuis la conversation',
-    label: 'Contact envoyé',
+    usage: 'Message vocal reçu dans une conversation',
+    label: 'Message vocal reçu',
     secours: [
       { freq: 1046, duration: 0.08, gain: 0.16 },
       { freq: 1318, start: 0.08, duration: 0.12, gain: 0.14 },
@@ -452,8 +452,8 @@ export const fileSent = () => sound('fileSent');
 /** L'envoi d'un fichier a échoué. */
 export const fileSendFailed = () => sound('fileSendFailed');
 
-/** Carte de contact envoyée depuis la conversation. */
-export const contactSent = () => sound('contactSent');
+/** Message vocal reçu dans une conversation. */
+export const voiceMessage = () => sound('voiceMessage');
 
 /** Connexion réussie. */
 export const login = () => sound('login');
@@ -487,7 +487,7 @@ export const mention = () =>
 /** L'appel est établi : la communication démarre. */
 export const callConnect = () => sound('callStart');
 
-/** Message vocal reçu. */
+/** Messagerie vocale : un appelant a laissé un message après un appel manqué. */
 export const voicemail = () => sound('voicemail');
 
 /** Raccrochage : la communication se termine. */

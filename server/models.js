@@ -408,6 +408,8 @@ export function addMessage(chatId, senderId, payload) {
     mentions: payload.mentions || [],
     poll: payload.poll || null,
     contactCard: payload.contactCard || null,
+    // Message laissé sur la messagerie vocale après un appel manqué.
+    voicemail: payload.voicemail === true,
     location: payload.location || null,
     scheduled: payload.scheduled || null,
     call: payload.call || null,

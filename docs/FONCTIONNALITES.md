@@ -130,6 +130,10 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 - Rejoindre un appel déjà en cours depuis la conversation
 - Bandeau « appel en cours » dans la conversation
 - Message d'appel dans le fil, avec durée et statut
+- **Messagerie vocale** : un appel sortant resté sans réponse ou refusé propose
+  de laisser un message. L'enregistrement (2 minutes maximum) arrive dans la
+  conversation marqué « Messagerie vocale · appel manqué », avec son propre son
+  de réception, distinct de celui d'un message vocal ordinaire
 - Historique complet : entrants, sortants, manqués, refusés, durée
 - Rappel en un clic depuis l'historique
 - Avertissement avant de fermer l'onglet pendant un appel
@@ -212,7 +216,7 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
   | `Skypenotification_.mp3` | demande de contact, réaction |
   | `Skypelogout.mp3` | déconnexion |
   | `Skypefolderreceived.mp3` | fichier reçu |
-  | `Skypeforwindowsnew.mp3` | carte de contact envoyée |
+  | `Skypeforwindowsnew.mp3` | message vocal reçu dans la conversation |
   | `Sonnerieskype2.mp3` | appel entrant (3ᵉ sonnerie, au choix) |
   | `Skypevideocall.mp3` | appel entrant (4ᵉ sonnerie, au choix) |
   | `Skypesonnerie3.mp3` | appel entrant (5ᵉ sonnerie, au choix) |
@@ -221,7 +225,7 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
   | `Skypesendfolder.mp3` | fichier, image ou GIF envoyé |
   | `Skypesendfolderfailed.mp3` | l'envoi d'un fichier a échoué |
   | `Skypestartcall.mp3` | l'appel est établi, la communication démarre |
-  | `Skypevoicemail.mp3` | réception d'un message vocal |
+  | `Skypevoicemail.mp3` | messagerie vocale, après un appel manqué |
 
   La correspondance est déclarée dans `public/js/lib/sounds.js` (champs
   `source` et `usage`) et verrouillée par `test/sons.test.js`, qui échoue si

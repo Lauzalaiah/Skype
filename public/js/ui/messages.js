@@ -103,6 +103,9 @@ function renderBody(message, { chat, isOwn, highlight }) {
 
   if (images.length) parts.push(renderImages(images));
   for (const audio of audios) parts.push(renderVoice(audio, message));
+  if (message.voicemail) parts.unshift(
+    el('div.voicemail-tag', {}, [icon('call', 'icon icon--sm'), 'Messagerie vocale · appel manqué'])
+  );
   for (const file of files) parts.push(renderFile(file));
 
   // Texte
@@ -157,13 +160,7 @@ const previewOf = (message) => {
   if (!message) return '';
   if (message.deleted) return 'Message supprimé';
   if (message.type === 'poll') return `📊 ${message.poll?.question || 'Sondage'}`;
-  if (message.attachments?.length) {
-    const first = message.attachments[0];
-    if (first.mime?.startsWith('image/')) return '📷 Photo';
-    if (first.mime?.startsWith('audio/')) return '🎤 Message vocal';
-    if (first.mime?.startsWith('video/')) return '🎬 Vidéo';
-    return `📎 ${first.name}`;
-  }
+  if (message.attachments?.length) return apercuPieceJointe(message);
   return String(message.content || '').slice(0, 120);
 };
 

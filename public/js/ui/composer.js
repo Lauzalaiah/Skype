@@ -697,7 +697,7 @@ function openContactPicker(chat) {
               content: `Carte de contact : ${contact.displayName}`,
               contactCard: { id: contact.id, displayName: contact.displayName, skypeName: contact.skypeName, avatar: contact.avatar },
             });
-            sounds.contactSent();
+            sounds.fileSent();
           } catch (err) {
             toast(err.message, { type: 'error' });
           }
