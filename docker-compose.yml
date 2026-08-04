@@ -46,7 +46,17 @@ services:
     restart: unless-stopped
     profiles: ["https"]
     environment:
-      DOMAINE: ${DOMAINE:?précisez DOMAINE=skype.exemple.fr}
+      # Pas de « ${DOMAINE:?…} » ici : Compose interprète TOUS les services,
+      # y compris ceux d'un profil inactif. Exiger la variable faisait donc
+      # échouer « docker compose up -d » — la commande la plus simple, celle
+      # de la première page du README — pour un service qui n'allait même pas
+      # démarrer.
+      #
+      # Sans domaine, Caddy sert https://localhost avec un certificat qu'il
+      # signe lui-même : le navigateur affiche un avertissement, mais le micro
+      # et la caméra fonctionnent. C'est utile pour essayer, insuffisant pour
+      # être joignable de l'extérieur.
+      DOMAINE: ${DOMAINE:-localhost}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data

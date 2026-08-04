@@ -130,3 +130,37 @@ describe('Document de lancement', () => {
     assert.match(lancement, /Mieux vaut y avoir pensé\s*\navant de poster/);
   });
 });
+
+describe('Composition Docker', () => {
+  const compose = lire('docker-compose.yml');
+
+  test('« docker compose up -d » ne dépend d’aucune variable', () => {
+    // Compose interprète TOUS les services, y compris ceux d'un profil
+    // inactif. Une variable déclarée obligatoire — « ${X:?message} » —
+    // n'attend donc pas que son service serve : elle fait échouer la
+    // commande la plus simple du README, celle qu'un inconnu tape en
+    // premier, pour un conteneur qui n'allait même pas démarrer.
+    // Les commentaires parlent du problème ; seule la configuration compte.
+    const configuration = compose
+      .split('\n')
+      .filter((ligne) => !ligne.trim().startsWith('#'))
+      .join('\n');
+    const obligatoires = [...configuration.matchAll(/\$\{([A-Z_]+):\?/g)].map((m) => m[1]);
+    assert.deepEqual(obligatoires, [],
+      `variable exigée à l’interprétation : ${obligatoires.join(', ')} — donnez-lui une valeur par défaut`);
+  });
+
+  test('le profil https reste séparé du démarrage ordinaire', () => {
+    // Sans cela, « up -d » ouvrirait les ports 80 et 443 et tenterait
+    // d'obtenir un certificat pour une machine qui n'a pas de domaine.
+    assert.match(compose, /profiles:\s*\["https"\]/,
+      'Caddy doit rester derrière son profil');
+  });
+
+  test('le dossier à sauvegarder est monté hors du conteneur', () => {
+    // Un volume anonyme disparaîtrait au premier « docker compose down -v »,
+    // emportant les comptes et les conversations sans prévenir.
+    assert.match(compose, /- \.\/donnees:\/données/,
+      'les données doivent vivre sur la machine hôte');
+  });
+});
