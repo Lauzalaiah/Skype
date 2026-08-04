@@ -14,7 +14,34 @@ Trois choses, dans cet ordre :
 
 ## 1. Le serveur
 
-Aucune dépendance à installer. Node 18 ou plus suffit.
+### Le chemin court : Docker, et un domaine
+
+Si vous avez déjà un nom de domaine pointé sur la machine, les trois étapes de
+cette page se font en une seule commande, certificat compris :
+
+```bash
+git clone <votre-dépôt> skype && cd skype
+DOMAINE=skype.exemple.fr docker compose --profile https up -d
+```
+
+Caddy obtient le certificat Let's Encrypt tout seul, laisse passer le
+WebSocket sans configuration, et le renouvelle sans qu'on y repense. Les
+données restent dans `./donnees` sur la machine hôte — c'est ce dossier qu'il
+faut sauvegarder.
+
+Sans domaine, pour essayer sur le réseau local :
+
+```bash
+docker compose up -d          # écoute sur le port 3000
+```
+
+Le reste de cette page décrit la même chose **à la main**, pour qui préfère se
+passer de Docker ou intégrer le serveur à une machine déjà configurée.
+
+### À la main
+
+Aucune dépendance à installer. Node 18 ou plus suffit pour le serveur (la
+suite de tests, elle, demande Node 22).
 
 ```bash
 git clone <votre-dépôt> skype && cd skype
