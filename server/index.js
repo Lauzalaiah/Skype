@@ -179,7 +179,7 @@ server.listen(PORT, HOST, () => {
   const port = server.address().port;
   console.log(`
   ╭──────────────────────────────────────────────╮
-  │   S k y p e   R e b o r n   ·   v8.134.0     │
+  │   S k y p e   R e b o r n   ·   v8.135.0     │
   ╰──────────────────────────────────────────────╯
 
   ▸ Application : http://localhost:${port}

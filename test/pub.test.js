@@ -66,6 +66,54 @@ describe('Page de campagne', () => {
   });
 });
 
+describe('La publicité est réellement joignable', () => {
+  /**
+   * Une publicité sans adresse publique ne sert à rien. Elle vivait
+   * uniquement sur « /pub » du serveur de l'application — que personne
+   * n'héberge. Elle est donc publiée à côté du site de téléchargement, où
+   * elle a une vraie adresse.
+   *
+   * Le même fichier sert aux deux endroits : dupliquer une page de 700 lignes
+   * garantirait qu'elle diverge. Ces tests exigent qu'elle reste identique et
+   * que ses chemins fonctionnent des deux côtés.
+   */
+  const enLigne = lire('docs/pub/index.html');
+
+  test('la copie publiée est identique à la source', () => {
+    assert.equal(enLigne, pub,
+      'docs/pub/index.html a divergé : recopiez public/pub/index.html');
+  });
+
+  test('aucun chemin absolu : la page suit là où on la sert', () => {
+    // « /assets/… » désignerait la racine du domaine, pas celle du site.
+    assert.doesNotMatch(pub, /(?:href|src)="\/[^"]/,
+      'un chemin absolu casserait la page servie depuis un sous-dossier');
+    assert.doesNotMatch(pub, /'\/assets\//,
+      'les sons doivent être référencés relativement');
+  });
+
+  test('chaque son référencé existe aux deux endroits', () => {
+    const sons = [...pub.matchAll(/'\.\.\/assets\/sounds\/([\w.-]+)'/g)].map((m) => m[1]);
+    assert.ok(sons.length >= 5, `seulement ${sons.length} son(s) référencé(s)`);
+    for (const son of sons) {
+      assert.ok(fs.existsSync(path.join(ROOT, 'public/assets/sounds', son)),
+        `absent de l’application : ${son}`);
+      assert.ok(fs.existsSync(path.join(ROOT, 'docs/assets/sounds', son)),
+        `absent du site publié : ${son}`);
+    }
+  });
+
+  test('le site de téléchargement renvoie vers elle', () => {
+    assert.match(lire('docs/index.html'), /href="pub\/"/,
+      'la publicité doit être atteignable depuis la page d’accueil');
+  });
+
+  test('la page publiée garde la mention de projet de fan', () => {
+    assert.match(enLigne, /Projet de fan, non officiel/);
+    assert.ok(enLigne.indexOf('Projet de fan, non officiel') < enLigne.indexOf('<header>'));
+  });
+});
+
 describe('Installation sur iPhone', () => {
   const index = lire('public/index.html');
   const manifeste = JSON.parse(lire('public/manifest.webmanifest'));
