@@ -1,0 +1,62 @@
+# Skype Reborn — pour héberger son propre serveur.
+#
+#   docker compose up -d
+#
+# et l'application répond sur http://<votre-machine>:3000.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# HTTPS : ce n'est pas un luxe, c'est une condition
+#
+# Les navigateurs refusent le micro et la caméra sur une page en http — donc
+# pas d'appel, pas de message vocal. « localhost » fait exception, mais pas
+# l'adresse IP de votre serveur.
+#
+# Le profil « https » ci-dessous ajoute Caddy, qui obtient et renouvelle le
+# certificat tout seul. Il lui faut seulement un nom de domaine pointant sur
+# la machine :
+#
+#   DOMAINE=skype.exemple.fr docker compose --profile https up -d
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  skype:
+    build: .
+    image: skype-reborn
+    container_name: skype
+    restart: unless-stopped
+    environment:
+      # Le serveur écoute sur toutes les interfaces du conteneur ; ce qui est
+      # exposé au dehors est décidé plus bas, par « ports ».
+      HOST: 0.0.0.0
+      PORT: 3000
+    volumes:
+      # TOUT est là : comptes, conversations, fichiers envoyés.
+      # C'est le seul chemin à sauvegarder.
+      - ./donnees:/données
+    ports:
+      # Avec le profil « https », Caddy se charge de l'exposition : vous pouvez
+      # commenter cette ligne pour que le serveur ne soit plus joignable
+      # directement en clair.
+      - "3000:3000"
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: skype-https
+    restart: unless-stopped
+    profiles: ["https"]
+    environment:
+      DOMAINE: ${DOMAINE:?précisez DOMAINE=skype.exemple.fr}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - skype
+
+volumes:
+  caddy-data:
+  caddy-config:

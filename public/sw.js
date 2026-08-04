@@ -21,7 +21,7 @@
  * d'un cache vide, et l'ancien est effacé à l'activation.
  */
 
-const VERSION = 'skype-8.135.0';
+const VERSION = 'skype-8.136.0';
 const COQUILLE = [
   '/',
   '/index.html',

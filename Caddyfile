@@ -1,0 +1,16 @@
+# Certificat HTTPS obtenu et renouvelé automatiquement par Caddy.
+# Le nom de domaine vient de la variable DOMAINE.
+{$DOMAINE} {
+	# Le WebSocket passe par la même adresse que le reste : Caddy relaie la
+	# montée en gamme du protocole sans configuration particulière.
+	reverse_proxy skype:3000
+
+	encode zstd gzip
+
+	header {
+		# Rien à embarquer dans une iframe : c'est une application, pas un widget.
+		X-Frame-Options DENY
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+	}
+}

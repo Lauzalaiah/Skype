@@ -82,8 +82,11 @@ function renderShell() {
   clear(appNode);
   appNode.removeAttribute('aria-busy');
 
-  mainSlot = el('div', { style: { flex: '1', display: 'flex', minWidth: '0' } });
-  detailsSlot = el('div', { style: { display: 'flex' } });
+  // La mise en page de ces conteneurs vit dans la feuille de style, pas ici :
+  // un style en ligne bat toute règle CSS, y compris celle qui doit leur
+  // retirer leur espace sur téléphone.
+  mainSlot = el('div.slot-main');
+  detailsSlot = el('div.slot-details');
 
   appNode.append(renderRail(), renderSidebar(), mainSlot, detailsSlot);
 

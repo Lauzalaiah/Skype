@@ -1,7 +1,7 @@
 {
   "name": "skype-reborn-desktop",
   "private": true,
-  "version": "8.135.0",
+  "version": "8.136.0",
   "description": "Skype Reborn — application de bureau. Recréation indépendante, faite par un fan, sans lien avec Microsoft.",
   "author": "Skype Reborn",
   "main": "main.js",

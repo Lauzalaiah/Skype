@@ -84,6 +84,12 @@
   border: 2px solid var(--bg-rail);
 }
 
+/* Conteneurs de la conversation et du panneau de détails. Leur mise en page
+   est ici, et non dans le JavaScript : un style en ligne empêcherait la
+   version mobile de leur retirer l'espace qu'ils réservent. */
+.slot-main { flex: 1; display: flex; min-width: 0; }
+.slot-details { display: flex; }
+
 /* ── Panneau latéral ──────────────────────────────────────────────────────── */
 .sidebar {
   width: var(--sidebar-width);
@@ -383,7 +389,10 @@
   .rail__profile { display: none; }
   .rail__button.is-active::before { left: 50%; top: -1px; transform: translateX(-50%); width: 24px; height: 3px; }
 
-  .sidebar { width: 100%; border-right: none; }
+  /* « column-reverse » empile les éléments depuis le bas : sans « flex: 1 »,
+     le panneau garde la hauteur de son contenu et tout l'espace libre reste
+     en haut de l'écran — la moitié de la page était vide sur un téléphone. */
+  .sidebar { width: 100%; border-right: none; flex: 1; min-height: 0; }
   /* La barre du bas est décalée par l'indicateur d'accueil de l'iPhone :
      le contenu doit s'arrêter au-dessus, sinon le composeur passe dessous. */
   .main { position: absolute; inset: 0; bottom: calc(58px + env(safe-area-inset-bottom)); z-index: 20; }
@@ -392,6 +401,12 @@
      les en-têtes descendent d'autant. */
   .sidebar__header,
   .main__header { padding-top: calc(10px + env(safe-area-inset-top)); }
+
+  /* La conversation est en position absolue sur téléphone : son conteneur ne
+     doit réserver aucune place dans le flux, sinon il mange la moitié de
+     l'écran et la liste se retrouve collée en bas. */
+  .slot-main, .slot-details { flex: 0 0 auto; min-height: 0; }
+
 
   body[data-mobile-view='list'] .main { display: none; }
   body[data-mobile-view='chat'] .sidebar { display: none; }

@@ -66,6 +66,22 @@ describe('Page de campagne', () => {
   });
 });
 
+describe('Les données de démonstration ne mentent pas non plus', () => {
+  /**
+   * Les comptes de démonstration finissent en captures d'écran, sur le dépôt
+   * et sur les forums. Une phrase de conversation qui laisse croire à un
+   * retour officiel de Skype y serait aussi trompeuse que sur la page de
+   * campagne — et bien plus difficile à rattraper une fois diffusée.
+   */
+  const seed = lire('server/seed.js');
+
+  test('aucune conversation ne laisse croire à un retour officiel', () => {
+    for (const motif of [/Skype (est )?(de retour|revenu|revient)/i, /le retour officiel/i]) {
+      assert.doesNotMatch(seed, motif, `formulation trompeuse dans les démos : ${motif}`);
+    }
+  });
+});
+
 describe('La publicité est réellement joignable', () => {
   /**
    * Une publicité sans adresse publique ne sert à rien. Elle vivait

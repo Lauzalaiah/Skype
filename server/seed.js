@@ -96,7 +96,7 @@ seedChat(chatMamie, [
   ['mamie.jeanne', 'On s’appelle en vidéo dimanche comme d’habitude ?', 234],
   ['camille.durand', 'Avec plaisir ! 15 h ça te va ?', 230],
   ['mamie.jeanne', 'Parfait (y)', 228],
-  ['mamie.jeanne', 'Je suis tellement contente que Skype soit revenu, je n’ai jamais rien compris à l’autre truc là…', 12],
+  ['mamie.jeanne', 'Je suis tellement contente qu’on ait retrouvé ça, je n’ai jamais rien compris à l’autre truc là…', 12],
 ]);
 
 const chatThomas = M.getOrCreateDirectChat(users['camille.durand'].id, users['thomas.leroy'].id);

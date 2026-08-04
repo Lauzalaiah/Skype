@@ -5,9 +5,59 @@
 **La messagerie, les appels audio et vidéo et le partage d'écran que vous aimiez.
 Recréés de A à Z, sans rien oublier.**
 
-Version 8.135.0 · Zéro dépendance · Node.js ≥ 18
+Version 8.136.0 · Zéro dépendance · Node.js ≥ 18
+
+**[Télécharger](https://lauzalaiah.github.io/Skype/)** ·
+**[Pourquoi ce projet](https://lauzalaiah.github.io/Skype/pub/)** ·
+[Toutes les fonctionnalités](docs/FONCTIONNALITES.md) ·
+[Héberger son serveur](docs/HEBERGEMENT.md)
+
+![La conversation](docs/captures/conversation.png)
 
 </div>
+
+Un **serveur que vous hébergez**, sans société derrière, sans publicité, sans
+collecte. Vos conversations restent chez vous, et personne ne peut fermer le
+service. Windows, macOS, Linux, plus le navigateur et le téléphone.
+
+> Recréation indépendante réalisée par un fan. Aucun lien avec Microsoft ni
+> avec les équipes de Skype. « Skype » est une marque de Microsoft, citée ici
+> pour désigner le logiciel d'origine.
+
+<table>
+<tr>
+<td width="50%"><img src="docs/captures/emoticones.png" alt="Les émoticônes d'origine"></td>
+<td width="50%"><img src="docs/captures/connexion.png" alt="L'écran de connexion"></td>
+</tr>
+</table>
+
+---
+
+## Héberger son serveur : une commande
+
+```bash
+git clone https://github.com/Lauzalaiah/Skype && cd Skype
+docker compose up -d
+```
+
+L'application répond sur `http://<votre-machine>:3000`. Les données vivent dans
+`./donnees` — c'est le seul dossier à sauvegarder.
+
+**Avec HTTPS automatique** (indispensable : les navigateurs refusent le micro et
+la caméra sans lui, donc pas d'appel) :
+
+```bash
+DOMAINE=skype.exemple.fr docker compose --profile https up -d
+```
+
+Caddy obtient et renouvelle le certificat tout seul. Il faut seulement que le
+nom de domaine pointe sur la machine.
+
+**Sans Docker**, c'est aussi court — le projet n'a aucune dépendance :
+
+```bash
+node server/index.js
+```
 
 ---
 
@@ -40,7 +90,7 @@ La publicité de lancement est servie sur **http://localhost:3000/pub**.
 ```bash
 npm run dev       # démarrage avec rechargement automatique
 npm run reset     # remet la base à zéro et recrée les comptes de démonstration
-npm test          # 220 tests de bout en bout (API, temps réel, sécurité, sons) — Node 22+
+npm test          # 246 tests de bout en bout (API, temps réel, sécurité, sons) — Node 22+
 PORT=8080 npm start
 ```
 
@@ -166,7 +216,7 @@ votre machine. Aucun traceur, aucun service tiers, aucune police ni script dista
 npm test
 ```
 
-220 tests couvrent l'inscription et la connexion, le rejet des identifiants invalides,
+246 tests couvrent l'inscription et la connexion, le rejet des identifiants invalides,
 les demandes de contact, les permissions de conversation, l'édition et la suppression
 de messages, les réactions, les sondages, les rôles d'administrateur, les liens
 d'invitation, le blocage, la fusion des réglages imbriqués, le crédit Skype, l'envoi
