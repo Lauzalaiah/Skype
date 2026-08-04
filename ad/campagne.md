@@ -19,6 +19,33 @@
 > d'audience fabriqué. Le projet vient de sortir : la campagne parle de ce
 > qu'il fait, pas de ce qu'on en dirait.
 
+> ## Angle retenu : « un endroit qui vous appartient »
+>
+> La nostalgie fait cliquer, elle ne fait pas rester. Et on ne convaincra
+> personne de quitter la plateforme où sont ses amis — c'est le seul argument
+> qui compte, et rien ne le contredit.
+>
+> **On ne vise donc pas les utilisateurs de plateformes de communauté.** On
+> vise les conversations qu'elles ne portent pas : les parents, les
+> grands-parents, l'ami parti à l'étranger. Ces échanges se sont éparpillés le
+> jour où Skype a fermé, et ne sont revenus nulle part.
+>
+> **Les deux arguments qui tiennent dans la durée :**
+> 1. *C'est votre serveur* — pas de société, pas de publicité, pas de collecte.
+> 2. *Personne ne peut vous le retirer* — Skype a fermé sur décision d'une
+>    entreprise ; celui-ci est ouvert et hébergé par vous.
+>
+> **Et un mécanisme, pas seulement un message** : une messagerie où l'on est
+> seul ne sert à rien. Chaque support doit pousser à venir *avec son cercle* —
+> installer pour ses proches, créer leurs comptes, passer le premier appel.
+> C'est ce qui décide si les gens restent, et c'est ce que la page dit
+> explicitement.
+>
+> **Les limites sont annoncées, pas cachées** : il faut un serveur pour être à
+> plusieurs, Windows affichera un avertissement, il n'y a pas d'App Store, et
+> ce n'est pas connecté au vrai Skype. Une déception après téléchargement coûte
+> plus cher qu'un visiteur en moins.
+
 Objectif : parler aux gens qui ont quitté Skype par résignation, pas par choix,
 et leur montrer qu'un particulier en a reconstruit une version fidèle.
 Cible principale : 30–65 ans, particuliers, familles éclatées géographiquement, expatriés,
