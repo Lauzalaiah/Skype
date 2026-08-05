@@ -376,7 +376,47 @@ describe('Une installation, pas seulement un fichier', () => {
       'la licence apparaît dans « apt show » et « dnf info »');
     assert.match(build.linux.category, /Network/,
       'sans catégorie, l’application n’apparaît nulle part dans le menu');
-    assert.ok(build.linux.desktop?.entry?.Name, 'le nom affiché dans le menu doit être choisi');
+  });
+
+  test('l’application aura bien une icône dans le menu Linux', () => {
+    // Avec un fichier PNG unique, electron-builder range l'icône dans
+    // « /usr/share/icons/hicolor/0x0/apps/ ». Elle est donc bien installée —
+    // et introuvable, car aucun bureau ne cherche dans « 0x0 ». Le paquet
+    // s'installe, l'application se lance, et son entrée de menu est vide.
+    // Il faut un dossier de tailles nommées.
+    assert.equal(build.linux.icon, 'build/icons');
+    const dossier = path.join(ROOT, 'desktop/build/icons');
+    const tailles = fs.readdirSync(dossier).filter((f) => f.endsWith('.png')).sort();
+    for (const attendue of ['16x16.png', '32x32.png', '48x48.png', '64x64.png',
+      '128x128.png', '256x256.png', '512x512.png']) {
+      assert.ok(tailles.includes(attendue), `taille d’icône manquante : ${attendue}`);
+    }
+    // Le nom du fichier doit correspondre à ses dimensions réelles, sinon
+    // c'est ce nom qui ment et l'icône s'affiche floue ou pas du tout.
+    for (const nom of tailles) {
+      const entete = fs.readFileSync(path.join(dossier, nom));
+      const largeur = entete.readUInt32BE(16);
+      const hauteur = entete.readUInt32BE(20);
+      assert.equal(`${largeur}x${hauteur}.png`, nom,
+        `${nom} mesure en réalité ${largeur}x${hauteur}`);
+    }
+  });
+
+  test('l’entrée de menu ne contient pas de champ mal formé', () => {
+    // Le niveau « entry » supplémentaire était recopié tel quel dans le
+    // fichier .desktop, produisant la ligne « entry=[object Object] » — et
+    // les clés qu'il contenait n'étaient jamais appliquées.
+    const bureau = build.linux.desktop || {};
+    assert.ok(!('entry' in bureau),
+      'electron-builder 24 attend une table plate de clés du fichier .desktop');
+    for (const [cle, valeur] of Object.entries(bureau)) {
+      assert.equal(typeof valeur, 'string',
+        `${cle} doit être une chaîne : tout le reste finit en « [object Object] »`);
+      assert.match(cle, /^[A-Z]/, `${cle} n’est pas une clé de fichier .desktop`);
+    }
+    assert.ok(bureau.Name, 'le nom affiché dans le menu doit être choisi');
+    assert.ok(bureau.StartupWMClass,
+      'sans cela, la fenêtre n’est pas rattachée à son icône dans la barre des tâches');
   });
 
   test('le workflow publie bien les paquets qu’il construit', () => {

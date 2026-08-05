@@ -1,7 +1,7 @@
 {
   "name": "skype-reborn-desktop",
   "private": true,
-  "version": "8.137.1",
+  "version": "8.137.2",
   "description": "Skype Reborn — application de bureau. Recréation indépendante, faite par un fan, sans lien avec Microsoft.",
   "homepage": "https://lauzalaiah.github.io/Skype/",
   "license": "MIT",
@@ -44,7 +44,8 @@
       "preload.cjs",
       "package.json",
       "node_modules/**/*",
-      "build/icon.png"
+      "build/icon.png",
+      "build/icons/**/*"
     ],
     "extraResources": [
       {
@@ -91,17 +92,16 @@
         "deb",
         "rpm"
       ],
-      "icon": "build/icon.png",
+      "icon": "build/icons",
       "category": "Network;InstantMessaging;VideoConference",
       "maintainer": "Skype Reborn <skype-reborn@users.noreply.github.com>",
       "synopsis": "Recréation indépendante de l'ancien Skype",
       "description": "Messagerie et appels audio/vidéo. Recréation indépendante faite par un fan, sans lien avec Microsoft.",
       "desktop": {
-        "entry": {
-          "Name": "Skype",
-          "Comment": "Messagerie et appels — recréation indépendante",
-          "Keywords": "chat;messagerie;appel;visio;skype;"
-        }
+        "Name": "Skype",
+        "GenericName": "Messagerie et appels",
+        "Keywords": "chat;messagerie;appel;visio;video;skype;",
+        "StartupWMClass": "Skype"
       },
       "artifactName": "Skype-Reborn-${version}.${ext}"
     },
