@@ -333,10 +333,30 @@ describe('Une installation, pas seulement un fichier', () => {
     // machine qui construit. L'exécuteur GitHub étant en Apple Silicon, la
     // moitié des Mac se retrouvait sans fichier utilisable — sans que rien
     // ne le signale, puisqu'un .dmg était bien publié.
-    const cibles = build.mac.target;
-    const dmg = cibles.find((c) => (c.target || c) === 'dmg');
+    const dmg = build.mac.target.find((c) => (c.target || c) === 'dmg');
     assert.ok(dmg?.arch?.includes('universal'),
       'le .dmg doit être universel, sinon il ne marche que sur une architecture');
+  });
+
+  test('la ligne de commande n’écrase pas les cibles configurées', () => {
+    // Le piège dans lequel cette configuration est déjà tombée : « arch:
+    // universal » était bien écrit, et le .dmg publié était quand même en
+    // arm64 seul. Nommer une cible en ligne de commande — « --mac dmg » —
+    // remplace la configuration au lieu de la compléter, et l'architecture
+    // repart à celle de la machine.
+    //
+    // Le plus dangereux est que rien n'échoue : un fichier est produit, le
+    // workflow est vert, la publication part. Seul un Mac Intel découvre le
+    // problème, et il n'a personne à qui le dire.
+    for (const [cible, drapeau] of [
+      ['build:win', '--win'], ['build:mac', '--mac'], ['build:linux', '--linux'],
+    ]) {
+      const commande = paquetBureau.scripts[cible];
+      const apres = commande.slice(commande.indexOf(drapeau) + drapeau.length).trim();
+      const premier = apres.split(/\s+/)[0] || '';
+      assert.ok(premier.startsWith('--'),
+        `${cible} nomme « ${premier} » après ${drapeau} : la configuration sera ignorée`);
+    }
   });
 
   test('Linux offre une vraie installation, pas seulement un fichier portable', () => {

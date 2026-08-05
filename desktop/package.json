@@ -1,7 +1,7 @@
 {
   "name": "skype-reborn-desktop",
   "private": true,
-  "version": "8.137.0",
+  "version": "8.137.1",
   "description": "Skype Reborn — application de bureau. Recréation indépendante, faite par un fan, sans lien avec Microsoft.",
   "homepage": "https://lauzalaiah.github.io/Skype/",
   "license": "MIT",
@@ -10,9 +10,9 @@
   "type": "module",
   "scripts": {
     "start": "electron .",
-    "build:win": "electron-builder --win nsis --publish never",
-    "build:linux": "electron-builder --linux AppImage deb rpm --publish never",
-    "build:mac": "electron-builder --mac dmg --publish never"
+    "build:win": "electron-builder --win --publish never",
+    "build:linux": "electron-builder --linux --publish never",
+    "build:mac": "electron-builder --mac --publish never"
   },
   "dependencies": {
     "electron-updater": "^6.3.9"
