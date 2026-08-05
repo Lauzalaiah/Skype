@@ -71,6 +71,8 @@ jobs:
             cible: build:linux
             fichiers: |
               desktop/dist/*.AppImage
+              desktop/dist/*.deb
+              desktop/dist/*.rpm
               desktop/dist/latest-linux.yml
     runs-on: ${{ matrix.os }}
     steps:
@@ -82,6 +84,13 @@ jobs:
           # le client WebSocket natif, qui n'existe pas avant. Le serveur, lui,
           # tourne dès Node 18.
           node-version: '22'
+
+      # Le paquet .rpm est fabriqué par fpm, qui appelle rpmbuild. Il n'est pas
+      # présent sur l'exécuteur Ubuntu : sans lui, la construction s'arrête sur
+      # une erreur qui ne dit pas laquelle des trois cibles a échoué.
+      - name: Outils d'empaquetage Linux
+        if: matrix.systeme == 'linux'
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq rpm
 
       - name: Installer les dépendances de l'enveloppe de bureau
         working-directory: desktop
@@ -174,7 +183,8 @@ jobs:
         run: |
           mkdir -p publication
           find recolte -type f \
-            \( -name '*.exe' -o -name '*.dmg' -o -name '*.AppImage' -o -name 'latest*.yml' \) \
+            \( -name '*.exe' -o -name '*.dmg' -o -name '*.AppImage' \
+               -o -name '*.deb' -o -name '*.rpm' -o -name 'latest*.yml' \) \
             -exec cp {} publication/ \;
           ls -lh publication
           test -n "$(ls -A publication)" || { echo "aucun fichier à publier"; exit 1; }
@@ -191,7 +201,7 @@ jobs:
         # Uniquement les fichiers que quelqu'un télécharge à la main : les
         # descriptions de version portent déjà leur propre empreinte SHA-512.
         run: |
-          sha256sum *.exe *.dmg *.AppImage 2>/dev/null > SHA256SUMS.txt || true
+          sha256sum *.exe *.dmg *.AppImage *.deb *.rpm 2>/dev/null > SHA256SUMS.txt || true
           test -s SHA256SUMS.txt || { echo "aucune empreinte calculée"; exit 1; }
           cat SHA256SUMS.txt
 
@@ -209,8 +219,15 @@ jobs:
           | Système | Fichier |
           | --- | --- |
           | Windows 10 / 11 | `Skype-Reborn-Setup-*.exe` |
-          | macOS | `Skype-Reborn-*.dmg` |
-          | Linux | `Skype-Reborn-*.AppImage` (`chmod +x`, puis lancer) |
+          | macOS (Intel et Apple Silicon) | `Skype-Reborn-*.dmg` |
+          | Debian, Ubuntu, Mint | `Skype-Reborn-*.deb` — `sudo apt install ./…deb` |
+          | Fedora, openSUSE | `Skype-Reborn-*.rpm` — `sudo dnf install ./…rpm` |
+          | Toute distribution, sans installer | `Skype-Reborn-*.AppImage` (`chmod +x`, puis lancer) |
+
+          Les paquets `.deb` et `.rpm` installent vraiment l'application :
+          entrée dans le menu, icône, et désinstallation par le gestionnaire de
+          paquets. L'AppImage ne s'installe pas — c'est un seul fichier qu'on
+          lance, pratique pour essayer ou pour emporter sur une clé.
 
           Page de téléchargement : https://lauzalaiah.github.io/Skype/
 
@@ -230,13 +247,19 @@ jobs:
 
           ## Mises à jour
 
-          **Windows et Linux** se mettent à jour tout seuls : l'application
-          vérifie au démarrage, télécharge en arrière-plan et propose
-          « Redémarrer maintenant ». Rien à retélécharger.
+          **Windows et l'AppImage Linux** se mettent à jour tout seuls :
+          l'application vérifie au démarrage, télécharge en arrière-plan et
+          propose « Redémarrer maintenant ». Rien à retélécharger.
 
           **macOS** ne le peut pas : remplacer une application exige une
-          signature Apple, que ce projet gratuit n'a pas. L'application signale
-          la nouvelle version et renvoie vers la page de téléchargement.
+          signature Apple, que ce projet gratuit n'a pas.
+
+          **Les paquets `.deb` et `.rpm`** non plus : l'application est
+          installée dans `/opt`, qui appartient au gestionnaire de paquets.
+          Retéléchargez le paquet et réinstallez-le par-dessus.
+
+          Dans ces deux cas l'application signale la nouvelle version et renvoie
+          vers la page de téléchargement — elle ne fait jamais semblant.
 
           ## Ce qui est inclus
 

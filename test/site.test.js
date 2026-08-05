@@ -153,6 +153,8 @@ describe('Publication des fichiers téléchargeables', () => {
       ['exe', /\/\\\.exe\$\/i/],
       ['dmg', /\/\\\.dmg\$\/i/],
       ['AppImage', /\/\\\.AppImage\$\/i/],
+      ['deb', /\/\\\.deb\$\/i/],
+      ['rpm', /\/\\\.rpm\$\/i/],
     ]) {
       assert.ok(workflow.includes(`*.${extension}`), `le workflow ne publie pas de .${extension}`);
       assert.match(site, motif, `la page ne sait pas reconnaître un .${extension}`);
@@ -160,7 +162,7 @@ describe('Publication des fichiers téléchargeables', () => {
   });
 
   test('les empreintes SHA-256 sont produites, jointes et recopiées dans les notes', () => {
-    assert.match(workflow, /sha256sum \*\.exe \*\.dmg \*\.AppImage/);
+    assert.match(workflow, /sha256sum \*\.exe \*\.dmg \*\.AppImage \*\.deb \*\.rpm/);
     // Recopiées dans les notes, sinon la page ne peut pas les lire : le
     // téléchargement d'une pièce jointe redirige vers un hôte qui n'autorise
     // pas les requêtes venues d'une autre origine.

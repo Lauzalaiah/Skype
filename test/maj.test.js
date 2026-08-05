@@ -133,10 +133,23 @@ describe('Le pont exposé à l’interface', () => {
 });
 
 describe('Comportement de la mise à jour', () => {
-  test('macOS ne prétend pas se mettre à jour tout seul', () => {
-    // Sans signature Apple, l'installation échouerait silencieusement à
-    // chaque démarrage. On se contente d'y signaler la nouvelle version.
-    assert.match(maj, /process\.platform !== 'darwin'/);
+  test('seuls ceux qui peuvent vraiment s’installer le tentent', async () => {
+    // Une mise à jour qui échoue ne se plaint jamais : l'application cherche,
+    // trouve, télécharge, rate l'installation, et ne dit rien. Mieux vaut
+    // donc savoir d'avance qui en est capable.
+    const { peutSInstallerSeul } = await import('../desktop/mise-a-jour-possible.js');
+
+    assert.equal(peutSInstallerSeul('win32', {}), true,
+      'Windows remplace son propre installateur sans difficulté');
+    assert.equal(peutSInstallerSeul('darwin', {}), false,
+      'sans signature Apple, l’installation échouerait silencieusement');
+
+    // Sous Linux, tout dépend de la forme sous laquelle on a installé.
+    assert.equal(peutSInstallerSeul('linux', { APPIMAGE: '/home/x/Skype.AppImage' }), true,
+      'une AppImage est un simple fichier : elle peut se remplacer');
+    assert.equal(peutSInstallerSeul('linux', {}), false,
+      'un paquet .deb ou .rpm appartient au gestionnaire de paquets, pas à l’application');
+
     assert.match(maj, /verifierSansInstaller/);
     assert.match(maj, /phase: 'manuel'/);
   });
@@ -277,11 +290,73 @@ describe('Publication des mises à jour', () => {
   });
 
   test('les empreintes ne portent que sur les fichiers téléchargeables', () => {
-    assert.match(workflow, /sha256sum \*\.exe \*\.dmg \*\.AppImage/);
+    assert.match(workflow, /sha256sum \*\.exe \*\.dmg \*\.AppImage \*\.deb \*\.rpm/);
   });
 
-  test('les notes de version expliquent la limite de macOS', () => {
-    assert.match(workflow, /Windows et Linux\*\* se mettent à jour tout seuls/);
-    assert.match(workflow, /signature Apple/);
+  test('les notes de version disent qui se met à jour seul, et qui non', () => {
+    assert.match(workflow, /Windows et l'AppImage Linux\*\* se mettent à jour tout seuls/);
+    assert.match(workflow, /signature Apple/,
+      'la limite de macOS doit être expliquée, pas passée sous silence');
+    assert.match(workflow, /\*\*Les paquets `\.deb` et `\.rpm`\*\* non plus/,
+      'un paquet ne peut pas se remplacer lui-même : le dire, sinon on promet à faux');
+    assert.match(workflow, /elle ne fait jamais semblant/);
+  });
+});
+
+describe('Une installation, pas seulement un fichier', () => {
+  const build = paquetBureau.build;
+
+  test('Windows propose un vrai installateur, pas un déballage', () => {
+    // « oneClick » installerait sans rien demander et sans laisser choisir
+    // l'emplacement — le contraire de ce qu'on attend d'une installation.
+    assert.equal(build.nsis.oneClick, false);
+    assert.equal(build.nsis.allowToChangeInstallationDirectory, true);
+    assert.equal(build.nsis.createStartMenuShortcut, true);
+    assert.equal(build.nsis.createDesktopShortcut, true);
+    // perMachine: false installe pour l'utilisateur courant, donc sans droits
+    // d'administrateur — une demande d'élévation fait renoncer beaucoup de monde.
+    assert.equal(build.nsis.perMachine, false);
+  });
+
+  test('macOS déclare pourquoi il demande la caméra et le micro', () => {
+    // Sans ces deux descriptions dans l'Info.plist, macOS REFUSE l'accès :
+    // l'application se lance, l'appel démarre, et il n'y a ni image ni son.
+    // Pour une application d'appel vidéo, c'est une panne totale, et elle ne
+    // se manifeste que sur un vrai Mac.
+    const info = build.mac.extendInfo || {};
+    assert.ok(info.NSCameraUsageDescription, 'sans quoi la caméra est refusée par le système');
+    assert.ok(info.NSMicrophoneUsageDescription, 'sans quoi le micro est refusé par le système');
+  });
+
+  test('le .dmg fonctionne sur les Mac Intel comme sur les Apple Silicon', () => {
+    // Sans architecture précisée, electron-builder ne produit que celle de la
+    // machine qui construit. L'exécuteur GitHub étant en Apple Silicon, la
+    // moitié des Mac se retrouvait sans fichier utilisable — sans que rien
+    // ne le signale, puisqu'un .dmg était bien publié.
+    const cibles = build.mac.target;
+    const dmg = cibles.find((c) => (c.target || c) === 'dmg');
+    assert.ok(dmg?.arch?.includes('universal'),
+      'le .dmg doit être universel, sinon il ne marche que sur une architecture');
+  });
+
+  test('Linux offre une vraie installation, pas seulement un fichier portable', () => {
+    // Une AppImage ne s'installe pas : ni entrée de menu, ni icône, ni
+    // désinstallation. Les paquets, si.
+    for (const cible of ['AppImage', 'deb', 'rpm']) {
+      assert.ok(build.linux.target.includes(cible), `cible Linux manquante : ${cible}`);
+    }
+    assert.ok(build.linux.maintainer,
+      'un paquet .deb sans mainteneur ne se construit pas du tout');
+    assert.match(build.linux.category, /Network/,
+      'sans catégorie, l’application n’apparaît nulle part dans le menu');
+    assert.ok(build.linux.desktop?.entry?.Name, 'le nom affiché dans le menu doit être choisi');
+  });
+
+  test('le workflow publie bien les paquets qu’il construit', () => {
+    for (const extension of ['*.AppImage', '*.deb', '*.rpm']) {
+      assert.ok(workflow.includes(extension), `non publié : ${extension}`);
+    }
+    assert.match(workflow, /install -y -qq rpm/,
+      'sans rpmbuild sur l’exécuteur, la construction Linux échoue en entier');
   });
 });

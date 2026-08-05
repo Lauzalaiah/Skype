@@ -8,25 +8,35 @@
  *
  * Deux comportements, et la différence n'est pas un caprice :
  *
- *   — Windows et Linux : téléchargement en arrière-plan puis installation au
- *     redémarrage. L'utilisateur n'a rien à faire d'autre qu'accepter.
+ *   — Windows, et Linux en AppImage : téléchargement en arrière-plan puis
+ *     installation au redémarrage. L'utilisateur n'a rien à faire d'autre
+ *     qu'accepter.
  *
  *   — macOS : impossible. macOS exige qu'une application signée par un
  *     certificat Apple pour se remplacer elle-même ; celle-ci ne l'est pas.
- *     Prétendre le contraire produirait un échec silencieux à chaque
- *     démarrage. On se contente donc de signaler la nouvelle version et de
- *     renvoyer vers la page de téléchargement.
+ *
+ *   — Linux installé par paquet (.deb, .rpm) : impossible aussi, et pour une
+ *     raison différente. Le fichier vit dans /opt, qui appartient à root, et
+ *     c'est le gestionnaire de paquets qui décide ce qui s'y trouve. Une
+ *     application qui se remplacerait elle-même à cet endroit passerait
+ *     derrière lui.
+ *
+ * Dans les deux derniers cas, prétendre le contraire produirait un échec
+ * silencieux à chaque démarrage : l'application chercherait, trouverait,
+ * téléchargerait, échouerait à installer, et ne dirait rien. On se contente
+ * donc de signaler la nouvelle version et de renvoyer vers la page de
+ * téléchargement — ou, pour un paquet, vers la commande habituelle.
  */
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import electronUpdater from 'electron-updater';
+import { peutSInstallerSeul } from './mise-a-jour-possible.js';
 
 const { autoUpdater } = electronUpdater;
 
 const DEPOT = 'Lauzalaiah/Skype';
 export const PAGE_TELECHARGEMENT = 'https://lauzalaiah.github.io/Skype/';
 
-/** macOS ne peut pas se mettre à jour sans signature de code. */
-const MISE_A_JOUR_AUTOMATIQUE_POSSIBLE = process.platform !== 'darwin';
+const MISE_A_JOUR_AUTOMATIQUE_POSSIBLE = peutSInstallerSeul();
 
 const INTERVALLE = 6 * 60 * 60 * 1000;   // toutes les six heures
 const PREMIER_DELAI = 8 * 1000;          // pas pendant le démarrage : l'ouverture doit rester rapide

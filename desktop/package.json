@@ -1,7 +1,7 @@
 {
   "name": "skype-reborn-desktop",
   "private": true,
-  "version": "8.136.1",
+  "version": "8.137.0",
   "description": "Skype Reborn — application de bureau. Recréation indépendante, faite par un fan, sans lien avec Microsoft.",
   "author": "Skype Reborn",
   "main": "main.js",
@@ -9,7 +9,7 @@
   "scripts": {
     "start": "electron .",
     "build:win": "electron-builder --win nsis --publish never",
-    "build:linux": "electron-builder --linux AppImage --publish never",
+    "build:linux": "electron-builder --linux AppImage deb rpm --publish never",
     "build:mac": "electron-builder --mac dmg --publish never"
   },
   "dependencies": {
@@ -37,6 +37,7 @@
     "files": [
       "main.js",
       "maj.js",
+      "mise-a-jour-possible.js",
       "serveur-partage.js",
       "preload.cjs",
       "package.json",
@@ -84,19 +85,48 @@
     },
     "linux": {
       "target": [
-        "AppImage"
+        "AppImage",
+        "deb",
+        "rpm"
       ],
       "icon": "build/icon.png",
-      "category": "Network",
+      "category": "Network;InstantMessaging;VideoConference",
+      "maintainer": "Skype Reborn <skype-reborn@users.noreply.github.com>",
+      "synopsis": "Recréation indépendante de l'ancien Skype",
+      "description": "Messagerie et appels audio/vidéo. Recréation indépendante faite par un fan, sans lien avec Microsoft.",
+      "desktop": {
+        "entry": {
+          "Name": "Skype",
+          "Comment": "Messagerie et appels — recréation indépendante",
+          "Keywords": "chat;messagerie;appel;visio;skype;"
+        }
+      },
       "artifactName": "Skype-Reborn-${version}.${ext}"
+    },
+    "deb": {
+      "priority": "optional"
+    },
+    "rpm": {
+      "fpm": [
+        "--rpm-rpmbuild-define=_build_id_links none"
+      ]
     },
     "mac": {
       "target": [
-        "dmg"
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
       ],
       "icon": "build/icon.png",
       "category": "public.app-category.social-networking",
-      "artifactName": "Skype-Reborn-${version}.${ext}"
+      "artifactName": "Skype-Reborn-${version}.${ext}",
+      "extendInfo": {
+        "NSCameraUsageDescription": "Skype a besoin de la caméra pour les appels vidéo.",
+        "NSMicrophoneUsageDescription": "Skype a besoin du micro pour les appels et les messages vocaux."
+      }
     }
   }
 }

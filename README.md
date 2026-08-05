@@ -5,7 +5,7 @@
 **La messagerie, les appels audio et vidéo et le partage d'écran que vous aimiez.
 Recréés de A à Z, sans rien oublier.**
 
-Version 8.136.1 · Zéro dépendance · Node.js ≥ 18
+Version 8.137.0 · Zéro dépendance · Node.js ≥ 18
 
 **[Télécharger](https://lauzalaiah.github.io/Skype/)** ·
 **[Pourquoi ce projet](https://lauzalaiah.github.io/Skype/pub/)** ·
@@ -90,7 +90,7 @@ La publicité de lancement est servie sur **http://localhost:3000/pub**.
 ```bash
 npm run dev       # démarrage avec rechargement automatique
 npm run reset     # remet la base à zéro et recrée les comptes de démonstration
-npm test          # 251 tests de bout en bout (API, temps réel, sécurité, sons) — Node 22+
+npm test          # 256 tests de bout en bout (API, temps réel, sécurité, sons) — Node 22+
 PORT=8080 npm start
 ```
 
@@ -216,7 +216,7 @@ votre machine. Aucun traceur, aucun service tiers, aucune police ni script dista
 npm test
 ```
 
-251 tests couvrent l'inscription et la connexion, le rejet des identifiants invalides,
+256 tests couvrent l'inscription et la connexion, le rejet des identifiants invalides,
 les demandes de contact, les permissions de conversation, l'édition et la suppression
 de messages, les réactions, les sondages, les rôles d'administrateur, les liens
 d'invitation, le blocage, la fusion des réglages imbriqués, le crédit Skype, l'envoi

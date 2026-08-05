@@ -173,6 +173,9 @@
   .plateforme h3 { font-size: 1.18rem; }
   .plateforme__desc { color: var(--ink-soft); font-size: .92rem; flex: 1; }
   .plateforme__fichier { font-family: var(--mono); font-size: .76rem; color: var(--ink-soft); word-break: break-all; }
+  .plateforme__autres { margin-top: .6rem; font-size: .8rem; color: var(--ink-soft); }
+  .plateforme__autres a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .plateforme__autres a:hover { color: var(--blue); }
   .plateforme .btn { width: 100%; padding: 12px 18px; font-size: .95rem; }
   .plateforme--vedette { border-color: var(--blue); box-shadow: 0 14px 40px rgba(0, 175, 240, .16); }
   .badge {
@@ -280,7 +283,7 @@
 <div class="hero" id="top">
   <div class="wrap hero__grid">
     <div>
-      <span class="eyebrow"><span class="eyebrow__dot"></span> Version <span id="etiquetteVersion">8.136.1</span> · gratuit</span>
+      <span class="eyebrow"><span class="eyebrow__dot"></span> Version <span id="etiquetteVersion">8.137.0</span> · gratuit</span>
       <h1>Téléchargez <em>l'ancien Skype</em>.</h1>
       <p class="hero__lead">
         Celui d'avant : un pseudo, une liste de contacts, un bouton vert.
@@ -357,7 +360,7 @@
           crée le raccourci du bureau et l'entrée du menu Démarrer, et s'ajoute
           à la liste des programmes installés.
         </p>
-        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-Setup-8.136.1.exe · 64 bits</p>
+        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-Setup-8.137.0.exe · 64 bits</p>
         <a class="btn btn--primary" data-role="lien" href="https://github.com/Lauzalaiah/Skype/releases/latest">Télécharger le .exe</a>
       </div>
 
@@ -371,21 +374,29 @@
           Réglages Système › Confidentialité et sécurité — et les mises à jour
           y restent manuelles, pour la même raison.
         </p>
-        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-8.136.1.dmg</p>
+        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-8.137.0.dmg</p>
         <a class="btn btn--line" data-role="lien" href="https://github.com/Lauzalaiah/Skype/releases/latest">Télécharger le .dmg</a>
       </div>
 
       <div class="plateforme" data-plateforme="linux">
         <div class="plateforme__icone">🐧</div>
-        <span class="badge badge--gris">Portable</span>
+        <span class="badge badge--gris">Trois formats</span>
         <h3>Linux</h3>
         <p class="plateforme__desc">
-          Un AppImage : un seul fichier, rien à installer. Rendez-le exécutable
-          (<code>chmod +x</code>) et lancez-le. Fonctionne sur la plupart des
-          distributions récentes.
+          L'AppImage ne s'installe pas : un seul fichier, <code>chmod +x</code>,
+          et il se lance. Les paquets <strong>.deb</strong> et
+          <strong>.rpm</strong>, eux, installent vraiment l'application —
+          entrée dans le menu, icône, désinstallation par le gestionnaire de
+          paquets.
         </p>
-        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-8.136.1.AppImage</p>
+        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-8.137.0.AppImage</p>
         <a class="btn btn--line" data-role="lien" href="https://github.com/Lauzalaiah/Skype/releases/latest">Télécharger l'AppImage</a>
+        <p class="plateforme__autres">
+          Ou installer :
+          <a data-role="lien-deb" href="https://github.com/Lauzalaiah/Skype/releases/latest">.deb</a>
+          <span aria-hidden="true">·</span>
+          <a data-role="lien-rpm" href="https://github.com/Lauzalaiah/Skype/releases/latest">.rpm</a>
+        </p>
       </div>
 
       <div class="plateforme" data-plateforme="mobile">
@@ -528,7 +539,7 @@
       <div class="empreintes__ligne" id="empreintesEtat"><b>SHA-256</b> — publiées avec chaque version, dans le fichier <b>SHA256SUMS.txt</b>.</div>
     </div>
     <p class="center" style="margin-top: 16px; font-size: .86rem; color: var(--ink-soft);">
-      Sous Windows : <code>certutil -hashfile Skype-Reborn-Setup-8.136.1.exe SHA256</code> —
+      Sous Windows : <code>certutil -hashfile Skype-Reborn-Setup-8.137.0.exe SHA256</code> —
       sous macOS et Linux : <code>shasum -a 256 &lt;fichier&gt;</code>
     </p>
   </div>
@@ -688,7 +699,7 @@
   // Le dépôt est la seule source de vérité : les fichiers proposés ici
   // sont ceux que GitHub Actions a publiés, jamais des liens écrits à la main.
   const DEPOT = 'Lauzalaiah/Skype';
-  const VERSION = '8.136.1';
+  const VERSION = '8.137.0';
   const PAGE_VERSIONS = `https://github.com/${DEPOT}/releases`;
 
   // Comment reconnaître le fichier de chaque système parmi ceux publiés.
@@ -784,6 +795,18 @@
         $('metaTaille').textContent = octets(fichier.size);
         $('metaDate').textContent = laDate(version.published_at);
       }
+    }
+
+    // Les paquets Linux : ils s'installent pour de bon, mais ils ne sont pas
+    // le format principal — le bouton reste l'AppImage, qui marche partout.
+    // Un lien qui ne trouve pas son fichier renvoie à la liste des versions
+    // plutôt que de rester sur une adresse morte.
+    for (const [role, motif] of [['lien-deb', /\.deb$/i], ['lien-rpm', /\.rpm$/i]]) {
+      const lien = document.querySelector(`[data-role="${role}"]`);
+      if (!lien) continue;
+      const fichier = trouver(motif);
+      lien.href = fichier ? fichier.browser_download_url : PAGE_VERSIONS;
+      if (fichier) lien.title = `${fichier.name} · ${octets(fichier.size)}`;
     }
 
     if (!auMoinsUn) {
