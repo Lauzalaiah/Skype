@@ -345,8 +345,15 @@ describe('Une installation, pas seulement un fichier', () => {
     for (const cible of ['AppImage', 'deb', 'rpm']) {
       assert.ok(build.linux.target.includes(cible), `cible Linux manquante : ${cible}`);
     }
+    // Ces deux champs ne sont pas décoratifs : sans eux, fpm refuse de
+    // fabriquer le paquet et la construction Linux s'arrête en entier —
+    // AppImage comprise, qui était pourtant déjà produite.
     assert.ok(build.linux.maintainer,
       'un paquet .deb sans mainteneur ne se construit pas du tout');
+    assert.ok(paquetBureau.homepage,
+      'sans « homepage », electron-builder refuse de construire le .deb');
+    assert.ok(paquetBureau.license,
+      'la licence apparaît dans « apt show » et « dnf info »');
     assert.match(build.linux.category, /Network/,
       'sans catégorie, l’application n’apparaît nulle part dans le menu');
     assert.ok(build.linux.desktop?.entry?.Name, 'le nom affiché dans le menu doit être choisi');

@@ -3,6 +3,8 @@
   "private": true,
   "version": "8.137.0",
   "description": "Skype Reborn — application de bureau. Recréation indépendante, faite par un fan, sans lien avec Microsoft.",
+  "homepage": "https://lauzalaiah.github.io/Skype/",
+  "license": "MIT",
   "author": "Skype Reborn",
   "main": "main.js",
   "type": "module",
