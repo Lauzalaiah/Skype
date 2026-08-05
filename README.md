@@ -10,7 +10,8 @@ Version 8.137.2 · Zéro dépendance · Node.js ≥ 18
 **[Télécharger](https://lauzalaiah.github.io/Skype/)** ·
 **[Pourquoi ce projet](https://lauzalaiah.github.io/Skype/pub/)** ·
 [Toutes les fonctionnalités](docs/FONCTIONNALITES.md) ·
-[Héberger son serveur](docs/HEBERGEMENT.md)
+[Héberger son serveur](docs/HEBERGEMENT.md) ·
+[Pas à pas sur un VPS](docs/VPS.md)
 
 ![La conversation](docs/captures/conversation.png)
 

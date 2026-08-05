@@ -7,6 +7,10 @@ saute, et c'est celle qui décide si l'application fonctionne ou non.
 Ce document contient le chemin exact, de la machine nue à deux personnes qui
 s'appellent, puis la liste complète des paramètres.
 
+> Vous louez un VPS et voulez qu'on vous tienne la main du début à la fin,
+> avec la liste des valeurs à préparer ? Suivez plutôt **[VPS.md](VPS.md)** :
+> c'est le même chemin, en pas à pas.
+
 ---
 
 ## Choisir où
