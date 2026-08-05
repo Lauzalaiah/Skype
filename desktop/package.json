@@ -1,12 +1,13 @@
 {
   "name": "skype-reborn-desktop",
   "private": true,
-  "version": "8.137.2",
+  "version": "8.138.0",
   "description": "Skype Reborn — application de bureau. Recréation indépendante, faite par un fan, sans lien avec Microsoft.",
   "homepage": "https://lauzalaiah.github.io/Skype/",
   "license": "MIT",
   "author": "Skype Reborn",
   "main": "main.js",
+  "desktopName": "skype-reborn-desktop.desktop",
   "type": "module",
   "scripts": {
     "start": "electron .",
@@ -15,11 +16,11 @@
     "build:mac": "electron-builder --mac --publish never"
   },
   "dependencies": {
-    "electron-updater": "^6.3.9"
+    "electron-updater": "^6.8.9"
   },
   "devDependencies": {
-    "electron": "^31.3.1",
-    "electron-builder": "^24.13.3"
+    "electron": "^43.3.0",
+    "electron-builder": "^26.15.3"
   },
   "build": {
     "appId": "app.skypereborn.fan",
@@ -98,12 +99,15 @@
       "synopsis": "Recréation indépendante de l'ancien Skype",
       "description": "Messagerie et appels audio/vidéo. Recréation indépendante faite par un fan, sans lien avec Microsoft.",
       "desktop": {
-        "Name": "Skype",
-        "GenericName": "Messagerie et appels",
-        "Keywords": "chat;messagerie;appel;visio;video;skype;",
-        "StartupWMClass": "Skype"
+        "entry": {
+          "Name": "Skype",
+          "GenericName": "Messagerie et appels",
+          "Keywords": "chat;messagerie;appel;visio;video;skype;",
+          "StartupWMClass": "Skype"
+        }
       },
-      "artifactName": "Skype-Reborn-${version}.${ext}"
+      "artifactName": "Skype-Reborn-${version}.${ext}",
+      "syncDesktopName": true
     },
     "deb": {
       "priority": "optional"

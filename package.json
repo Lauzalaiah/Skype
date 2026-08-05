@@ -1,6 +1,6 @@
 {
   "name": "skype-reborn",
-  "version": "8.137.2",
+  "version": "8.138.0",
   "description": "Skype, recréé de A à Z — messagerie, appels audio/vidéo, partage d'écran, groupes, sondages, Skype Credit, et tout le reste. Zéro dépendance.",
   "type": "module",
   "main": "server/index.js",

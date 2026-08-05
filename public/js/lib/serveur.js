@@ -126,5 +126,40 @@ export async function tester(adresse) {
   if (!info || info.service !== 'skype') {
     throw new Error('Cette adresse ne répond pas comme un serveur Skype.');
   }
+
+  const probleme = incompatibilite(info.protocole);
+  if (probleme) throw new Error(probleme);
   return info;
+}
+
+/**
+ * Ce que l'application sait parler. À n'incrémenter que le jour où un client
+ * plus ancien cesserait réellement de fonctionner — voir server/protocole.js.
+ */
+export const PROTOCOLE_ATTENDU = 1;
+
+/**
+ * Deux versions différentes n'empêchent pas de se parler ; deux protocoles
+ * différents, si. Le message doit dire *qui* doit agir, sinon la personne
+ * bloquée cherche du côté qu'il ne faut pas — l'utilisateur ne peut rien
+ * faire pour un serveur trop ancien, et l'administrateur ne peut rien faire
+ * pour une application trop ancienne.
+ *
+ * Un serveur qui ne renvoie rien du tout est un serveur d'avant cette
+ * mesure : il est accepté. Refuser tout ce qui est déjà déployé serait le
+ * comble pour un mécanisme censé préserver la compatibilité.
+ */
+export function incompatibilite(protocoleDuServeur, attendu = PROTOCOLE_ATTENDU) {
+  if (protocoleDuServeur === undefined || protocoleDuServeur === null) return null;
+
+  const serveur = Number(protocoleDuServeur);
+  if (!Number.isFinite(serveur)) return null;
+
+  if (serveur > attendu) {
+    return 'Ce serveur est plus récent que cette application. Mettez à jour Skype pour vous y connecter.';
+  }
+  if (serveur < attendu) {
+    return 'Ce serveur est trop ancien pour cette application. Son administrateur doit le mettre à jour.';
+  }
+  return null;
 }

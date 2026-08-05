@@ -402,21 +402,46 @@ describe('Une installation, pas seulement un fichier', () => {
     }
   });
 
-  test('l’entrée de menu ne contient pas de champ mal formé', () => {
-    // Le niveau « entry » supplémentaire était recopié tel quel dans le
-    // fichier .desktop, produisant la ligne « entry=[object Object] » — et
-    // les clés qu'il contenait n'étaient jamais appliquées.
+  test('l’entrée de menu suit le schéma de la version d’electron-builder', () => {
+    // Ce détail a déjà produit « entry=[object Object] » dans le fichier
+    // .desktop publié, avec les mots-clés de recherche silencieusement
+    // ignorés. La forme attendue a changé d'une version à l'autre :
+    //
+    //   electron-builder 24 → une table plate de clés
+    //   electron-builder 25+ → les mêmes clés sous « entry »
+    //
+    // On lit donc la version déclarée plutôt que d'en figer une : passer à
+    // la majeure suivante sans toucher à ce bloc referait le même dégât.
+    const majeure = Number(
+      (paquetBureau.devDependencies['electron-builder'].match(/(\d+)/) || [])[1]);
+    assert.ok(majeure >= 24, 'version d’electron-builder illisible');
+
     const bureau = build.linux.desktop || {};
-    assert.ok(!('entry' in bureau),
-      'electron-builder 24 attend une table plate de clés du fichier .desktop');
-    for (const [cle, valeur] of Object.entries(bureau)) {
+    const cles = majeure >= 25 ? bureau.entry : bureau;
+
+    if (majeure >= 25) {
+      assert.ok(bureau.entry,
+        'à partir de la 25, les clés vont sous « desktop.entry »');
+    } else {
+      assert.ok(!('entry' in bureau),
+        'la 24 attend une table plate : « entry » serait recopié tel quel');
+    }
+
+    for (const [cle, valeur] of Object.entries(cles || {})) {
       assert.equal(typeof valeur, 'string',
         `${cle} doit être une chaîne : tout le reste finit en « [object Object] »`);
       assert.match(cle, /^[A-Z]/, `${cle} n’est pas une clé de fichier .desktop`);
     }
-    assert.ok(bureau.Name, 'le nom affiché dans le menu doit être choisi');
-    assert.ok(bureau.StartupWMClass,
+    assert.ok(cles?.Name, 'le nom affiché dans le menu doit être choisi');
+    assert.ok(cles?.StartupWMClass,
       'sans cela, la fenêtre n’est pas rattachée à son icône dans la barre des tâches');
+
+    // StartupWMClass ne suffit pas : Electron dérive son WM_CLASS réel de
+    // « desktopName ». Sans lui, le bureau affiche une seconde icône
+    // générique à côté de la vraie, et l'épinglage ne fonctionne pas.
+    assert.ok(paquetBureau.desktopName,
+      'sans desktopName, la fenêtre ouverte n’est pas reliée à son entrée de menu');
+    assert.equal(build.linux.syncDesktopName, true);
   });
 
   test('le workflow publie bien les paquets qu’il construit', () => {

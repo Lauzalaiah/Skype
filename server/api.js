@@ -2,6 +2,7 @@
  * API REST de Skype Reborn.
  */
 import fs from 'node:fs';
+import { PROTOCOLE } from './protocole.js';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { db, save, id, FILES_DIR, hashPassword, verifyPassword } from './store.js';
@@ -641,6 +642,10 @@ export function createApi(hub) {
     service: 'skype',
     ok: true,
     version: VERSION,
+    // Ce que le client interroge pour savoir s'il peut parler à ce serveur.
+    // Distinct de « version », qui bouge à chaque correctif : voir
+    // server/protocole.js.
+    protocole: PROTOCOLE,
     uptime: Math.round(process.uptime()),
   }));
 

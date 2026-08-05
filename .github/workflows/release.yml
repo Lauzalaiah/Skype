@@ -96,6 +96,27 @@ jobs:
         working-directory: desktop
         run: npm install
 
+      # L'application web n'a aucune dépendance ; l'enveloppe de bureau, si —
+      # Electron et son outillage. Sans ce contrôle, elles vieillissent sans
+      # que personne le remarque : la version 8.137.2 est partie avec neuf
+      # failles connues, dont une critique, et douze versions majeures de
+      # retard sur Electron. Rien ne l'avait signalé.
+      #
+      # Bloquant sur « critique », signalé sans bloquer au-dessous : une
+      # alerte moyenne sur un outil de construction ne doit pas empêcher de
+      # publier un correctif urgent.
+      - name: Failles connues des dépendances de bureau
+        if: matrix.systeme == 'linux'
+        working-directory: desktop
+        run: |
+          npm audit || true
+          echo "── ce qui bloque la publication ──"
+          if ! npm audit --audit-level=critical; then
+            echo "::error::faille critique dans les dépendances de l'enveloppe de bureau"
+            exit 1
+          fi
+          echo "aucune faille critique"
+
       - name: Construire
         working-directory: desktop
         # Sans certificat Apple, la découverte automatique d'identité fait
