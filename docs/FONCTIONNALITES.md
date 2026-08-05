@@ -93,7 +93,7 @@ Skip (8.x). Chaque ligne est implémentée et fonctionnelle.
 
 ## 6. Émoticônes et émojis
 
-- 80 émoticônes historiques de Skype avec leurs raccourcis d'origine
+- 80 émoticônes historiques redessinées, avec leurs raccourcis d'origine
   (`(y)`, `(n)`, `(h)`, `(rofl)`, `(cool)`, `(party)`, `(inlove)`, `(facepalm)`, `(ninja)`…)
 - Conversion automatique à la frappe, y compris `:)`, `:D`, `;)`, `:P`, `xD`, `8)`
 - Sélecteur à 9 catégories, dont un onglet « Émoticônes Skip » dédié
@@ -111,7 +111,7 @@ Skip (8.x). Chaque ligne est implémentée et fonctionnelle.
   votre message sera enregistré puis rejoué. » (synthèse vocale locale), fait
   entendre un bip, enregistre dix secondes, puis rejoue l'enregistrement — de
   quoi vérifier micro et haut-parleurs avant un vrai appel, exactement comme
-  dans Skype. Ne passe par aucune signalisation WebRTC : personne ne répond réellement à
+  dans le logiciel d'origine. Ne passe par aucune signalisation WebRTC : personne ne répond réellement à
   l'autre bout, tout se joue dans le navigateur
 - Coupure/réactivation du micro en cours d'appel, y compris pendant le test
   avec le service d'écho
@@ -212,30 +212,30 @@ Skip (8.x). Chaque ligne est implémentée et fonctionnelle.
 
 - Notifications système du navigateur, cliquables
 - Bandeau interne façon Skip
-- **Sons d'origine de Skip** — chaque fichier est rattaché à un événement
+- **Les sons** — chaque fichier est rattaché à un événement
   précis, et à un seul :
 
-  | Fichier d'origine | Se déclenche sur |
+  | Fichier | Se déclenche sur |
   |---|---|
-  | `Skypelogin.mp3` | connexion à Skip, et rien d'autre |
-  | `Skypecall.mp3` | appel entrant (sonnerie par défaut) |
-  | `Skype_ringtone_.mp3` | appel entrant (sonnerie alternative, au choix) |
-  | `Skypecallbipbip.mp3` | appel sortant, pendant que ça sonne |
-  | `Skypecallincall.mp3` | appel entrant pendant une communication |
-  | `Skypecallnotconnected.mp3` | appel sans réponse, refusé ou annulé |
-  | `Skypecallfailed.mp3` | micro ou caméra inaccessible |
-  | `Skypemessage.mp3` | message texte reçu |
-  | `Skypenotification_.mp3` | demande de contact, réaction |
-  | `Skypelogout.mp3` | déconnexion |
-  | `Skypefolderreceived.mp3` | fichier reçu |
-  | `Skypeforwindowsnew.mp3` | message vocal reçu dans la conversation |
-  | `Sonnerieskype2.mp3` | appel entrant (3ᵉ sonnerie, au choix) |
-  | `Skypevideocall.mp3` | appel entrant (4ᵉ sonnerie, au choix) |
-  | `Skypesonnerie3.mp3` | appel entrant (5ᵉ sonnerie, au choix) |
-  | `Skyperaccroche_.mp3` | raccrochage d'une communication établie |
-  | `Skypepaused.mp3` | appel mis en attente, ou repris |
-  | `Skypesendfolder.mp3` | fichier, image ou GIF envoyé |
-  | `Skypesendfolderfailed.mp3` | l'envoi d'un fichier a échoué |
+  | `skip-login.mp3` | connexion à Skip, et rien d'autre |
+  | `skip-ring.mp3` | appel entrant (sonnerie par défaut) |
+  | `skip-ringtone-2.mp3` | appel entrant (sonnerie alternative, au choix) |
+  | `skip-dialing.mp3` | appel sortant, pendant que ça sonne |
+  | `skip-call-waiting.mp3` | appel entrant pendant une communication |
+  | `skip-call-not-connected.mp3` | appel sans réponse, refusé ou annulé |
+  | `skip-call-failed.mp3` | micro ou caméra inaccessible |
+  | `skip-message.mp3` | message texte reçu |
+  | `skip-notification.mp3` | demande de contact, réaction |
+  | `skip-logout.mp3` | déconnexion |
+  | `skip-file-received.mp3` | fichier reçu |
+  | `skip-voice-message.mp3` | message vocal reçu dans la conversation |
+  | `skip-ringtone-3.mp3` | appel entrant (3ᵉ sonnerie, au choix) |
+  | `skip-ringtone-4.mp3` | appel entrant (4ᵉ sonnerie, au choix) |
+  | `skip-ringtone-classic.mp3` | appel entrant (5ᵉ sonnerie, au choix) |
+  | `skip-call-end.mp3` | raccrochage d'une communication établie |
+  | `skip-call-hold.mp3` | appel mis en attente, ou repris |
+  | `skip-file-sent.mp3` | fichier, image ou GIF envoyé |
+  | `skip-file-send-failed.mp3` | l'envoi d'un fichier a échoué |
   | `Skypestartcall.mp3` | l'appel est établi, la communication démarre |
   | `Skypevoicemail.mp3` | messagerie vocale, après un appel manqué |
 

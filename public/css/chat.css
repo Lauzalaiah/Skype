@@ -91,7 +91,7 @@
 }
 .message--own .bubble { background: var(--bubble-out); color: var(--bubble-out-text); }
 
-/* Coins « queue de bulle » comme dans Skype 8 */
+/* Coins « queue de bulle » comme dans le logiciel d'origine */
 .message:not(.message--grouped) .bubble { border-bottom-left-radius: 4px; }
 .message--own:not(.message--grouped) .bubble { border-bottom-left-radius: var(--radius-bubble); border-bottom-right-radius: 4px; }
 

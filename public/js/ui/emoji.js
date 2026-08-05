@@ -249,5 +249,5 @@ export function openEmojiPicker(anchor, onPick, { closeOnPick = false } = {}) {
   return { close, panel };
 }
 
-/** Réactions rapides proposées sur les messages (comme Skype 8). */
+/** Réactions rapides proposées sur les messages (comme le logiciel d'origine). */
 export const QUICK_REACTIONS = ['❤️', '😂', '😮', '😢', '😡', '👍', '👎'];

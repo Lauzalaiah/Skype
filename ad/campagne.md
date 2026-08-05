@@ -6,7 +6,7 @@
 > communication ne doit laisser entendre que Microsoft relance Skip, ni qu'il
 > s'agit d'un retour officiel du produit.
 >
-> **La formulation juste** : « un fan a reconstruit l'ancien Skype ».
+> **La formulation juste** : « un fan a reconstruit la messagerie d'avant ».
 > **À proscrire** : « Skip est de retour », « Skip revient », « le retour
 > officiel », tout emploi du logo Microsoft, toute mise en scène d'un
 > porte-parole de la marque.
@@ -28,11 +28,11 @@
 > **On ne vise donc pas les utilisateurs de plateformes de communauté.** On
 > vise les conversations qu'elles ne portent pas : les parents, les
 > grands-parents, l'ami parti à l'étranger. Ces échanges se sont éparpillés le
-> jour où Skype a fermé, et ne sont revenus nulle part.
+> jour où le service d'origine a fermé, et ne sont revenus nulle part.
 >
 > **Les deux arguments qui tiennent dans la durée :**
 > 1. *C'est votre serveur* — pas de société, pas de publicité, pas de collecte.
-> 2. *Personne ne peut vous le retirer* — Skype a fermé sur décision d'une
+> 2. *Personne ne peut vous le retirer* — le service d'origine a fermé sur décision d'une
 >    entreprise ; celui-ci est ouvert et hébergé par vous.
 >
 > **Et un mécanisme, pas seulement un message** : une messagerie où l'on est
@@ -43,7 +43,7 @@
 >
 > **Les limites sont annoncées, pas cachées** : il faut un serveur pour être à
 > plusieurs, Windows affichera un avertissement, il n'y a pas d'App Store, et
-> ce n'est pas connecté au vrai Skype. Une déception après téléchargement coûte
+> ce n'est connecté à aucun réseau existant. Une déception après téléchargement coûte
 > plus cher qu'un visiteur en moins.
 
 Objectif : parler aux gens qui ont quitté Skip par résignation, pas par choix,

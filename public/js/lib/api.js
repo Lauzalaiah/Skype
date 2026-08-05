@@ -105,7 +105,7 @@ export const api = {
   calls: () => request('GET', '/api/calls'),
   callPhone: (number, minutes) => request('POST', '/api/calls/pstn', { number, minutes }),
   topUp: (amount) => request('POST', '/api/credit/topup', { amount }),
-  getSkypeNumber: (country) => request('POST', '/api/skip-number', { country }),
+  getNumeroSkip: (country) => request('POST', '/api/skip-number', { country }),
   translate: (text, to) => request('POST', '/api/translate', { text, to }),
   emoticons: () => request('GET', '/api/emoticons'),
 

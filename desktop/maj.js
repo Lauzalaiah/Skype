@@ -100,10 +100,10 @@ async function verifierSansInstaller() {
 function brancherAutoUpdater() {
   autoUpdater.autoDownload = true;
   autoUpdater.autoInstallOnAppQuit = true;
-  // Silencieux par défaut ; SKYPE_MAJ_DEBUG=1 fait dire à electron-updater ce
+  // Silencieux par défaut ; SKIP_MAJ_DEBUG=1 fait dire à electron-updater ce
   // qu'il a lu et pourquoi il conclut ce qu'il conclut. Sans cela, une mise à
   // jour qui ne part pas est indiscernable d'une absence de mise à jour.
-  autoUpdater.logger = process.env.SKYPE_MAJ_DEBUG ? console : null;
+  autoUpdater.logger = process.env.SKIP_MAJ_DEBUG ? console : null;
 
   autoUpdater.on('checking-for-update', () => publier({ phase: 'recherche' }));
 
@@ -154,7 +154,7 @@ export function surveillerMisesAJour() {
   ipcMain.handle('maj:installer', () => {
     if (etat.phase !== 'prete') return false;
     // isSilent = false : l'installateur montre sa progression, comme le
-    // faisait le vrai Skype. isForceRunAfter : on rouvre l'application après.
+    // faisait le logiciel d'origine. isForceRunAfter : on rouvre l'application après.
     autoUpdater.quitAndInstall(false, true);
     return true;
   });

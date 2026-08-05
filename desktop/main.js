@@ -84,7 +84,7 @@ function chargerServeur(fenetre) {
     console.warn(`[skip] serveur partagé injoignable (${description}) : retour au serveur local`);
     dialog.showErrorBox(
       'Serveur injoignable',
-      `${url}\n\n${description}\n\nSkype revient à son serveur local. `
+      `${url}\n\n${description}\n\nSkip revient à son serveur local. `
       + 'Vous pourrez saisir une autre adresse depuis l’écran de connexion.'
     );
     definirAdresseServeur('');

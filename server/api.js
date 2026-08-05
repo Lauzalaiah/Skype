@@ -128,7 +128,7 @@ export function createApi(hub) {
     const user = M.createUser(body);
     const token = M.createSession(user.id, ctx.req.headers['user-agent'] || '');
     user.status = user.manualStatus;
-    // Disponible dès l'inscription, comme dans Skype.
+    // Disponible dès l'inscription, comme dans le logiciel d'origine.
     M.connectToEchoBot(user);
     save();
     return { token, user: M.publicUser(user, user.id) };
@@ -571,9 +571,9 @@ export function createApi(hub) {
     const { country = 'FR' } = await readJson(ctx.req);
     const prefixes = { FR: '+33 9 70', BE: '+32 2', CH: '+41 22', CA: '+1 514', US: '+1 415', UK: '+44 20' };
     const digits = String(crypto.randomInt(100000, 999999));
-    user.skypeNumber = `${prefixes[country] || prefixes.FR} ${digits.slice(0, 2)} ${digits.slice(2, 4)} ${digits.slice(4)}`;
+    user.numeroSkip = `${prefixes[country] || prefixes.FR} ${digits.slice(0, 2)} ${digits.slice(2, 4)} ${digits.slice(4)}`;
     save();
-    return { skypeNumber: user.skypeNumber };
+    return { numeroSkip: user.numeroSkip };
   });
 
   // ── Fichiers ────────────────────────────────────────────────────────────────
@@ -652,7 +652,7 @@ export function createApi(hub) {
   return { router, json, readJson };
 }
 
-// ── Émoticônes historiques de Skype ─────────────────────────────────────────
+// ── Émoticônes historiques, redessinées ─────────────────────────────────────────
 
 export const EMOTICON_CATALOG = {
   smileys: [

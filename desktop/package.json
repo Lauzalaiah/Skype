@@ -1,7 +1,7 @@
 {
   "name": "skip-desktop",
   "private": true,
-  "version": "8.140.0",
+  "version": "8.141.0",
   "description": "Skip — application de bureau. Recréation indépendante, faite par un fan, sans lien avec Microsoft.",
   "homepage": "https://lauzalaiah.github.io/Skype/",
   "license": "MIT",
@@ -96,7 +96,7 @@
       "icon": "build/icons",
       "category": "Network;InstantMessaging;VideoConference",
       "maintainer": "Skip <skip@users.noreply.github.com>",
-      "synopsis": "Recréation indépendante de l'ancien Skype",
+      "synopsis": "Messagerie et appels, recréation indépendante",
       "description": "Messagerie et appels audio/vidéo. Recréation indépendante faite par un fan, sans lien avec Microsoft.",
       "desktop": {
         "entry": {

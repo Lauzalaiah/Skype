@@ -98,7 +98,7 @@ describe('Choix du serveur, côté application web', () => {
 describe('Ajout d’un contact', () => {
   test('le bouton ouvre directement la fenêtre de recherche', () => {
     // Il basculait vers la liste des contacts, où il fallait trouver un second
-    // bouton : un détour que l'ancien Skype ne faisait pas.
+    // bouton : un détour que le logiciel d'origine ne faisait pas.
     assert.match(app, /onclick: openAddContactDialog \}, \[icon\('person-add'/);
     assert.match(app, /import \{[^}]*openAddContactDialog[^}]*\} from '\.\/ui\/modals\.js'/);
   });

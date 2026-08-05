@@ -230,7 +230,7 @@ jobs:
         run: |
           cat > notes.md <<'FIN'
           **Projet de fan, non officiel.** Skip est une recréation
-          indépendante de l'ancien Skype, réalisée par passion. Aucun lien avec
+          indépendante du logiciel d'origine, réalisée par passion. Aucun lien avec
           Microsoft ni avec les équipes de Skype, aucune affiliation. « Skip »
           est une marque de Microsoft, citée ici pour désigner le logiciel
           d'origine.

@@ -33,7 +33,7 @@ le même wifi pourront s'écrire, pas s'appeler.
 Docker installé, puis :
 
 ```bash
-git clone https://github.com/Lauzalaiah/Skype && cd Skip
+git clone https://github.com/Lauzalaiah/Skype && cd Skype
 docker compose up -d
 ```
 
@@ -102,7 +102,7 @@ curl -fsSL https://get.docker.com | sh
 sudo ufw allow 80/tcp && sudo ufw allow 443/tcp
 
 # Le projet
-git clone https://github.com/Lauzalaiah/Skype && cd Skip
+git clone https://github.com/Lauzalaiah/Skype && cd Skype
 
 # En service, avec certificat automatique
 DOMAINE=skip.exemple.fr docker compose --profile https up -d
@@ -221,7 +221,7 @@ l'adresse à la construction et supprimer l'écran de saisie.
 
 | Variable | Effet |
 | --- | --- |
-| `SKYPE_MAJ_DEBUG=1` | Affiche le détail de la mise à jour automatique, normalement silencieuse. |
+| `SKIP_MAJ_DEBUG=1` | Affiche le détail de la mise à jour automatique, normalement silencieuse. |
 
 ---
 
@@ -251,7 +251,7 @@ les pièces jointes.
 ## 6. Mettre à jour
 
 ```bash
-cd Skip && git pull
+cd Skype && git pull
 docker compose up -d --build
 ```
 

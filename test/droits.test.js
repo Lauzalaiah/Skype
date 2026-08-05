@@ -121,3 +121,22 @@ describe('L’application survit au retrait des sons', () => {
     }
   });
 });
+
+describe('Le renommage n’a pas cassé les instructions', () => {
+  test('chaque « git clone » entre dans le dossier qu’il vient de créer', () => {
+    // Le dépôt s'appelle encore Skype : cloner crée un dossier « Skype ».
+    // Le renommage avait produit « git clone …/Skype && cd Skip », qui
+    // échoue à la deuxième commande — dans le tout premier bloc que copie
+    // quelqu'un qui découvre le projet.
+    const fichiers = ['README.md', 'docs/HEBERGEMENT.md', 'docs/VPS.md',
+      'docs/index.html', 'public/pub/index.html'];
+    for (const nom of fichiers) {
+      const texte = lire(nom);
+      for (const [, depot, dossier] of texte.matchAll(
+        /git clone https:\/\/github\.com\/[\w-]+\/([\w-]+)(?:\s|&amp;|&)+cd\s+([\w-]+)/g)) {
+        assert.equal(dossier, depot,
+          `${nom} : « git clone …/${depot} » suivi de « cd ${dossier} » — le dossier n’existe pas`);
+      }
+    }
+  });
+});

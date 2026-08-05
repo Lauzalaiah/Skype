@@ -38,7 +38,7 @@ Docker est écarté sans être essayé.
 
 **3. Les limites doivent être écrites par vous, avant qu'on vous les oppose.**
 Il faut un serveur, le binaire n'est pas signé, il n'y a pas d'App Store, ce
-n'est pas connecté au vrai Skype. Le dire soi-même désamorce ; le cacher se
+n'est connecté à aucun réseau existant. Le dire soi-même désamorce ; le cacher se
 retourne toujours.
 
 **4. Vous devez déjà l'utiliser.**
@@ -68,7 +68,7 @@ de ce qu'on vous répond avant de recommencer ailleurs.
 
 ### Pour un forum d'auto-hébergement
 
-> **Skip — l'ancien Skype, reconstruit, que vous hébergez vous-même**
+> **Skip — la messagerie d'avant, reconstruite, que vous hébergez vous-même**
 >
 > Microsoft a fermé Skip. Je n'ai pas trouvé d'équivalent que ma famille sache
 > utiliser : Discord et les autres sont faits pour des communautés, pas pour
@@ -87,7 +87,7 @@ de ce qu'on vous répond avant de recommencer ailleurs.
 > passent pas par le serveur (WebRTC en pair-à-pair), donc un très petit VPS
 > suffit.
 >
-> Ce que ce n'est pas : ce n'est pas connecté au vrai Skype, les binaires ne
+> Ce que ce n'est pas : ce n'est connecté à aucun réseau existant, les binaires ne
 > sont pas signés (SmartScreen râlera), et il n'y a pas d'App Store. C'est un
 > projet de fan, sans aucun lien avec Microsoft.
 >
@@ -95,7 +95,7 @@ de ce qu'on vous répond avant de recommencer ailleurs.
 
 ### Pour un public non technique
 
-> **J'ai reconstruit l'ancien Skype, parce que ma famille n'a jamais réussi à
+> **J'ai reconstruit la messagerie d'avant, parce que ma famille n'a jamais réussi à
 > s'en passer**
 >
 > Depuis la fermeture, mes parents n'appellent plus personne en vidéo. Les

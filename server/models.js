@@ -90,7 +90,7 @@ export function createUser({ pseudo, displayName, password, email = '', avatar =
     phone: '',
     website: '',
     credit: 5.0,                  // Skip Crédit de démonstration (€)
-    skypeNumber: null,
+    numeroSkip: null,
     contacts: [],
     favorites: [],
     blocked: [],
@@ -147,7 +147,7 @@ export function ensureEchoBot() {
     phone: '',
     website: '',
     credit: 0,
-    skypeNumber: null,
+    numeroSkip: null,
     contacts: [],
     favorites: [],
     blocked: [],
@@ -170,7 +170,7 @@ export function ensureEchoBot() {
  * Ajoute le service d'écho aux contacts d'un utilisateur et prépare sa
  * conversation, avec un message d'accueil s'il n'en a pas déjà un. Appelé à
  * l'inscription, pour que le contact soit immédiatement disponible — comme
- * il l'était réellement dans Skype.
+ * il l'était réellement dans le logiciel d'origine.
  */
 export function connectToEchoBot(user) {
   const bot = ensureEchoBot();
@@ -239,7 +239,7 @@ export function publicUser(user, viewerId = null) {
     phone: isSelf ? user.phone : '',
     email: isSelf ? user.email : '',
     website: user.website,
-    skypeNumber: user.skypeNumber,
+    numeroSkip: user.numeroSkip,
     isBot: !!user.isBot,
     ...(isSelf ? { credit: user.credit, settings: user.settings, drafts: user.drafts } : {}),
   };

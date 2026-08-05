@@ -400,7 +400,7 @@ export async function openProfileCard(userId, preloaded = null) {
         detail('Statut', presenceLabel(user.status, user.lastSeen)),
         detail('Lieu', [user.city, user.country].filter(Boolean).join(', ')),
         detail('Anniversaire', user.birthday ? dateOf(new Date(user.birthday).getTime()) : ''),
-        detail('Numéro Skip', user.skypeNumber),
+        detail('Numéro Skip', user.numeroSkip),
         detail('Site web', user.website),
         user.about ? el('p', { style: { fontSize: '0.9em', lineHeight: '1.5', marginTop: '8px', color: 'var(--text-secondary)' }, text: user.about }) : null,
       ]),
@@ -742,7 +742,7 @@ export function openAboutDialog() {
         text: 'S',
       }),
       el('h3', { style: { fontSize: '1.3em' }, text: 'Skip' }),
-      el('p.dim', { text: 'Version 8.140.0 · Skip' }),
+      el('p.dim', { text: 'Version 8.141.0 · Skip' }),
       el('p', {
         style: { marginTop: '16px', lineHeight: '1.6', fontSize: '0.9em', color: 'var(--text-secondary)' },
         text: 'Messagerie, appels audio et vidéo, partage d’écran, groupes, sondages et bien plus. Toutes vos conversations restent sur votre serveur.',

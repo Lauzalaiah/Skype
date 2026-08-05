@@ -76,7 +76,7 @@ s'échangent beaucoup de fichiers.
 Sur votre propre machine, avec Docker :
 
 ```bash
-git clone https://github.com/Lauzalaiah/Skype && cd Skip
+git clone https://github.com/Lauzalaiah/Skype && cd Skype
 docker compose up -d
 cloudflared tunnel --url http://localhost:3000
 ```
@@ -170,7 +170,7 @@ docker --version
 ## 5. Installer, en une commande
 
 ```bash
-git clone https://github.com/Lauzalaiah/Skype && cd Skip
+git clone https://github.com/Lauzalaiah/Skype && cd Skype
 DOMAINE=② docker compose --profile https up -d
 ```
 

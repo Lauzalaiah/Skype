@@ -1,6 +1,6 @@
 /**
  * Le site de téléchargement est la première chose que verra quelqu'un qui
- * cherche « revenir sur Skype ». Deux catégories d'erreurs y seraient graves :
+ * cherche à retrouver la messagerie d'avant. Deux catégories d'erreurs y seraient graves :
  *
  *  - laisser croire à un retour officiel de Skip (c'est un projet de fan) ;
  *  - proposer un bouton de téléchargement qui ne mène nulle part.

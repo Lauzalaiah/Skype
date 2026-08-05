@@ -418,7 +418,7 @@ describe('Réglages et profil', () => {
 
   test('attribue un numéro Skip', async () => {
     const { data } = await call('POST', '/api/skip-number', { token: users.alice.token, body: { country: 'FR' } });
-    assert.match(data.skypeNumber, /^\+33/);
+    assert.match(data.numeroSkip, /^\+33/);
   });
 });
 

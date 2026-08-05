@@ -88,7 +88,7 @@ export function renderDetails(chat) {
           row('Pseudo Skip', other.pseudo),
           row('Lieu', [other.city, other.country].filter(Boolean).join(', ')),
           row('Anniversaire', other.birthday ? dateOf(new Date(other.birthday).getTime()) : ''),
-          row('Numéro Skip', other.skypeNumber),
+          row('Numéro Skip', other.numeroSkip),
         ])
       );
     }

@@ -214,7 +214,7 @@ export function renderSidebar() {
       if (last.content) preview += ` · ${plainPreview(last.content, 40)}`;
     } else preview = plainPreview(last.content);
 
-    // Préfixe de l'auteur (comme Skype : « Vous : … » ou « Prénom : … »)
+    // Préfixe de l'auteur (comme le logiciel d'origine : « Vous : … » ou « Prénom : … »)
     if (last && !chat.draft && last.type !== 'system') {
       const author = last.senderId === state.user.id ? 'Vous' : isGroup ? getUser(last.senderId)?.displayName?.split(' ')[0] : null;
       if (author) preview = `${author} : ${preview}`;
@@ -629,14 +629,14 @@ export function renderSidebar() {
           style: { fontSize: '0.8em', maxWidth: '260px', lineHeight: '1.5' },
           text: 'Appels vers les fixes et mobiles du monde entier, avec le crédit Skip. Tarifs de démonstration : aucun appel réel n’est passé.',
         }),
-        state.user.skypeNumber
-          ? el('p.center', { style: { fontSize: '0.85em' } }, [el('strong', { text: 'Votre numéro Skip : ' }), state.user.skypeNumber])
+        state.user.numeroSkip
+          ? el('p.center', { style: { fontSize: '0.85em' } }, [el('strong', { text: 'Votre numéro Skip : ' }), state.user.numeroSkip])
           : el('button.btn.btn--outline.btn--sm', {
               text: 'Obtenir un numéro Skip',
               onclick: async () => {
-                const { skypeNumber } = await api.getSkypeNumber('FR');
-                state.user.skypeNumber = skypeNumber;
-                toast(`Votre numéro Skip : ${skypeNumber}`);
+                const { numeroSkip } = await api.getNumeroSkip('FR');
+                state.user.numeroSkip = numeroSkip;
+                toast(`Votre numéro Skip : ${numeroSkip}`);
                 renderList();
               },
             }),

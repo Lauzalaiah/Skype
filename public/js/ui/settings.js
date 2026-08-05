@@ -438,16 +438,16 @@ export function openSettings(section = 'profile') {
         settingRow('Appels entrants', 'Limitez les appels à vos contacts', select('privacy.whoCanCall', [['anyone', 'Tout le monde'], ['contacts', 'Mes contacts uniquement']])),
       ]),
       group('Appels téléphoniques', [
-        settingRow('Numéro Skip', state.user.skypeNumber || 'Recevez des appels sur un vrai numéro',
-          state.user.skypeNumber
-            ? el('code', { text: state.user.skypeNumber })
+        settingRow('Numéro Skip', state.user.numeroSkip || 'Recevez des appels sur un vrai numéro',
+          state.user.numeroSkip
+            ? el('code', { text: state.user.numeroSkip })
             : el('button.btn.btn--sm', {
                 text: 'Obtenir un numéro',
                 onclick: async () => {
-                  const { skypeNumber } = await api.getSkypeNumber('FR');
-                  state.user.skypeNumber = skypeNumber;
+                  const { numeroSkip } = await api.getNumeroSkip('FR');
+                  state.user.numeroSkip = numeroSkip;
                   renderPanel();
-                  toast(`Votre numéro Skip : ${skypeNumber}`);
+                  toast(`Votre numéro Skip : ${numeroSkip}`);
                 },
               })
         ),
@@ -713,18 +713,18 @@ export function openSettings(section = 'profile') {
         settingRow('International', 'à partir de 0,04 €/min', el('span.dim', { text: '0,040 €' })),
       ]),
       group('Numéro Skip', [
-        settingRow('Recevoir des appels sur un numéro', state.user.skypeNumber || 'Aucun numéro attribué',
+        settingRow('Recevoir des appels sur un numéro', state.user.numeroSkip || 'Aucun numéro attribué',
           el('button.btn.btn--sm', {
-            text: state.user.skypeNumber ? 'Changer' : 'Obtenir',
+            text: state.user.numeroSkip ? 'Changer' : 'Obtenir',
             onclick: async (e) => {
               menu(
                 [['FR', 'France'], ['BE', 'Belgique'], ['CH', 'Suisse'], ['CA', 'Canada'], ['UK', 'Royaume-Uni'], ['US', 'États-Unis']].map(([code, label]) => ({
                   label,
                   onClick: async () => {
-                    const { skypeNumber } = await api.getSkypeNumber(code);
-                    state.user.skypeNumber = skypeNumber;
+                    const { numeroSkip } = await api.getNumeroSkip(code);
+                    state.user.numeroSkip = numeroSkip;
                     renderPanel();
-                    toast(`Numéro attribué : ${skypeNumber}`);
+                    toast(`Numéro attribué : ${numeroSkip}`);
                   },
                 })),
                 { anchor: e.currentTarget }

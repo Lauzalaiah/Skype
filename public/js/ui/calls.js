@@ -905,7 +905,7 @@ function createSession({ chat, video, stream, outgoing }) {
     socket.on('call:state', ({ userId, state: peerState }) => {
       const peer = peers.get(userId);
       if (!peer) return;
-      // La mise en attente du correspondant s'entend, comme dans Skype.
+      // La mise en attente du correspondant s'entend, comme dans le logiciel d'origine.
       if (peerState.hold !== undefined && peerState.hold !== peer.state.hold) sounds.callHold();
       Object.assign(peer.state, peerState);
       updateTile(userId);

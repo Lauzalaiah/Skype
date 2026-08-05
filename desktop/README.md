@@ -2,7 +2,7 @@
 
 Une vraie application de bureau — icône, menu Démarrer, raccourci sur le
 bureau, fenêtre à elle sans barre d'adresse de navigateur — installée avec
-un programme d'installation classique, exactement comme l'ancien Skype.
+un programme d'installation classique, exactement comme un logiciel installé.
 
 Contrairement à l'IPA iOS, **aucun compte développeur ni certificat n'est
 nécessaire** : Windows n'exige pas de signature pour qu'un `.exe` s'installe.

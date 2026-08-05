@@ -1,7 +1,7 @@
 /** Mise en forme des messages : émoticônes, Markdown léger, liens, mentions. */
 import { escapeHtml } from './dom.js';
 
-/* Émoticônes historiques de Skype : « (y) », « :) », « (rofl) »… */
+/* Émoticônes historiques, redessinées : « (y) », « :) », « (rofl) »… */
 export const EMOTICONS = {
   ':)': '🙂', ':-)': '🙂', ':D': '😃', ':-D': '😃', ':d': '😃',
   ':(': '🙁', ':-(': '🙁', ';)': '😉', ';-)': '😉',

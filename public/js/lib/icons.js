@@ -1,4 +1,4 @@
-/** Jeu d'icônes SVG (tracés Fluent/Segoe simplifiés, comme dans Skype 8). */
+/** Jeu d'icônes SVG (tracés Fluent/Segoe simplifiés, comme dans le logiciel d'origine). */
 
 const PATHS = {
   chat: 'M12 2C6.5 2 2 5.9 2 10.7c0 2.7 1.4 5.1 3.7 6.7-.2 1.4-.9 2.7-1.9 3.7-.2.2-.1.6.2.6 2 0 3.9-.7 5.4-1.9 0 0 1.5.3 2.6.3 5.5 0 10-3.9 10-8.7S17.5 2 12 2z',
