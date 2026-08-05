@@ -38,7 +38,7 @@ describe('Configuration de la mise à jour', () => {
     const [publication] = paquetBureau.build.publish;
     assert.equal(publication.provider, 'github');
     assert.equal(publication.owner, 'Lauzalaiah');
-    assert.equal(publication.repo, 'Skype');
+    assert.equal(publication.repo, 'Skip');
   });
 
   test('tout module importé par l’application est empaqueté', () => {
@@ -145,7 +145,7 @@ describe('Comportement de la mise à jour', () => {
       'sans signature Apple, l’installation échouerait silencieusement');
 
     // Sous Linux, tout dépend de la forme sous laquelle on a installé.
-    assert.equal(peutSInstallerSeul('linux', { APPIMAGE: '/home/x/Skype.AppImage' }), true,
+    assert.equal(peutSInstallerSeul('linux', { APPIMAGE: '/home/x/Skip.AppImage' }), true,
       'une AppImage est un simple fichier : elle peut se remplacer');
     assert.equal(peutSInstallerSeul('linux', {}), false,
       'un paquet .deb ou .rpm appartient au gestionnaire de paquets, pas à l’application');
@@ -240,7 +240,7 @@ describe('Mise à jour de la version web (service worker)', () => {
 
   test('une nouvelle version repart d’un cache vide', () => {
     const version = sw.match(/const VERSION = '([^']+)'/)[1];
-    assert.equal(version, `skype-${paquet.version}`,
+    assert.equal(version, `skip-${paquet.version}`,
       'le nom du cache doit porter le numéro de version');
     assert.match(sw, /noms\.filter\(\(n\) => n !== VERSION\)\.map\(\(n\) => caches\.delete\(n\)\)/,
       'les caches des versions précédentes doivent être effacés');
@@ -253,14 +253,14 @@ describe('Mise à jour de la version web (service worker)', () => {
 
 describe('Robustesse de l’application de bureau', () => {
   test('une erreur après le démarrage ne ferme plus l’application', () => {
-    // Fermer Skype parce qu'une promesse a échoué quelque part couperait une
+    // Fermer Skip parce qu'une promesse a échoué quelque part couperait une
     // conversation en cours pour un incident qui ne concerne pas l'utilisateur.
     assert.match(main, /if \(demarre\) \{[\s\S]{0,160}return;/);
     assert.match(main, /demarre = true;/);
   });
 
   test('un démarrage qui échoue, lui, reste fatal et visible', () => {
-    assert.match(main, /dialog\.showErrorBox\('Skype n’a pas pu démarrer'/);
+    assert.match(main, /dialog\.showErrorBox\('Skip n’a pas pu démarrer'/);
     assert.match(main, /app\.quit\(\);/);
   });
 

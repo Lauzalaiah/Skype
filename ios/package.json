@@ -1,8 +1,8 @@
 {
-  "name": "skype-reborn-ios",
+  "name": "skip-ios",
   "version": "1.0.0",
   "private": true,
-  "description": "Enveloppe iOS (Capacitor) de Skype Reborn. Isolée ici : le serveur et l'application web restent sans aucune dépendance.",
+  "description": "Enveloppe iOS (Capacitor) de Skip. Isolée ici : le serveur et l'application web restent sans aucune dépendance.",
   "scripts": {
     "prepare:ios": "cap add ios && cap sync ios",
     "sync": "cap sync ios",

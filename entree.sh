@@ -15,7 +15,7 @@
 
 set -e
 
-DONNEES="${SKYPE_DATA_DIR:-/données}"
+DONNEES="${SKIP_DATA_DIR:-/données}"
 mkdir -p "$DONNEES"
 
 # Ne pas relancer un « chown -R » à chaque démarrage sur des années de

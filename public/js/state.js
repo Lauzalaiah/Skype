@@ -147,7 +147,7 @@ export function computeUnread() {
     state.unreadTotal = total;
     notify('unreadTotal');
   }
-  document.title = total ? `(${total}) Skype` : 'Skype';
+  document.title = total ? `(${total}) Skip` : 'Skip';
   return total;
 }
 

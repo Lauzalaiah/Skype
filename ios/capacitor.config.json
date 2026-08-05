@@ -1,6 +1,6 @@
 {
-  "appId": "app.skypereborn.fan",
-  "appName": "Skype Reborn",
+  "appId": "app.skip.fan",
+  "appName": "Skip",
   "webDir": "../public",
   "ios": {
     "contentInset": "always",

@@ -1,4 +1,4 @@
-# Héberger Skype Reborn
+# Héberger Skip
 
 L'application est un **client**. Tant qu'aucun serveur ne tourne quelque part
 de joignable, elle ne sert à rien à plusieurs. C'est l'étape que tout le monde
@@ -33,7 +33,7 @@ le même wifi pourront s'écrire, pas s'appeler.
 Docker installé, puis :
 
 ```bash
-git clone https://github.com/Lauzalaiah/Skype && cd Skype
+git clone https://github.com/Lauzalaiah/Skype && cd Skip
 docker compose up -d
 ```
 
@@ -82,14 +82,14 @@ box laisse passer les ports 80 et 443.
 Créez un enregistrement DNS **A** pointant vers l'adresse IP de la machine :
 
 ```
-skype.exemple.fr.   A   203.0.113.42
+skip.exemple.fr.   A   203.0.113.42
 ```
 
 Vérifiez qu'il est propagé avant d'aller plus loin — sans quoi Caddy
 demandera un certificat pour un nom qui ne mène pas à lui, et échouera :
 
 ```bash
-dig +short skype.exemple.fr
+dig +short skip.exemple.fr
 ```
 
 ### 3.3 L'installation
@@ -102,10 +102,10 @@ curl -fsSL https://get.docker.com | sh
 sudo ufw allow 80/tcp && sudo ufw allow 443/tcp
 
 # Le projet
-git clone https://github.com/Lauzalaiah/Skype && cd Skype
+git clone https://github.com/Lauzalaiah/Skype && cd Skip
 
 # En service, avec certificat automatique
-DOMAINE=skype.exemple.fr docker compose --profile https up -d
+DOMAINE=skip.exemple.fr docker compose --profile https up -d
 ```
 
 Caddy obtient le certificat Let's Encrypt seul, laisse passer le WebSocket sans
@@ -114,8 +114,8 @@ configuration, et renouvelle sans qu'on y repense.
 ### 3.4 Vérifier
 
 ```bash
-curl https://skype.exemple.fr/api/health
-# {"service":"skype","ok":true,"version":"…","uptime":…}
+curl https://skip.exemple.fr/api/health
+# {"service":"skip","ok":true,"version":"…","uptime":…}
 ```
 
 Puis, depuis un téléphone :
@@ -147,7 +147,7 @@ Trois variables, c'est tout.
 | --- | --- | --- |
 | `PORT` | `3000` | Port d'écoute. **`PORT=0` demande au système un port libre** — utilisé par l'application de bureau pour ne jamais entrer en conflit. |
 | `HOST` | `0.0.0.0` | Interface d'écoute. `127.0.0.1` rend le serveur injoignable de l'extérieur : à utiliser quand un reverse proxy est devant. |
-| `SKYPE_DATA_DIR` | `./data` | Où vivent les données. **C'est le seul dossier à sauvegarder.** |
+| `SKIP_DATA_DIR` | `./data` | Où vivent les données. **C'est le seul dossier à sauvegarder.** |
 
 Dans l'image Docker, ces trois valeurs sont déjà `0.0.0.0`, `3000` et
 `/données`.
@@ -163,7 +163,7 @@ Dans l'image Docker, ces trois valeurs sont déjà `0.0.0.0`, `3000` et
 
 ```bash
 docker compose up -d                                     # local, port 3000
-DOMAINE=skype.exemple.fr docker compose --profile https up -d   # public, HTTPS
+DOMAINE=skip.exemple.fr docker compose --profile https up -d   # public, HTTPS
 ```
 
 ### 4.3 L'image
@@ -216,7 +216,7 @@ On peut en changer depuis l'écran de connexion.
 l'adresse à la construction et supprimer l'écran de saisie.
 
 ```json
-"server": { "url": "https://skype.exemple.fr" }
+"server": { "url": "https://skip.exemple.fr" }
 ```
 
 | Variable | Effet |
@@ -231,15 +231,15 @@ Tout est dans un seul dossier : comptes, conversations, fichiers envoyés.
 
 ```bash
 # Sauvegarde
-tar czf skype-$(date +%F).tar.gz donnees/
+tar czf skip-$(date +%F).tar.gz donnees/
 
 # Restauration
 docker compose down
-rm -rf donnees && tar xzf skype-2026-08-05.tar.gz
+rm -rf donnees && tar xzf skip-2026-08-05.tar.gz
 docker compose up -d
 ```
 
-`donnees/skype.json` contient les comptes et les messages, `donnees/files/`
+`donnees/skip.json` contient les comptes et les messages, `donnees/files/`
 les pièces jointes.
 
 > `docker compose down -v` supprime les volumes nommés (ceux de Caddy), **pas**
@@ -251,7 +251,7 @@ les pièces jointes.
 ## 6. Mettre à jour
 
 ```bash
-cd Skype && git pull
+cd Skip && git pull
 docker compose up -d --build
 ```
 
@@ -267,11 +267,11 @@ serveur de famille, gardez l'adresse privée — ou placez une authentification
 devant, dans Caddy :
 
 ```
-skype.exemple.fr {
+skip.exemple.fr {
     basic_auth {
         famille <empreinte>
     }
-    reverse_proxy skype:3000
+    reverse_proxy skip:3000
 }
 ```
 
@@ -302,5 +302,5 @@ Le contrôle de santé répond toujours à la même adresse, et c'est le premier
 endroit où regarder :
 
 ```bash
-curl https://skype.exemple.fr/api/health
+curl https://skip.exemple.fr/api/health
 ```

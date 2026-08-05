@@ -1,4 +1,4 @@
-# Skype Reborn — pour héberger son propre serveur.
+# Skip — pour héberger son propre serveur.
 #
 #   docker compose up -d
 #
@@ -15,15 +15,15 @@
 # certificat tout seul. Il lui faut seulement un nom de domaine pointant sur
 # la machine :
 #
-#   DOMAINE=skype.exemple.fr docker compose --profile https up -d
+#   DOMAINE=skip.exemple.fr docker compose --profile https up -d
 #
 # ─────────────────────────────────────────────────────────────────────────────
 
 services:
-  skype:
+  skip:
     build: .
-    image: skype-reborn
-    container_name: skype
+    image: skip
+    container_name: skip
     restart: unless-stopped
     environment:
       # Le serveur écoute sur toutes les interfaces du conteneur ; ce qui est
@@ -42,7 +42,7 @@ services:
 
   caddy:
     image: caddy:2-alpine
-    container_name: skype-https
+    container_name: skip-https
     restart: unless-stopped
     profiles: ["https"]
     environment:
@@ -65,7 +65,7 @@ services:
       - "80:80"
       - "443:443"
     depends_on:
-      - skype
+      - skip
 
 volumes:
   caddy-data:

@@ -1,15 +1,15 @@
 /* ════════════════════════════════════════════════════════════════════════════
-   Skype Reborn — jetons de design
-   Palette officielle Skype : bleu #00AFF0, avec les nuances de Skype 8.
+   Skip — jetons de design
+   Palette officielle Skip : bleu #5A4FE0, avec les nuances de Skip 8.
    ════════════════════════════════════════════════════════════════════════════ */
 
 :root {
   /* Marque */
-  --skype-blue: #00aff0;
-  --skype-blue-dark: #0091c8;
-  --skype-blue-darker: #0078a8;
-  --skype-blue-light: #35c1f5;
-  --skype-blue-pale: #e5f7fe;
+  --skip-blue: #5a4fe0;
+  --skip-blue-dark: #0091c8;
+  --skip-blue-darker: #3b2ca8;
+  --skip-blue-light: #35c1f5;
+  --skip-blue-pale: #e5f7fe;
 
   /* Présence */
   --presence-online: #6bb700;
@@ -51,10 +51,10 @@
 /* ── Thème clair (défaut) ─────────────────────────────────────────────────── */
 :root,
 [data-theme='light'] {
-  --accent: var(--skype-blue);
-  --accent-hover: var(--skype-blue-dark);
-  --accent-active: var(--skype-blue-darker);
-  --accent-soft: var(--skype-blue-pale);
+  --accent: var(--skip-blue);
+  --accent-hover: var(--skip-blue-dark);
+  --accent-active: var(--skip-blue-darker);
+  --accent-soft: var(--skip-blue-pale);
   --accent-contrast: #ffffff;
 
   --bg-app: #ffffff;
@@ -137,21 +137,21 @@
   color-scheme: dark;
 }
 
-/* ── Thème « Classic » : le bleu Skype d'origine ──────────────────────────── */
+/* ── Thème « Classic » : le bleu Skip d'origine ──────────────────────────── */
 [data-theme='classic'] {
-  --accent: #00aff0;
+  --accent: #5a4fe0;
   --accent-hover: #0091c8;
-  --accent-active: #0078a8;
+  --accent-active: #3b2ca8;
   --accent-soft: #d6f0fb;
   --accent-contrast: #ffffff;
 
   --bg-app: #ffffff;
-  --bg-rail: #00aff0;
+  --bg-rail: #5a4fe0;
   --bg-sidebar: #f7fcff;
   --bg-main: #ffffff;
   --bg-elevated: #ffffff;
-  --bg-hover: rgba(0, 175, 240, 0.08);
-  --bg-active: rgba(0, 175, 240, 0.16);
+  --bg-hover: rgba(90, 79, 224, 0.08);
+  --bg-active: rgba(90, 79, 224, 0.16);
   --bg-selected: #cdeefc;
   --bg-input: #eef8fd;
   --bg-overlay: rgba(0, 60, 90, 0.42);
@@ -159,19 +159,19 @@
 
   --bubble-in: #eef8fd;
   --bubble-in-text: #14364a;
-  --bubble-out: #00aff0;
+  --bubble-out: #5a4fe0;
   --bubble-out-text: #ffffff;
-  --bubble-system: rgba(0, 175, 240, 0.08);
+  --bubble-system: rgba(90, 79, 224, 0.08);
 
   --text: #14364a;
   --text-secondary: #4a6b7e;
   --text-tertiary: #7d97a6;
   --text-inverse: #ffffff;
-  --link: #0078a8;
+  --link: #3b2ca8;
 
-  --border: rgba(0, 175, 240, 0.2);
-  --border-strong: rgba(0, 175, 240, 0.4);
-  --divider: rgba(0, 175, 240, 0.14);
+  --border: rgba(90, 79, 224, 0.2);
+  --border-strong: rgba(90, 79, 224, 0.4);
+  --divider: rgba(90, 79, 224, 0.14);
 
   color-scheme: light;
 }

@@ -1,7 +1,7 @@
-/** Client HTTP de l'API Skype. */
+/** Client HTTP de l'API Skip. */
 import { url as urlServeur } from './serveur.js';
 
-const TOKEN_KEY = 'skype.token';
+const TOKEN_KEY = 'skip.token';
 
 export const getToken = () => localStorage.getItem(TOKEN_KEY);
 export const setToken = (token) => (token ? localStorage.setItem(TOKEN_KEY, token) : localStorage.removeItem(TOKEN_KEY));
@@ -105,7 +105,7 @@ export const api = {
   calls: () => request('GET', '/api/calls'),
   callPhone: (number, minutes) => request('POST', '/api/calls/pstn', { number, minutes }),
   topUp: (amount) => request('POST', '/api/credit/topup', { amount }),
-  getSkypeNumber: (country) => request('POST', '/api/skype-number', { country }),
+  getSkypeNumber: (country) => request('POST', '/api/skip-number', { country }),
   translate: (text, to) => request('POST', '/api/translate', { text, to }),
   emoticons: () => request('GET', '/api/emoticons'),
 

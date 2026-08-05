@@ -30,7 +30,7 @@ export const EMOTICONS = {
   '(cat)': '🐱', '(dog)': '🐶', '(monkey)': '🐵', '(bear)': '🐻', '(penguin)': '🐧',
   '(unicorn)': '🦄', '(poop)': '💩', '(fire)': '🔥', '(100)': '💯',
   '(brokenheart)': '💔', '(sparklingheart)': '💖', '(hug)': '🤗', '(rose)': '🌹',
-  '(skype)': '💙', '(flag)': '🏳️', '(hearteyes)': '😍', '(zzz)': '💤',
+  '(skip)': '💙', '(flag)': '🏳️', '(hearteyes)': '😍', '(zzz)': '💤',
 };
 
 const EMOTICON_PATTERN = new RegExp(
@@ -73,7 +73,7 @@ export function formatMessage(text, { mentions = [], currentUserName = '', emoti
   html = html.replace(/(?:^|(?<=\s))`([^`\n]+)`(?=\s|$|[.,!?;:)])/g, (_, code) => stash(`<code>${code}</code>`));
   html = html.replace(/\{code\}([\s\S]*?)\{\/code\}/g, (_, code) => stash(`<pre><code>${code}</code></pre>`));
 
-  // Mise en forme façon Skype : *gras*, _italique_, ~barré~, !!monospace!!
+  // Mise en forme façon Skip : *gras*, _italique_, ~barré~, !!monospace!!
   html = html.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s.,!?;:)]|$)/g, '$1<strong>$2</strong>');
   html = html.replace(/(^|[\s(])_([^_\n]+)_(?=[\s.,!?;:)]|$)/g, '$1<em>$2</em>');
   html = html.replace(/(^|[\s(])~([^~\n]+)~(?=[\s.,!?;:)]|$)/g, '$1<s>$2</s>');
@@ -89,7 +89,7 @@ export function formatMessage(text, { mentions = [], currentUserName = '', emoti
 
   // Mentions
   html = html.replace(MENTION_PATTERN, (match, name) => {
-    const known = mentions.some((m) => m.skypeName === name.toLowerCase() || m.id === name);
+    const known = mentions.some((m) => m.pseudo === name.toLowerCase() || m.id === name);
     if (!known) return match;
     const isMe = name.toLowerCase() === String(currentUserName).toLowerCase();
     return stash(`<span class="mention${isMe ? ' mention--me' : ''}" data-mention="${name.toLowerCase()}">@${name}</span>`);
@@ -145,7 +145,7 @@ export function initials(name) {
 
 /** Couleur d'avatar déterministe, dérivée de l'identifiant. */
 export function colorFor(seed) {
-  const palette = ['#00AFF0', '#7B68EE', '#FF6B6B', '#20C997', '#F59E0B', '#EC4899', '#0EA5E9', '#8B5CF6', '#14B8A6', '#F97316'];
+  const palette = ['#5A4FE0', '#7B68EE', '#FF6B6B', '#20C997', '#F59E0B', '#EC4899', '#0EA5E9', '#8B5CF6', '#14B8A6', '#F97316'];
   let hash = 0;
   for (const char of String(seed)) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
   return palette[hash % palette.length];
@@ -171,7 +171,7 @@ export function formatDuration(seconds) {
 /** Extrait les mentions « @pseudo » d'un texte. */
 export const extractMentions = (text, members) =>
   [...String(text).matchAll(MENTION_PATTERN)]
-    .map((match) => members.find((m) => m.skypeName === match[1].toLowerCase()))
+    .map((match) => members.find((m) => m.pseudo === match[1].toLowerCase()))
     .filter(Boolean)
     .map((m) => m.id);
 

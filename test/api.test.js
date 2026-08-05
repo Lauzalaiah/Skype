@@ -15,8 +15,8 @@ const ROOT = path.join(__dirname, '..');
 const PORT = 3199;
 const BASE = `http://127.0.0.1:${PORT}`;
 const DATA_DIR = path.join(ROOT, 'data');
-const DB_PATH = path.join(DATA_DIR, 'skype.json');
-const BACKUP_PATH = path.join(DATA_DIR, 'skype.json.testbackup');
+const DB_PATH = path.join(DATA_DIR, 'skip.json');
+const BACKUP_PATH = path.join(DATA_DIR, 'skip.json.testbackup');
 
 let server;
 
@@ -73,7 +73,7 @@ const users = {};
 
 async function createUser(key, name) {
   const { status, data } = await call('POST', '/api/auth/signup', {
-    body: { skypeName: `${name}.${suffix}`, displayName: name, password: 'motdepasse123' },
+    body: { pseudo: `${name}.${suffix}`, displayName: name, password: 'motdepasse123' },
   });
   assert.equal(status, 200, `création de ${name} : ${JSON.stringify(data)}`);
   users[key] = { ...data.user, token: data.token };
@@ -86,27 +86,27 @@ describe('Authentification', () => {
   test('crée un compte et renvoie un jeton', async () => {
     const alice = await createUser('alice', 'alice');
     assert.ok(alice.token);
-    assert.equal(alice.skypeName, `alice.${suffix}`);
+    assert.equal(alice.pseudo, `alice.${suffix}`);
     assert.equal(alice.status, 'online');
   });
 
   test('refuse un pseudo déjà pris', async () => {
     const { status } = await call('POST', '/api/auth/signup', {
-      body: { skypeName: `alice.${suffix}`, displayName: 'Imposteur', password: 'motdepasse123' },
+      body: { pseudo: `alice.${suffix}`, displayName: 'Imposteur', password: 'motdepasse123' },
     });
     assert.equal(status, 409);
   });
 
   test('refuse un pseudo invalide', async () => {
     const { status } = await call('POST', '/api/auth/signup', {
-      body: { skypeName: '42', displayName: 'X', password: 'motdepasse123' },
+      body: { pseudo: '42', displayName: 'X', password: 'motdepasse123' },
     });
     assert.equal(status, 400);
   });
 
   test('refuse un mot de passe trop court', async () => {
     const { status } = await call('POST', '/api/auth/signup', {
-      body: { skypeName: `court.${suffix}`, displayName: 'X', password: '123' },
+      body: { pseudo: `court.${suffix}`, displayName: 'X', password: '123' },
     });
     assert.equal(status, 400);
   });
@@ -365,10 +365,10 @@ describe('Réglages et profil', () => {
   test('met à jour le profil', async () => {
     const { data } = await call('PATCH', '/api/me', {
       token: users.alice.token,
-      body: { displayName: 'Alice Martin', mood: 'De retour sur Skype' },
+      body: { displayName: 'Alice Martin', mood: 'De retour sur Skip' },
     });
     assert.equal(data.user.displayName, 'Alice Martin');
-    assert.equal(data.user.mood, 'De retour sur Skype');
+    assert.equal(data.user.mood, 'De retour sur Skip');
   });
 
   test('fusionne les réglages imbriqués sans écraser les voisins', async () => {
@@ -405,7 +405,7 @@ describe('Réglages et profil', () => {
     users.bob.token = newLogin.data.token;
   });
 
-  test('crédit Skype : recharge et débit d’un appel', async () => {
+  test('crédit Skip : recharge et débit d’un appel', async () => {
     const before = await call('GET', '/api/auth/me', { token: users.alice.token });
     const topUp = await call('POST', '/api/credit/topup', { token: users.alice.token, body: { amount: 10 } });
     assert.ok(topUp.data.credit > before.data.user.credit);
@@ -416,8 +416,8 @@ describe('Réglages et profil', () => {
     assert.equal(callResult.data.call.type, 'pstn');
   });
 
-  test('attribue un numéro Skype', async () => {
-    const { data } = await call('POST', '/api/skype-number', { token: users.alice.token, body: { country: 'FR' } });
+  test('attribue un numéro Skip', async () => {
+    const { data } = await call('POST', '/api/skip-number', { token: users.alice.token, body: { country: 'FR' } });
     assert.match(data.skypeNumber, /^\+33/);
   });
 });
@@ -518,7 +518,7 @@ describe('Cache des fichiers servis', () => {
   });
 
   test('les sons et les icônes, eux, restent en cache', async () => {
-    const { cache } = await entete('/assets/sounds/skype-message.mp3');
+    const { cache } = await entete('/assets/sounds/skip-message.mp3');
     assert.match(cache, /max-age=\d{4,}/, 'ce qui ne change pas doit rester en cache');
   });
 
@@ -536,7 +536,7 @@ describe('Cache des fichiers servis', () => {
     assert.match(absent.headers.get('content-type'), /text\/html/,
       'un chemin inconnu doit rester reconnaissable à son type');
 
-    const present = await fetch(`${BASE}/assets/sounds/skype-message.mp3`);
+    const present = await fetch(`${BASE}/assets/sounds/skip-message.mp3`);
     assert.match(present.headers.get('content-type'), /^audio\/mpeg/,
       'un son réellement servi s’annonce comme un son');
   });
@@ -573,7 +573,7 @@ describe('Service d’écho (test du micro)', () => {
     const { data } = await call('GET', '/api/contacts', { token: denise.token });
     const bot = data.contacts.find((c) => c.isBot);
     assert.ok(bot, 'aucun contact marqué isBot après l’inscription');
-    assert.equal(bot.skypeName, 'echo123');
+    assert.equal(bot.pseudo, 'echo123');
   });
 
   test('sa conversation contient un message d’accueil', async () => {
@@ -592,7 +592,7 @@ describe('Service d’écho (test du micro)', () => {
 
   test('le pseudo echo123 ne peut pas être pris à l’inscription', async () => {
     const { status, data } = await call('POST', '/api/auth/signup', {
-      body: { skypeName: 'echo123', displayName: 'Imposteur', password: 'motdepasse123' },
+      body: { pseudo: 'echo123', displayName: 'Imposteur', password: 'motdepasse123' },
     });
     assert.equal(status, 409, JSON.stringify(data));
   });
@@ -609,7 +609,7 @@ describe('Serveur statique', () => {
   test('sert l’application', async () => {
     const response = await fetch(BASE + '/');
     assert.equal(response.status, 200);
-    assert.match(await response.text(), /<title>Skype<\/title>/);
+    assert.match(await response.text(), /<title>Skip<\/title>/);
   });
 
   test('sert la page publicitaire', async () => {

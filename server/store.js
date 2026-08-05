@@ -11,9 +11,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Surchageable : une application de bureau empaquetée (voir desktop/) ne peut
 // pas écrire à côté de son propre exécutable (droits refusés sous
 // « Program Files »), et doit ranger les données dans le dossier utilisateur.
-export const DATA_DIR = process.env.SKYPE_DATA_DIR || path.join(__dirname, '..', 'data');
+// L'ancienne variable reste acceptée : un serveur déjà installé la définit
+// dans son unité systemd ou sa composition Docker, et cesserait brutalement de
+// trouver ses données le jour de la mise à jour — sans message d'erreur, il
+// repartirait simplement sur une base vide.
+export const DATA_DIR = process.env.SKIP_DATA_DIR
+  || process.env.SKYPE_DATA_DIR
+  || path.join(__dirname, '..', 'data');
 export const FILES_DIR = path.join(DATA_DIR, 'files');
-const DB_PATH = path.join(DATA_DIR, 'skype.json');
+const DB_PATH = path.join(DATA_DIR, 'skip.json');
+const ANCIEN_DB_PATH = path.join(DATA_DIR, 'skype.json');
 
 const EMPTY_DB = {
   version: 1,
@@ -30,8 +37,34 @@ function ensureDirs() {
   fs.mkdirSync(FILES_DIR, { recursive: true });
 }
 
+/**
+ * Le fichier de données a changé de nom en même temps que le projet.
+ *
+ * Sans cette reprise, la mise à jour serait une perte totale et silencieuse :
+ * le serveur ne trouverait pas « skip.json », en conclurait qu'il démarre pour
+ * la première fois, et créerait une base vide à côté de l'ancienne. Comptes,
+ * conversations et contacts seraient toujours sur le disque, mais plus
+ * personne ne pourrait se connecter — et rien dans le journal ne dirait
+ * pourquoi.
+ *
+ * On renomme plutôt que copier : deux fichiers vivants finiraient par
+ * diverger, et l'on ne saurait plus lequel fait foi.
+ */
+function reprendreAncienneBase() {
+  if (fs.existsSync(DB_PATH) || !fs.existsSync(ANCIEN_DB_PATH)) return;
+  try {
+    fs.renameSync(ANCIEN_DB_PATH, DB_PATH);
+    console.log('Base de données reprise de skype.json vers skip.json.');
+  } catch (err) {
+    // Un disque en lecture seule ne doit pas empêcher le serveur de démarrer,
+    // mais le silence serait pire que l'échec.
+    console.error('[store] reprise de l’ancienne base impossible :', err.message);
+  }
+}
+
 function load() {
   ensureDirs();
+  reprendreAncienneBase();
   if (!fs.existsSync(DB_PATH)) return structuredClone(EMPTY_DB);
   try {
     const parsed = JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));

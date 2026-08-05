@@ -1,4 +1,4 @@
-# Héberger Skype Reborn sur un VPS
+# Héberger Skip sur un VPS
 
 Un seul chemin, du serveur vide à deux personnes qui s'appellent. Comptez
 vingt minutes, dont quinze d'attente.
@@ -15,9 +15,9 @@ Quatre valeurs. Notez-les maintenant : chaque commande de ce guide y renvoie.
 | | Valeur | Où la trouver | Exemple |
 | --- | --- | --- | --- |
 | **①** | Adresse IP du serveur | tableau de bord du fournisseur, après création | `203.0.113.42` |
-| **②** | Nom de domaine | chez votre registrar | `skype.exemple.fr` |
+| **②** | Nom de domaine | chez votre registrar | `skip.exemple.fr` |
 | **③** | Utilisateur SSH initial | fourni par le fournisseur | `root` ou `ubuntu` |
-| **④** | Nom d'utilisateur à créer | vous le choisissez | `skype` |
+| **④** | Nom d'utilisateur à créer | vous le choisissez | `skip` |
 
 Quatre, et c'est tout. Pas d'adresse e-mail — Caddy obtient le certificat
 sans en demander. Pas de clé d'API, pas de jeton, aucun compte à créer nulle
@@ -76,7 +76,7 @@ s'échangent beaucoup de fichiers.
 Sur votre propre machine, avec Docker :
 
 ```bash
-git clone https://github.com/Lauzalaiah/Skype && cd Skype
+git clone https://github.com/Lauzalaiah/Skype && cd Skip
 docker compose up -d
 cloudflared tunnel --url http://localhost:3000
 ```
@@ -98,12 +98,12 @@ Chez votre registrar, créez un enregistrement :
 
 | Type | Nom | Valeur | TTL |
 | --- | --- | --- | --- |
-| `A` | `skype` (ou `@` pour le domaine nu) | **①** l'IP du serveur | 300 |
+| `A` | `skip` (ou `@` pour le domaine nu) | **①** l'IP du serveur | 300 |
 
 Puis attendez, et vérifiez :
 
 ```bash
-dig +short skype.exemple.fr        # ② — doit afficher ① et rien d'autre
+dig +short skip.exemple.fr        # ② — doit afficher ① et rien d'autre
 ```
 
 **Ne passez à la suite que lorsque cette commande affiche votre IP.** Comptez
@@ -170,14 +170,14 @@ docker --version
 ## 5. Installer, en une commande
 
 ```bash
-git clone https://github.com/Lauzalaiah/Skype && cd Skype
+git clone https://github.com/Lauzalaiah/Skype && cd Skip
 DOMAINE=② docker compose --profile https up -d
 ```
 
 Par exemple :
 
 ```bash
-DOMAINE=skype.exemple.fr docker compose --profile https up -d
+DOMAINE=skip.exemple.fr docker compose --profile https up -d
 ```
 
 La première fois, Docker construit l'image (une minute) puis Caddy demande le
@@ -195,7 +195,7 @@ Vous cherchez une ligne contenant `certificate obtained successfully`.
 
 ```bash
 curl https://②/api/health
-# {"service":"skype","ok":true,"version":"…","uptime":…}
+# {"service":"skip","ok":true,"version":"…","uptime":…}
 ```
 
 Puis, depuis un téléphone, ouvrez `https://②` :
@@ -230,7 +230,7 @@ Puis, dans le `Caddyfile`, avant `reverse_proxy` :
     basic_auth {
         famille <l-empreinte-obtenue-ci-dessus>
     }
-    reverse_proxy skype:3000
+    reverse_proxy skip:3000
     …
 }
 ```
@@ -247,7 +247,7 @@ propre compte.
 Tout tient dans un dossier : comptes, conversations, fichiers envoyés.
 
 ```bash
-tar czf ~/skype-$(date +%F).tar.gz donnees/
+tar czf ~/skip-$(date +%F).tar.gz donnees/
 ```
 
 Automatiquement, chaque nuit à 3 h :
@@ -255,7 +255,7 @@ Automatiquement, chaque nuit à 3 h :
 ```bash
 crontab -e
 # puis ajouter :
-0 3 * * * cd /home/④/Skype && tar czf ~/sauvegardes/skype-$(date +\%F).tar.gz donnees/
+0 3 * * * cd /home/④/Skip && tar czf ~/sauvegardes/skip-$(date +\%F).tar.gz donnees/
 ```
 
 ```bash
@@ -274,7 +274,7 @@ Pour restaurer :
 
 ```bash
 docker compose down
-rm -rf donnees && tar xzf skype-2026-08-05.tar.gz
+rm -rf donnees && tar xzf skip-2026-08-05.tar.gz
 docker compose --profile https up -d
 ```
 
@@ -283,7 +283,7 @@ docker compose --profile https up -d
 ## 8. Mettre à jour le serveur
 
 ```bash
-cd ~/Skype && git pull
+cd ~/Skip && git pull
 DOMAINE=② docker compose --profile https up -d --build
 ```
 
@@ -312,7 +312,7 @@ Les données ne sont pas touchées : elles vivent hors de l'image.
 | --- | --- | --- |
 | `PORT` | `3000` | Port d'écoute. `PORT=0` demande un port libre au système. |
 | `HOST` | `0.0.0.0` | Interface d'écoute. |
-| `SKYPE_DATA_DIR` | `/données` dans l'image | Emplacement des données. |
+| `SKIP_DATA_DIR` | `/données` dans l'image | Emplacement des données. |
 
 Pour les changer, ajoutez-les sous `environment:` dans `docker-compose.yml`.
 En pratique, aucune n'a besoin d'être modifiée pour un VPS.

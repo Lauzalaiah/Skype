@@ -32,7 +32,7 @@ export function renderMessage(message, { chat, previous = null, isLast = false, 
   );
 
   // Sur écran tactile, la barre d'actions au survol n'existe pas : l'appui
-  // long ouvre le menu du message, comme sur Skype mobile.
+  // long ouvre le menu du message, comme sur Skip mobile.
   if (!message.deleted && matchMedia('(hover: none)').matches) {
     let minuteur = null;
     let depart = null;
@@ -141,7 +141,7 @@ function renderBody(message, { chat, isOwn, highlight }) {
   if (hasText) {
     let html = formatMessage(message.content, {
       mentions: members,
-      currentUserName: state.user?.skypeName,
+      currentUserName: state.user?.pseudo,
       emoticons: state.user?.settings?.chat?.animatedEmoticons !== false,
     });
     if (highlight) html = highlightHtml(html, highlight);
@@ -364,7 +364,7 @@ function renderContactCard(message) {
     avatar(contact, { size: 'md', presence: false }),
     el('div', { style: { flex: '1', minWidth: '0' } }, [
       el('div', { style: { fontWeight: '700' }, text: contact.displayName || 'Contact' }),
-      el('div.dim', { style: { fontSize: '0.85em' }, text: `@${contact.skypeName || ''}` }),
+      el('div.dim', { style: { fontSize: '0.85em' }, text: `@${contact.pseudo || ''}` }),
     ]),
     el('button.btn.btn--sm.btn--primary', {
       text: 'Ajouter',
@@ -488,7 +488,7 @@ function renderActions(message, { chat, isOwn }) {
   return el('div.message__actions', {}, [react, reply, more]);
 }
 
-/** Sélecteur de réaction rapide (les 7 réactions de Skype + « plus »). */
+/** Sélecteur de réaction rapide (les 7 réactions de Skip + « plus »). */
 export function openReactionPicker(anchor, message, chat) {
   document.querySelector('.reaction-picker')?.remove();
 

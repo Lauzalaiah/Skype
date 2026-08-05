@@ -1,5 +1,5 @@
 /**
- * Skype Reborn — application de bureau (Electron).
+ * Skip — application de bureau (Electron).
  *
  * Le serveur (zéro dépendance, écrit pour tourner seul) est démarré ICI, dans
  * le processus principal — Electron embarque déjà Node.js, inutile d'en
@@ -33,12 +33,12 @@ if (!app.requestSingleInstanceLock()) {
 app.commandLine.appendSwitch('disable-background-networking');
 
 // Electron nomme le dossier de données d'après le nom du paquet npm
-// (« skype-reborn-desktop ») et fige ce chemin avant l'exécution de ce
+// (« skip-desktop ») et fige ce chemin avant l'exécution de ce
 // fichier : app.setName() seul arrive trop tard. On impose donc le chemin
-// explicitement, pour que les conversations vivent dans %APPDATA%\Skype
+// explicitement, pour que les conversations vivent dans %APPDATA%\Skip
 // plutôt que dans un dossier au nom technique.
-app.setName('Skype');
-app.setPath('userData', path.join(app.getPath('appData'), 'Skype'));
+app.setName('Skip');
+app.setPath('userData', path.join(app.getPath('appData'), 'Skip'));
 
 let mainWindow = null;
 
@@ -53,7 +53,7 @@ app.on('second-instance', () => {
 async function demarrerServeur() {
   process.env.HOST = '127.0.0.1';       // usage local uniquement, jamais exposé sur le réseau
   process.env.PORT = '0';               // 0 = le système choisit un port libre : aucun conflit possible
-  process.env.SKYPE_DATA_DIR = path.join(app.getPath('userData'), 'data');
+  process.env.SKIP_DATA_DIR = path.join(app.getPath('userData'), 'data');
 
   const entree = app.isPackaged
     ? path.join(process.resourcesPath, 'server', 'index.js')
@@ -81,7 +81,7 @@ function chargerServeur(fenetre) {
 
   fenetre.webContents.once('did-fail-load', (_e, code, description, url, principale) => {
     if (!principale || code === -3) return;   // -3 : chargement interrompu volontairement
-    console.warn(`[skype] serveur partagé injoignable (${description}) : retour au serveur local`);
+    console.warn(`[skip] serveur partagé injoignable (${description}) : retour au serveur local`);
     dialog.showErrorBox(
       'Serveur injoignable',
       `${url}\n\n${description}\n\nSkype revient à son serveur local. `
@@ -98,7 +98,7 @@ function creerFenetre(port) {
     height: 760,
     minWidth: 760,
     minHeight: 480,
-    title: 'Skype',
+    title: 'Skip',
     backgroundColor: '#ffffff',
     icon: path.join(__dirname, 'build', 'icon.png'),
     autoHideMenuBar: true,
@@ -134,7 +134,7 @@ function creerFenetre(port) {
  * sans un mot : impossible à diagnostiquer pour qui l'utilise, et invisible
  * pour qui la teste.
  *
- * Mais une fois la fenêtre ouverte, la règle s'inverse : fermer Skype parce
+ * Mais une fois la fenêtre ouverte, la règle s'inverse : fermer Skip parce
  * qu'une promesse a échoué quelque part — une vérification de mise à jour, une
  * requête réseau perdue — couperait une conversation en cours pour un incident
  * dont l'utilisateur n'a que faire. Après le démarrage, on journalise et on
@@ -146,13 +146,13 @@ function signalerEchec(err) {
   const message = String(err?.stack || err);
 
   if (demarre) {
-    console.error('[skype] erreur ignorée après démarrage :', message);
+    console.error('[skip] erreur ignorée après démarrage :', message);
     return;
   }
 
-  console.error('[skype] démarrage impossible :', message);
+  console.error('[skip] démarrage impossible :', message);
   try {
-    dialog.showErrorBox('Skype n’a pas pu démarrer', message);
+    dialog.showErrorBox('Skip n’a pas pu démarrer', message);
   } catch {
     /* si même la boîte de dialogue échoue, la console reste */
   }

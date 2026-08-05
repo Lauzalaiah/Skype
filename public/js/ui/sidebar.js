@@ -25,7 +25,7 @@ export function renderSidebar() {
   const root = el('div.sidebar', {}, [headerNode, incomingNode, searchNode, filtersNode, listNode]);
 
   /**
-   * Appel entrant dans la colonne de gauche. Skype le montrait ici quand on
+   * Appel entrant dans la colonne de gauche. Skip le montrait ici quand on
    * était déjà en communication : la fenêtre d'appel occupe l'écran, mais la
    * liste reste accessible dès qu'on la réduit.
    */
@@ -78,7 +78,7 @@ export function renderSidebar() {
       dialpad: 'Appeler un numéro',
     };
 
-    headerNode.append(el('h1.sidebar__title', { text: titles[state.view] || 'Skype' }), el('span.spacer'));
+    headerNode.append(el('h1.sidebar__title', { text: titles[state.view] || 'Skip' }), el('span.spacer'));
 
     if (state.view === 'chats') {
       headerNode.append(
@@ -335,7 +335,7 @@ export function renderSidebar() {
 
     if (!contacts.length) {
       listNode.append(
-        emptyState('people', 'Aucun contact', 'Recherchez quelqu’un par son pseudo Skype pour l’ajouter.',
+        emptyState('people', 'Aucun contact', 'Recherchez quelqu’un par son pseudo Skip pour l’ajouter.',
           el('button.btn.btn--primary', { text: 'Ajouter un contact', onclick: openAddContactDialog }))
       );
       return;
@@ -386,7 +386,7 @@ export function renderSidebar() {
       avatar(from, {}),
       el('div.chat-item__body', {}, [
         el('div.chat-item__top', {}, [el('span.chat-item__name', { text: from.displayName })]),
-        el('div.chat-item__bottom', {}, [el('span.chat-item__preview', { text: request.message || `@${from.skypeName} souhaite vous ajouter` })]),
+        el('div.chat-item__bottom', {}, [el('span.chat-item__preview', { text: request.message || `@${from.pseudo} souhaite vous ajouter` })]),
         el('div.row.gap-8', { style: { marginTop: '6px' } }, [
           el('button.btn.btn--primary.btn--sm', {
             text: 'Accepter',
@@ -583,7 +583,7 @@ export function renderSidebar() {
         el('div.credit-banner', { style: { width: '100%' } }, [
           icon('wallet', 'icon icon--lg'),
           el('div', { style: { flex: '1' } }, [
-            el('div', { style: { fontSize: '0.82em', opacity: '0.9' }, text: 'Crédit Skype' }),
+            el('div', { style: { fontSize: '0.82em', opacity: '0.9' }, text: 'Crédit Skip' }),
             el('div.credit-banner__amount', { text: `${(state.user.credit ?? 0).toFixed(2)} €` }),
           ]),
           el('button.btn.btn--sm', {
@@ -627,16 +627,16 @@ export function renderSidebar() {
         ]),
         el('p.dim.center', {
           style: { fontSize: '0.8em', maxWidth: '260px', lineHeight: '1.5' },
-          text: 'Appels vers les fixes et mobiles du monde entier, avec le crédit Skype. Tarifs de démonstration : aucun appel réel n’est passé.',
+          text: 'Appels vers les fixes et mobiles du monde entier, avec le crédit Skip. Tarifs de démonstration : aucun appel réel n’est passé.',
         }),
         state.user.skypeNumber
-          ? el('p.center', { style: { fontSize: '0.85em' } }, [el('strong', { text: 'Votre numéro Skype : ' }), state.user.skypeNumber])
+          ? el('p.center', { style: { fontSize: '0.85em' } }, [el('strong', { text: 'Votre numéro Skip : ' }), state.user.skypeNumber])
           : el('button.btn.btn--outline.btn--sm', {
-              text: 'Obtenir un numéro Skype',
+              text: 'Obtenir un numéro Skip',
               onclick: async () => {
                 const { skypeNumber } = await api.getSkypeNumber('FR');
                 state.user.skypeNumber = skypeNumber;
-                toast(`Votre numéro Skype : ${skypeNumber}`);
+                toast(`Votre numéro Skip : ${skypeNumber}`);
                 renderList();
               },
             }),
@@ -676,7 +676,7 @@ export function renderSidebar() {
           const known = state.contacts.some((c) => c.id === person.id);
           listNode.append(
             personRow(person, {
-              sub: `@${person.skypeName}${person.city ? ` · ${person.city}` : ''}`,
+              sub: `@${person.pseudo}${person.city ? ` · ${person.city}` : ''}`,
               onClick: () => openProfileCard(person.id, person),
               trailing: known
                 ? el('span.dim', { style: { fontSize: '0.8em' }, text: 'Contact' })
@@ -686,7 +686,7 @@ export function renderSidebar() {
                     onclick: async (e) => {
                       e.stopPropagation();
                       try {
-                        await api.addContact(person.id, 'Bonjour, ajoutons-nous sur Skype !');
+                        await api.addContact(person.id, 'Bonjour, ajoutons-nous sur Skip !');
                         toast('Demande de contact envoyée');
                       } catch (err) {
                         toast(err.message, { type: 'error' });

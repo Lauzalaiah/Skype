@@ -133,7 +133,7 @@ jobs:
         if: matrix.systeme == 'linux'
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq xvfb
-          BINAIRE=desktop/dist/linux-unpacked/skype-reborn-desktop
+          BINAIRE=desktop/dist/linux-unpacked/skip-desktop
           xvfb-run -a "$BINAIRE" --no-sandbox --disable-gpu > /tmp/app.log 2>&1 &
 
           for _ in $(seq 1 60); do
@@ -166,7 +166,7 @@ jobs:
           # Un son absent répondait donc « 200 » exactement comme un son
           # présent, et cette vérification ne pouvait rien détecter. C'est le
           # type de contenu qui tranche.
-          for SON in skype-ring skype-message skype-login; do
+          for SON in skip-ring skip-message skip-login; do
             TYPE=$(curl -fsS --max-time 10 -o /dev/null -w '%{content_type}' \
               "http://127.0.0.1:$PORT/assets/sounds/$SON.mp3")
             case "$TYPE" in
@@ -178,11 +178,11 @@ jobs:
             esac
           done
           echo "l'application démarre, sert son interface et ses sons en $SERVIE"
-          pkill -f skype-reborn-desktop || true
+          pkill -f skip-desktop || true
 
       - uses: actions/upload-artifact@v6
         with:
-          name: skype-reborn-${{ matrix.systeme }}
+          name: skip-${{ matrix.systeme }}
           path: ${{ matrix.fichiers }}
           if-no-files-found: error
 
@@ -229,9 +229,9 @@ jobs:
       - name: Rédiger les notes de version
         run: |
           cat > notes.md <<'FIN'
-          **Projet de fan, non officiel.** Skype Reborn est une recréation
+          **Projet de fan, non officiel.** Skip est une recréation
           indépendante de l'ancien Skype, réalisée par passion. Aucun lien avec
-          Microsoft ni avec les équipes de Skype, aucune affiliation. « Skype »
+          Microsoft ni avec les équipes de Skype, aucune affiliation. « Skip »
           est une marque de Microsoft, citée ici pour désigner le logiciel
           d'origine.
 
@@ -239,11 +239,11 @@ jobs:
 
           | Système | Fichier |
           | --- | --- |
-          | Windows 10 / 11 | `Skype-Reborn-Setup-*.exe` |
-          | macOS (Intel et Apple Silicon) | `Skype-Reborn-*.dmg` |
-          | Debian, Ubuntu, Mint | `Skype-Reborn-*.deb` — `sudo apt install ./…deb` |
-          | Fedora, openSUSE | `Skype-Reborn-*.rpm` — `sudo dnf install ./…rpm` |
-          | Toute distribution, sans installer | `Skype-Reborn-*.AppImage` (`chmod +x`, puis lancer) |
+          | Windows 10 / 11 | `Skip-Setup-*.exe` |
+          | macOS (Intel et Apple Silicon) | `Skip-*.dmg` |
+          | Debian, Ubuntu, Mint | `Skip-*.deb` — `sudo apt install ./…deb` |
+          | Fedora, openSUSE | `Skip-*.rpm` — `sudo dnf install ./…rpm` |
+          | Toute distribution, sans installer | `Skip-*.AppImage` (`chmod +x`, puis lancer) |
 
           Les paquets `.deb` et `.rpm` installent vraiment l'application :
           entrée dans le menu, icône, et désinstallation par le gestionnaire de
@@ -287,7 +287,7 @@ jobs:
           Messagerie complète, appels audio et vidéo, partage d'écran, mise en
           attente, groupes et sondages, fichiers, messages vocaux, messagerie
           vocale, service d'écho (`echo123`), pavé numérique international,
-          statuts de présence, thèmes dont *Skype Classic*, et les sons
+          statuts de présence, thèmes dont *Skip Classic*, et les sons
           d'origine. L'application embarque son propre serveur : elle fonctionne
           sans connexion Internet et range ses données dans votre dossier
           utilisateur.
@@ -323,11 +323,11 @@ jobs:
           TAG="v${VERSION}"
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "La version $TAG existe déjà : mise à jour des fichiers."
-            gh release edit "$TAG" --title "Skype Reborn $VERSION" --notes-file notes.md
+            gh release edit "$TAG" --title "Skip $VERSION" --notes-file notes.md
             gh release upload "$TAG" publication/* --clobber
           else
             gh release create "$TAG" publication/* \
-              --title "Skype Reborn $VERSION" \
+              --title "Skip $VERSION" \
               --notes-file notes.md \
               --latest
           fi

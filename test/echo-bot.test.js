@@ -58,7 +58,7 @@ describe('La session d’écho ne parle jamais au serveur d’appel', () => {
   test('le message d’accueil est synthétisé localement, avec le texte exact demandé', () => {
     assert.match(corps, /SpeechSynthesisUtterance/);
     assert.match(corps,
-      /Bienvenue au service de test d’appel Skype\. Après le bip, parlez, votre message sera enregistré puis rejoué\./,
+      /Bienvenue au service de test d’appel Skip\. Après le bip, parlez, votre message sera enregistré puis rejoué\./,
       'le texte doit correspondre mot pour mot à ce qui a été demandé');
   });
 

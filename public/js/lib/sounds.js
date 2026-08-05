@@ -1,5 +1,5 @@
 /**
- * Sons de Skype.
+ * Sons de Skip.
  *
  * Les sons officiels sont déclarés dans BIBLIOTHEQUE ci-dessous et chargés
  * depuis /assets/sounds/. Chaque son garde une synthèse Web Audio de secours :
@@ -51,7 +51,7 @@ export const isSoundEnabled = () => enabled;
 
 export const BIBLIOTHEQUE = {
   message: {
-    file: 'skype-message.mp3',
+    file: 'skip-message.mp3',
     source: 'Skypemessage.mp3',
     usage: 'Message texte reçu, conversation non ouverte',
     label: 'Message reçu',
@@ -62,7 +62,7 @@ export const BIBLIOTHEQUE = {
     ],
   },
   notify: {
-    file: 'skype-notification.mp3',
+    file: 'skip-notification.mp3',
     source: 'Skypenotification_.mp3',
     usage: 'Notification : demande de contact, réaction à un message',
     label: 'Notification',
@@ -73,9 +73,9 @@ export const BIBLIOTHEQUE = {
     ],
   },
   logout: {
-    file: 'skype-logout.mp3',
+    file: 'skip-logout.mp3',
     source: 'Skypelogout.mp3',
-    usage: 'Déconnexion de Skype, à la demande de l’utilisateur',
+    usage: 'Déconnexion de Skip, à la demande de l’utilisateur',
     label: 'Déconnexion',
     secours: [
       { freq: 784, duration: 0.12, gain: 0.16 },
@@ -84,7 +84,7 @@ export const BIBLIOTHEQUE = {
     ],
   },
   ring: {
-    file: 'skype-ring.mp3',
+    file: 'skip-ring.mp3',
     source: 'Skypecall.mp3',
     usage: 'Appel entrant, quand aucun appel n’est déjà en cours',
     label: 'Sonnerie — classique',
@@ -101,7 +101,7 @@ export const BIBLIOTHEQUE = {
     secoursBoucle: 2600,
   },
   ringLong: {
-    file: 'skype-ringtone-classic.mp3',
+    file: 'skip-ringtone-classic.mp3',
     source: 'Skype_ringtone_.mp3',
     usage: 'Appel entrant — variante choisie dans les réglages',
     label: 'Sonnerie — longue',
@@ -111,7 +111,7 @@ export const BIBLIOTHEQUE = {
     secoursBoucle: 2600,
   },
   ringAlt: {
-    file: 'skype-ringtone-2.mp3',
+    file: 'skip-ringtone-2.mp3',
     source: 'Sonnerieskype2.mp3',
     usage: 'Appel entrant — variante choisie dans les réglages',
     label: 'Sonnerie — variante 1',
@@ -121,7 +121,7 @@ export const BIBLIOTHEQUE = {
     secoursBoucle: 2600,
   },
   ringAlt2: {
-    file: 'skype-ringtone-3.mp3',
+    file: 'skip-ringtone-3.mp3',
     source: 'Skypevideocall.mp3',
     usage: 'Appel entrant — variante choisie dans les réglages',
     label: 'Sonnerie — variante 2',
@@ -131,7 +131,7 @@ export const BIBLIOTHEQUE = {
     secoursBoucle: 2600,
   },
   ringAlt3: {
-    file: 'skype-ringtone-4.mp3',
+    file: 'skip-ringtone-4.mp3',
     source: 'Skypesonnerie3.mp3',
     usage: 'Appel entrant — variante choisie dans les réglages',
     label: 'Sonnerie — variante 3',
@@ -141,7 +141,7 @@ export const BIBLIOTHEQUE = {
     secoursBoucle: 2600,
   },
   callStart: {
-    file: 'skype-call-start.mp3',
+    file: 'skip-call-start.mp3',
     source: 'Skypestartcall.mp3',
     usage: 'L’appel est établi : la communication démarre',
     label: 'Début d’appel',
@@ -151,7 +151,7 @@ export const BIBLIOTHEQUE = {
     ],
   },
   voicemail: {
-    file: 'skype-voicemail.mp3',
+    file: 'skip-voicemail.mp3',
     source: 'Skypevoicemail.mp3',
     usage: 'Messagerie vocale : un appelant a laissé un message après un appel manqué',
     label: 'Messagerie vocale',
@@ -161,7 +161,7 @@ export const BIBLIOTHEQUE = {
     ],
   },
   dialing: {
-    file: 'skype-dialing.mp3',
+    file: 'skip-dialing.mp3',
     source: 'Skypecallbipbip.mp3',
     usage: 'Appel sortant, pendant que ça sonne chez le correspondant',
     label: 'Tonalité d’appel',
@@ -175,7 +175,7 @@ export const BIBLIOTHEQUE = {
     secoursBoucle: 3000,
   },
   callWaiting: {
-    file: 'skype-call-waiting.mp3',
+    file: 'skip-call-waiting.mp3',
     source: 'Skypecallincall.mp3',
     usage: 'Appel entrant alors qu’une communication est déjà en cours',
     label: 'Second appel entrant',
@@ -185,7 +185,7 @@ export const BIBLIOTHEQUE = {
     ],
   },
   callNotConnected: {
-    file: 'skype-call-not-connected.mp3',
+    file: 'skip-call-not-connected.mp3',
     source: 'Skypecallnotconnected.mp3',
     usage: 'Appel terminé sans avoir abouti : sans réponse, refusé ou annulé',
     label: 'Appel sans réponse',
@@ -195,14 +195,14 @@ export const BIBLIOTHEQUE = {
     ],
   },
   callFailed: {
-    file: 'skype-call-failed.mp3',
+    file: 'skip-call-failed.mp3',
     source: 'Skypecallfailed.mp3',
     usage: 'Appel impossible à démarrer : micro ou caméra inaccessible',
     label: 'Échec de l’appel',
     secours: [{ freq: 220, duration: 0.25, gain: 0.18, type: 'sawtooth', sweepTo: 150 }],
   },
   fileReceived: {
-    file: 'skype-file-received.mp3',
+    file: 'skip-file-received.mp3',
     source: 'Skypefolderreceived.mp3',
     usage: 'Message reçu contenant une pièce jointe',
     label: 'Fichier reçu',
@@ -212,9 +212,9 @@ export const BIBLIOTHEQUE = {
     ],
   },
   login: {
-    file: 'skype-login.mp3',
+    file: 'skip-login.mp3',
     source: 'Skypelogin.mp3',
-    usage: 'Connexion à Skype, et rien d’autre. Ne retentit pas au rechargement '
+    usage: 'Connexion à Skip, et rien d’autre. Ne retentit pas au rechargement '
       + 'de la page ni à la reconnexion automatique du socket.',
     label: 'Connexion',
     secours: [
@@ -224,7 +224,7 @@ export const BIBLIOTHEQUE = {
     ],
   },
   fileSent: {
-    file: 'skype-file-sent.mp3',
+    file: 'skip-file-sent.mp3',
     source: 'Skypesendfolder.mp3',
     usage: 'Envoi d’un fichier, d’une image ou d’un GIF depuis la conversation',
     label: 'Fichier envoyé',
@@ -234,7 +234,7 @@ export const BIBLIOTHEQUE = {
     ],
   },
   fileSendFailed: {
-    file: 'skype-file-send-failed.mp3',
+    file: 'skip-file-send-failed.mp3',
     source: 'Skypesendfolderfailed.mp3',
     usage: 'L’envoi d’un fichier a échoué',
     label: 'Échec de l’envoi',
@@ -244,7 +244,7 @@ export const BIBLIOTHEQUE = {
     ],
   },
   voiceMessage: {
-    file: 'skype-voice-message.mp3',
+    file: 'skip-voice-message.mp3',
     source: 'Skypeforwindowsnew.mp3',
     usage: 'Message vocal reçu dans une conversation',
     label: 'Message vocal reçu',
@@ -254,7 +254,7 @@ export const BIBLIOTHEQUE = {
     ],
   },
   callEnd: {
-    file: 'skype-call-end.mp3',
+    file: 'skip-call-end.mp3',
     source: 'Skyperaccroche_.mp3',
     usage: 'Raccrochage : la communication se termine',
     label: 'Fin d’appel',
@@ -264,7 +264,7 @@ export const BIBLIOTHEQUE = {
     ],
   },
   callHold: {
-    file: 'skype-call-hold.mp3',
+    file: 'skip-call-hold.mp3',
     source: 'Skypepaused.mp3',
     usage: 'L’appel est mis en attente, ou repris',
     label: 'Mise en attente',
@@ -440,7 +440,7 @@ export function sound(key, { loop = null, gain = null } = {}) {
 
 // ── Sons ponctuels ────────────────────────────────────────────────────────────
 
-/** Message reçu — le « blop » de Skype. */
+/** Message reçu — le « blop » de Skip. */
 export const messageIn = () => sound('message');
 
 /** Fichier ou photo reçu. */

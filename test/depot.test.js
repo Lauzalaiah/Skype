@@ -73,7 +73,7 @@ describe('Essayer en une commande', () => {
 
   test('le conteneur range les données hors de l’image', () => {
     const dockerfile = lire('Dockerfile');
-    assert.match(dockerfile, /ENV SKYPE_DATA_DIR=/,
+    assert.match(dockerfile, /ENV SKIP_DATA_DIR=/,
       'sans cela, tout serait perdu à chaque reconstruction');
     assert.doesNotMatch(dockerfile, /^VOLUME/m,
       'VOLUME crée un volume anonyme dès qu’aucun montage n’est donné : ils s’accumulent sans nom');

@@ -479,7 +479,7 @@ export function createComposer(chat, { onSent = () => {} } = {}) {
 
     const query = match[1].toLowerCase();
     const candidates = chatMembers(chat)
-      .filter((m) => m.id !== state.user.id && (m.displayName.toLowerCase().includes(query) || m.skypeName.includes(query)))
+      .filter((m) => m.id !== state.user.id && (m.displayName.toLowerCase().includes(query) || m.pseudo.includes(query)))
       .slice(0, 6);
     if (!candidates.length) return;
 
@@ -491,12 +491,12 @@ export function createComposer(chat, { onSent = () => {} } = {}) {
           onclick: () => {
             const before = text.slice(0, getCaretOffset()).replace(/@[\w.-]*$/, '');
             const after = text.slice(getCaretOffset());
-            setText(`${before}@${member.skypeName} ${after}`);
+            setText(`${before}@${member.pseudo} ${after}`);
             placeCursorAtEnd();
             mentionMenu?.remove();
             mentionMenu = null;
           },
-        }, [avatar(member, { size: 'xs', presence: false }), el('span', { text: member.displayName }), el('span.dim', { text: `@${member.skypeName}` })])
+        }, [avatar(member, { size: 'xs', presence: false }), el('span', { text: member.displayName }), el('span.dim', { text: `@${member.pseudo}` })])
       );
     }
     document.getElementById('menus').append(mentionMenu);
@@ -695,7 +695,7 @@ function openContactPicker(chat) {
             await api.send(chat.id, {
               type: 'contact',
               content: `Carte de contact : ${contact.displayName}`,
-              contactCard: { id: contact.id, displayName: contact.displayName, skypeName: contact.skypeName, avatar: contact.avatar },
+              contactCard: { id: contact.id, displayName: contact.displayName, pseudo: contact.pseudo, avatar: contact.avatar },
             });
             sounds.fileSent();
           } catch (err) {
@@ -706,7 +706,7 @@ function openContactPicker(chat) {
         avatar(contact, { size: 'md' }),
         el('div.person-row__body', {}, [
           el('div.person-row__name', { text: contact.displayName }),
-          el('div.person-row__sub', { text: `@${contact.skypeName}` }),
+          el('div.person-row__sub', { text: `@${contact.pseudo}` }),
         ]),
       ])
     );
@@ -737,7 +737,7 @@ async function shareLocation(chat) {
 /** Sélecteur de GIF : bibliothèque locale animée en SVG (aucun service externe). */
 function openGifPicker(chat) {
   const GIFS = [
-    ['🎉', 'Bravo !', '#7B68EE'], ['👋', 'Coucou', '#00AFF0'], ['😂', 'Trop drôle', '#F59E0B'],
+    ['🎉', 'Bravo !', '#7B68EE'], ['👋', 'Coucou', '#5A4FE0'], ['😂', 'Trop drôle', '#F59E0B'],
     ['❤️', 'Amour', '#EC4899'], ['👍', 'Parfait', '#20C997'], ['🤯', 'Incroyable', '#8B5CF6'],
     ['🕺', 'On danse', '#F97316'], ['😴', 'Bonne nuit', '#0EA5E9'], ['🍕', 'On mange ?', '#EF4444'],
     ['🚀', 'C’est parti', '#14B8A6'], ['🙏', 'Merci', '#6366F1'], ['🤔', 'Hmm…', '#64748B'],

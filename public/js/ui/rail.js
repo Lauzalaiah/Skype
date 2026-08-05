@@ -119,7 +119,7 @@ async function setMood() {
     title: 'Message d’humeur',
     label: 'Que se passe-t-il ?',
     value: state.user.mood || '',
-    placeholder: 'De retour sur Skype 💙',
+    placeholder: 'De retour sur Skip 💙',
     maxLength: 120,
   });
   if (mood === null) return;
@@ -141,10 +141,10 @@ function openMainMenu(anchor) {
       { label: 'Audio et vidéo', icon: 'video', onClick: () => openSettings('audio') },
       { label: 'Notifications', icon: 'bell', onClick: () => openSettings('notifications') },
       { label: 'Confidentialité', icon: 'shield', onClick: () => openSettings('privacy') },
-      { label: 'Crédit Skype', icon: 'wallet', onClick: () => openSettings('credit') },
+      { label: 'Crédit Skip', icon: 'wallet', onClick: () => openSettings('credit') },
       'divider',
       { label: 'Raccourcis clavier', icon: 'keyboard', onClick: openShortcutsDialog },
-      { label: 'À propos de Skype', icon: 'info', onClick: openAboutDialog },
+      { label: 'À propos de Skip', icon: 'info', onClick: openAboutDialog },
     ],
     { anchor, align: 'start' }
   );

@@ -120,7 +120,7 @@
 .toast--success { border-color: var(--success); }
 .toast button { border: none; background: none; color: var(--accent); font-weight: 700; cursor: pointer; }
 
-/* Notification de message entrant (façon Skype) */
+/* Notification de message entrant (façon Skip) */
 .notification-card {
   position: fixed;
   top: 16px;
@@ -489,8 +489,8 @@
   place-items: center;
   padding: 20px;
   background:
-    radial-gradient(1200px 600px at 15% -10%, rgba(0, 175, 240, 0.28), transparent 60%),
-    radial-gradient(900px 500px at 110% 110%, rgba(0, 175, 240, 0.22), transparent 60%),
+    radial-gradient(1200px 600px at 15% -10%, rgba(90, 79, 224, 0.28), transparent 60%),
+    radial-gradient(900px 500px at 110% 110%, rgba(90, 79, 224, 0.22), transparent 60%),
     var(--bg-app);
   overflow-y: auto;
 }

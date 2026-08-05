@@ -93,7 +93,7 @@ async function verifierSansInstaller() {
     // Une vérification qui échoue n'est pas un incident : l'utilisateur peut
     // être hors ligne, ce qui est un usage prévu de cette application.
     publier({ phase: 'inactif', version: null, notes: null });
-    console.warn('[skype] vérification de mise à jour impossible :', err.message);
+    console.warn('[skip] vérification de mise à jour impossible :', err.message);
   }
 }
 
@@ -134,7 +134,7 @@ function brancherAutoUpdater() {
  */
 function signalerEchec(err) {
   publier({ phase: 'inactif', version: null, notes: null });
-  console.warn('[skype] mise à jour impossible :', err?.message || err);
+  console.warn('[skip] mise à jour impossible :', err?.message || err);
 }
 
 /**

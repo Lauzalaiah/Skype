@@ -26,9 +26,9 @@ const empreinte = (contenu) => crypto.createHash('sha512').update(contenu).diges
 function publication(version, deteriorer = () => {}) {
   const dossier = fs.mkdtempSync(path.join(os.tmpdir(), 'publication-'));
   const fichiers = {
-    'latest.yml': `Skype-Reborn-Setup-${version}.exe`,
-    'latest-mac.yml': `Skype-Reborn-${version}.dmg`,
-    'latest-linux.yml': `Skype-Reborn-${version}.AppImage`,
+    'latest.yml': `Skip-Setup-${version}.exe`,
+    'latest-mac.yml': `Skip-${version}.dmg`,
+    'latest-linux.yml': `Skip-${version}.AppImage`,
   };
 
   for (const [description, binaire] of Object.entries(fichiers)) {

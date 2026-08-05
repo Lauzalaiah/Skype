@@ -85,10 +85,10 @@ export function renderDetails(chat) {
       body.append(
         el('div.details__section', {}, [
           el('div.details__section-title', { text: 'Coordonnées' }),
-          row('Pseudo Skype', other.skypeName),
+          row('Pseudo Skip', other.pseudo),
           row('Lieu', [other.city, other.country].filter(Boolean).join(', ')),
           row('Anniversaire', other.birthday ? dateOf(new Date(other.birthday).getTime()) : ''),
-          row('Numéro Skype', other.skypeNumber),
+          row('Numéro Skip', other.skypeNumber),
         ])
       );
     }

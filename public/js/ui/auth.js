@@ -10,7 +10,7 @@ const skypeLogo = (size = 40) =>
       width: `${size}px`,
       height: `${size}px`,
       borderRadius: '50%',
-      background: 'linear-gradient(135deg, #00AFF0, #0078A8)',
+      background: 'linear-gradient(135deg, #5A4FE0, #3B2CA8)',
       display: 'grid',
       placeItems: 'center',
       color: '#fff',
@@ -59,7 +59,7 @@ export function showAuth() {
         autocapitalize: 'none',
         autocorrect: 'off',
         spellcheck: 'false',
-        placeholder: 'https://skype.exemple.fr',
+        placeholder: 'https://skip.exemple.fr',
         value: serveurChoisi(),
         autofocus: true,
       });
@@ -85,7 +85,7 @@ export function showAuth() {
       }, [
         error,
         el('div.field', {}, [
-          el('label.field__label', { for: 'srv-url', text: 'Adresse de votre serveur Skype' }),
+          el('label.field__label', { for: 'srv-url', text: 'Adresse de votre serveur Skip' }),
           champ,
           el('div.field__hint', { text: 'L’adresse complète, https comprise. Le micro et la caméra exigent https.' }),
         ]),
@@ -93,11 +93,11 @@ export function showAuth() {
       ]);
 
       return el('div.auth__card', {}, [
-        el('div.auth__logo', {}, [skypeLogo(44), el('span.auth__logo-text', { text: 'Skype' })]),
+        el('div.auth__logo', {}, [skypeLogo(44), el('span.auth__logo-text', { text: 'Skip' })]),
         el('p.auth__tagline', { text: 'À quel serveur cette application doit-elle se connecter ?' }),
         form,
         el('p.auth__switch', { style: { fontSize: '0.82em' } }, [
-          'Skype Reborn n’a pas de serveur central : chacun héberge le sien. '
+          'Skip n’a pas de serveur central : chacun héberge le sien. '
           + 'Demandez son adresse à la personne qui l’héberge.',
         ]),
       ]);
@@ -105,7 +105,7 @@ export function showAuth() {
 
     function signinCard() {
       const error = errorBox();
-      const identifier = el('input.input', { id: 'si-identifier', placeholder: 'Pseudo Skype ou e-mail', autocomplete: 'username', autofocus: true, name: 'identifier', autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false' });
+      const identifier = el('input.input', { id: 'si-identifier', placeholder: 'Pseudo Skip ou e-mail', autocomplete: 'username', autofocus: true, name: 'identifier', autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false' });
       const password = el('input.input', { id: 'si-password', type: 'password', placeholder: 'Mot de passe', autocomplete: 'current-password', name: 'password' });
       const submit = el('button.btn.btn--primary.btn--block.btn--lg', { type: 'submit', text: 'Se connecter' });
 
@@ -126,14 +126,14 @@ export function showAuth() {
         },
       }, [
         error,
-        el('div.field', {}, [el('label.field__label', { for: 'si-identifier', text: 'Pseudo Skype, e-mail ou téléphone' }), identifier]),
+        el('div.field', {}, [el('label.field__label', { for: 'si-identifier', text: 'Pseudo Skip, e-mail ou téléphone' }), identifier]),
         el('div.field', {}, [el('label.field__label', { for: 'si-password', text: 'Mot de passe' }), password]),
         submit,
       ]);
 
       return el('div.auth__card', {}, [
-        el('div.auth__logo', {}, [skypeLogo(44), el('span.auth__logo-text', { text: 'Skype' })]),
-        el('p.auth__tagline', { text: 'Le Skype que vous aimiez. De retour, en mieux.' }),
+        el('div.auth__logo', {}, [skypeLogo(44), el('span.auth__logo-text', { text: 'Skip' })]),
+        el('p.auth__tagline', { text: 'Le Skip que vous aimiez. De retour, en mieux.' }),
         form,
         el('p.auth__switch', {}, [
           'Pas encore de compte ? ',
@@ -161,7 +161,7 @@ export function showAuth() {
     function signupCard() {
       const error = errorBox();
       const displayName = el('input.input', { id: 'su-name', name: 'displayName', placeholder: 'Camille Durand', autocomplete: 'name', autofocus: true });
-      const skypeName = el('input.input', { id: 'su-skypename', name: 'skypeName', placeholder: 'camille.durand', autocomplete: 'username', autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false' });
+      const pseudo = el('input.input', { id: 'su-skypename', name: 'pseudo', placeholder: 'camille.durand', autocomplete: 'username', autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false' });
       const email = el('input.input', { id: 'su-email', name: 'email', type: 'email', placeholder: 'vous@exemple.fr', autocomplete: 'email', autocapitalize: 'none' });
       const password = el('input.input', { id: 'su-password', name: 'password', type: 'password', placeholder: '6 caractères minimum', autocomplete: 'new-password' });
       const hint = el('div.field__hint', { text: '3 à 32 caractères : lettres, chiffres, point, tiret ou souligné.' });
@@ -169,8 +169,8 @@ export function showAuth() {
 
       // Proposition automatique de pseudo à partir du nom saisi.
       displayName.addEventListener('input', () => {
-        if (skypeName.dataset.touched) return;
-        skypeName.value = displayName.value
+        if (pseudo.dataset.touched) return;
+        pseudo.value = displayName.value
           .toLowerCase()
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '')
@@ -178,7 +178,7 @@ export function showAuth() {
           .replace(/^\.|\.$/g, '')
           .slice(0, 32);
       });
-      skypeName.addEventListener('input', () => (skypeName.dataset.touched = '1'));
+      pseudo.addEventListener('input', () => (pseudo.dataset.touched = '1'));
 
       const form = el('form', {
         onsubmit: async (e) => {
@@ -190,7 +190,7 @@ export function showAuth() {
             finish(
               await api.signup({
                 displayName: displayName.value.trim(),
-                skypeName: skypeName.value.trim(),
+                pseudo: pseudo.value.trim(),
                 email: email.value.trim(),
                 password: password.value,
               })
@@ -204,14 +204,14 @@ export function showAuth() {
       }, [
         error,
         el('div.field', {}, [el('label.field__label', { for: 'su-name', text: 'Nom complet' }), displayName]),
-        el('div.field', {}, [el('label.field__label', { for: 'su-skypename', text: 'Pseudo Skype' }), skypeName, hint]),
+        el('div.field', {}, [el('label.field__label', { for: 'su-skypename', text: 'Pseudo Skip' }), pseudo, hint]),
         el('div.field', {}, [el('label.field__label', { for: 'su-email', text: 'E-mail (facultatif)' }), email]),
         el('div.field', {}, [el('label.field__label', { for: 'su-password', text: 'Mot de passe' }), password]),
         submit,
       ]);
 
       return el('div.auth__card', {}, [
-        el('div.auth__logo', {}, [skypeLogo(44), el('span.auth__logo-text', { text: 'Skype' })]),
+        el('div.auth__logo', {}, [skypeLogo(44), el('span.auth__logo-text', { text: 'Skip' })]),
         el('p.auth__tagline', { text: 'Créez votre compte en dix secondes. Sans numéro de téléphone.' }),
         form,
         el('p.auth__switch', {}, [

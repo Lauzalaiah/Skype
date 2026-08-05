@@ -3,7 +3,7 @@
 {$DOMAINE} {
 	# Le WebSocket passe par la même adresse que le reste : Caddy relaie la
 	# montée en gamme du protocole sans configuration particulière.
-	reverse_proxy skype:3000
+	reverse_proxy skip:3000
 
 	encode zstd gzip
 

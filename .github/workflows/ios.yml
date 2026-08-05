@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
     inputs:
       server_url:
-        description: "Adresse du serveur Skype que l'application doit charger"
+        description: "Adresse du serveur Skip que l'application doit charger"
         required: false
         default: ""
 
@@ -111,11 +111,11 @@ jobs:
           mkdir -p "$RUNNER_TEMP/export/Payload"
           cp -r "$RUNNER_TEMP/App.xcarchive/Products/Applications/App.app" "$RUNNER_TEMP/export/Payload/"
           cd "$RUNNER_TEMP/export"
-          zip -qry SkypeReborn-non-signe.ipa Payload
+          zip -qry Skip-non-signe.ipa Payload
           rm -rf Payload
 
       - uses: actions/upload-artifact@v6
         with:
-          name: skype-reborn-ios
+          name: skip-ios
           path: ${{ runner.temp }}/export/*.ipa
           if-no-files-found: error

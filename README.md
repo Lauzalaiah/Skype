@@ -1,11 +1,11 @@
 <div align="center">
 
-# Skype
+# Skip
 
 **La messagerie, les appels audio et vidéo et le partage d'écran que vous aimiez.
 Recréés de A à Z, sans rien oublier.**
 
-Version 8.138.0 · Zéro dépendance · Node.js ≥ 18
+Version 8.139.0 · Zéro dépendance · Node.js ≥ 18
 
 **[Télécharger](https://lauzalaiah.github.io/Skype/)** ·
 **[Pourquoi ce projet](https://lauzalaiah.github.io/Skype/pub/)** ·
@@ -22,7 +22,7 @@ collecte. Vos conversations restent chez vous, et personne ne peut fermer le
 service. Windows, macOS, Linux, plus le navigateur et le téléphone.
 
 > Recréation indépendante réalisée par un fan. Aucun lien avec Microsoft ni
-> avec les équipes de Skype. « Skype » est une marque de Microsoft, citée ici
+> avec les équipes de Skip. « Skype » est une marque de Microsoft, citée ici
 > pour désigner le logiciel d'origine.
 
 <table>
@@ -37,7 +37,7 @@ service. Windows, macOS, Linux, plus le navigateur et le téléphone.
 ## Héberger son serveur : une commande
 
 ```bash
-git clone https://github.com/Lauzalaiah/Skype && cd Skype
+git clone https://github.com/Lauzalaiah/Skype && cd Skip
 docker compose up -d
 ```
 
@@ -48,7 +48,7 @@ L'application répond sur `http://<votre-machine>:3000`. Les données vivent dan
 la caméra sans lui, donc pas d'appel) :
 
 ```bash
-DOMAINE=skype.exemple.fr docker compose --profile https up -d
+DOMAINE=skip.exemple.fr docker compose --profile https up -d
 ```
 
 Caddy obtient et renouvelle le certificat tout seul. Il faut seulement que le
@@ -71,7 +71,7 @@ npm start         # démarre le serveur sur http://localhost:3000
 
 Ouvrez **http://localhost:3000** et connectez-vous :
 
-| Pseudo Skype | Nom | Mot de passe |
+| Pseudo Skip | Nom | Mot de passe |
 |---|---|---|
 | `camille.durand` | Camille Durand *(compte principal)* | `skype123` |
 | `thomas.leroy` | Thomas Leroy | `skype123` |
@@ -91,7 +91,7 @@ La publicité de lancement est servie sur **http://localhost:3000/pub**.
 ```bash
 npm run dev       # démarrage avec rechargement automatique
 npm run reset     # remet la base à zéro et recrée les comptes de démonstration
-npm test          # 267 tests de bout en bout (API, temps réel, sécurité, sons) — Node 22+
+npm test          # 270 tests de bout en bout (API, temps réel, sécurité, sons) — Node 22+
 PORT=8080 npm start
 ```
 
@@ -99,7 +99,7 @@ PORT=8080 npm start
 
 ## Ce qu'il y a dedans
 
-Tout Skype, jusqu'aux détails. Le détail complet se trouve dans
+Tout Skip, jusqu'aux détails. Le détail complet se trouve dans
 [`docs/FONCTIONNALITES.md`](docs/FONCTIONNALITES.md) — en résumé :
 
 **Messagerie** — conversations individuelles et de groupe, texte enrichi
@@ -108,7 +108,7 @@ suppression pour soi ou pour tous, transfert, mentions `@pseudo`, réactions, ac
 de lecture, indicateur de saisie, brouillons, messages favoris, séparateurs de jour
 et de nouveaux messages.
 
-**Émoticônes** — les 80 classiques de Skype avec leurs raccourcis d'origine
+**Émoticônes** — les 80 classiques de Skip avec leurs raccourcis d'origine
 (`(y)`, `(rofl)`, `(cool)`, `(party)`…) plus 1 800 émojis modernes, recherche,
 récents, et affichage géant quand un message ne contient que des émojis.
 
@@ -118,7 +118,7 @@ intervenant, détection de la personne qui parle, réduction de bruit, réponses
 sur appel entrant, historique et appels manqués.
 
 **Téléphonie** — pavé numérique avec tonalités DTMF, appels vers les numéros fixes et
-mobiles décomptés du crédit Skype, attribution d'un numéro Skype.
+mobiles décomptés du crédit Skip, attribution d'un numéro Skip.
 
 **Groupes** — administrateurs, photo, renommage, lien d'invitation, ajout et retrait de
 participants, sondages avec choix simple ou multiple.
@@ -129,11 +129,11 @@ vocaux enregistrés au micro, galerie de médias, historique des fichiers et des
 **Présence** — En ligne, Absent, Ne pas déranger, Invisible, Hors ligne, passage
 automatique en Absent après 5 minutes d'inactivité, « vu il y a… ».
 
-**Personnalisation** — thèmes Clair, Sombre, **Skype Classic** (le bleu d'origine) et
+**Personnalisation** — thèmes Clair, Sombre, **Skip Classic** (le bleu d'origine) et
 Contraste élevé, six couleurs d'accentuation, quatre tailles de texte, densité de liste.
 
 **Le reste** — recherche universelle, notifications système et sonores, les **sons
-d'origine de Skype** (message, sonnerie au choix, tonalité d'appel, connexion,
+d'origine de Skip** (message, sonnerie au choix, tonalité d'appel, connexion,
 fichier reçu, appel en attente…), blocage, confidentialité fine, export des
 données, raccourcis clavier, interface mobile, PWA installable.
 
@@ -144,8 +144,8 @@ tableau, en haut de `public/js/lib/sounds.js` :
 
 ```js
 export const BIBLIOTHEQUE = {
-  message: { file: 'skype-message.mp3', label: 'Message reçu', eager: true, secours: [...] },
-  ring:    { file: 'skype-ring.mp3',    label: 'Sonnerie — classique', loop: true, ... },
+  message: { file: 'skip-message.mp3', label: 'Message reçu', eager: true, secours: [...] },
+  ring:    { file: 'skip-ring.mp3',    label: 'Sonnerie — classique', loop: true, ... },
   // …
 };
 ```
@@ -206,7 +206,7 @@ constant, jetons de session de 256 bits, échappement HTML systématique avant t
 de contenu utilisateur, protection contre la traversée de répertoire, contrôle
 d'appartenance sur chaque conversation, blocage respecté côté serveur.
 
-**Données** — tout est stocké dans `data/skype.json` et `data/files/`. Rien ne sort de
+**Données** — tout est stocké dans `data/skip.json` et `data/files/`. Rien ne sort de
 votre machine. Aucun traceur, aucun service tiers, aucune police ni script distant.
 
 ---
@@ -217,10 +217,10 @@ votre machine. Aucun traceur, aucun service tiers, aucune police ni script dista
 npm test
 ```
 
-267 tests couvrent l'inscription et la connexion, le rejet des identifiants invalides,
+270 tests couvrent l'inscription et la connexion, le rejet des identifiants invalides,
 les demandes de contact, les permissions de conversation, l'édition et la suppression
 de messages, les réactions, les sondages, les rôles d'administrateur, les liens
-d'invitation, le blocage, la fusion des réglages imbriqués, le crédit Skype, l'envoi
+d'invitation, le blocage, la fusion des réglages imbriqués, le crédit Skip, l'envoi
 et le téléchargement de fichiers, la diffusion WebSocket et le refus des jetons
 invalides, la correspondance de chaque son avec son événement, l'honnêteté de la page
 de campagne et du site de téléchargement.

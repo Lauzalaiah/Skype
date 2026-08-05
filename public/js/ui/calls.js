@@ -109,7 +109,7 @@ async function acquireMedia({ video }) {
 // ── Service d'écho (test du micro) ──────────────────────────────────────────
 //
 // Contact « echo123 » : il décroche instantanément et renvoie la voix de
-// l'utilisateur, comme le faisait historiquement Skype. Personne ne répond
+// l'utilisateur, comme le faisait historiquement Skip. Personne ne répond
 // réellement à l'autre bout — tout se joue en local, dans le navigateur —
 // donc aucune signalisation WebRTC n'est utilisée ici.
 
@@ -252,7 +252,7 @@ function startEchoTest(chat) {
       timerLabel.textContent = formatDuration((Date.now() - startedAt) / 1000);
     }, 1000);
     parler(
-      'Bienvenue au service de test d’appel Skype. Après le bip, parlez, votre message sera enregistré puis rejoué.',
+      'Bienvenue au service de test d’appel Skip. Après le bip, parlez, votre message sera enregistré puis rejoué.',
       () => {
         sounds.beep();
         demarrerEnregistrement();
@@ -922,13 +922,13 @@ function createSession({ chat, video, stream, outgoing }) {
       if (endedId !== callId) return;
       if (reason === 'missed') toast('Personne n’a répondu');
       // Appel jamais établi : on joue le son « appel non abouti » plutôt que
-      // le raccrochage, comme le faisait Skype.
+      // le raccrochage, comme le faisait Skip.
       const aboutit = !!startedAt;
       const sortant = outgoing;
       destroy();
       if (!aboutit && ['missed', 'declined', 'cancelled'].includes(reason)) sounds.callNotConnected();
       // Appel sortant resté sans réponse : on propose de laisser un message,
-      // comme le répondeur de Skype.
+      // comme le répondeur de Skip.
       if (!aboutit && sortant && ['missed', 'declined'].includes(reason)) {
         proposerMessagerieVocale(chat);
       }
@@ -1018,7 +1018,7 @@ export function showIncomingCall({ call, from, chat }) {
   // Notification système si la fenêtre n'est pas au premier plan.
   if (document.hidden && Notification?.permission === 'granted') {
     const notification = new Notification(`${from.displayName} vous appelle`, {
-      body: call.video ? 'Appel vidéo Skype' : 'Appel audio Skype',
+      body: call.video ? 'Appel vidéo Skip' : 'Appel audio Skip',
       icon: from.avatar || undefined,
       tag: `call-${call.id}`,
       requireInteraction: true,
@@ -1043,7 +1043,7 @@ export const hangupActiveCall = () => session?.hangup();
 // ── Messagerie vocale ────────────────────────────────────────────────────────
 
 /**
- * Répondeur de Skype : quand un appel sortant reste sans réponse, l'appelant
+ * Répondeur de Skip : quand un appel sortant reste sans réponse, l'appelant
  * peut laisser un message vocal, qui arrive dans la conversation marqué comme
  * tel — et déclenche chez le destinataire le son de messagerie vocale, distinct
  * de celui d'un message vocal ordinaire.
@@ -1145,10 +1145,10 @@ export function enregistrerMessagerieVocale(chat) {
   });
 }
 
-// ── Appel téléphonique (Skype Credit) ────────────────────────────────────────
+// ── Appel téléphonique (Skip Credit) ────────────────────────────────────────
 
 /**
- * Achat de crédit Skype. Montrer combien de minutes chaque montant représente
+ * Achat de crédit Skip. Montrer combien de minutes chaque montant représente
  * vers la destination visée rend le choix concret.
  */
 export function openCreditPurchase(pays = null, onDone = null) {
@@ -1159,7 +1159,7 @@ export function openCreditPurchase(pays = null, onDone = null) {
   const montants = [5, 10, 25, 50];
 
   const instance = modal({
-    title: 'Acheter du crédit Skype',
+    title: 'Acheter du crédit Skip',
     size: 'narrow',
     body: el('div', {}, [
       el('div.credit-banner', {}, [
@@ -1180,7 +1180,7 @@ export function openCreditPurchase(pays = null, onDone = null) {
               const { credit } = await api.topUp(montant);
               state.user.credit = credit;
               soldeNode.textContent = `${credit.toFixed(2)} €`;
-              toast(`${montant} € ajoutés à votre crédit Skype`);
+              toast(`${montant} € ajoutés à votre crédit Skip`);
               onDone?.();
             } catch (err) {
               toast(err.message, { type: 'error' });
@@ -1226,7 +1226,7 @@ export async function startPhoneCall(number) {
     body: el('div.center', {}, [
       el('div.avatar.avatar--xl', { style: { margin: '0 auto 14px', background: 'var(--accent)' } }, icon('call', 'icon icon--xl')),
       el('div', { style: { fontSize: '1.2em', fontWeight: '700' }, text: formatNumero(number) }),
-      el('div.dim', { style: { fontSize: '0.85em' }, text: pays ? `${pays.nom} · via le crédit Skype` : 'Appel via le crédit Skype' }),
+      el('div.dim', { style: { fontSize: '0.85em' }, text: pays ? `${pays.nom} · via le crédit Skip` : 'Appel via le crédit Skip' }),
       timer,
       el('div.dim', { style: { fontSize: '0.8em' }, text: `Tarif : ${rate.toFixed(3)} €/min` }),
       el('div.dim', { style: { fontSize: '0.8em' }, text: `Crédit : ${credit.toFixed(2)} €` }),

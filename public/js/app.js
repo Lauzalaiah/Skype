@@ -1,5 +1,5 @@
 /**
- * Skype Reborn — point d'entrée.
+ * Skip — point d'entrée.
  * Amorçage, routage des vues, événements temps réel et raccourcis clavier.
  */
 import { el, clear, $, replace } from './lib/dom.js';
@@ -141,8 +141,8 @@ function welcomeScreen() {
       el('button.btn', { onclick: () => setState({ view: 'dialpad' }) }, [icon('dialpad', 'icon icon--sm'), 'Appeler un numéro']),
     ]),
     el('p.dim', { style: { marginTop: '20px', fontSize: '0.82em' } }, [
-      'Votre pseudo Skype : ',
-      el('code', { text: state.user.skypeName }),
+      'Votre pseudo Skip : ',
+      el('code', { text: state.user.pseudo }),
       ' — partagez-le pour qu’on vous retrouve.',
     ]),
   ]);
@@ -716,5 +716,5 @@ function installLifecycle() {
 // Journalisation des erreurs non interceptées (utile en démo).
 window.addEventListener('unhandledrejection', (e) => {
   if (e.reason?.name === 'AbortError') return;
-  console.error('[skype]', e.reason);
+  console.error('[skip]', e.reason);
 });

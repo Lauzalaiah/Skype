@@ -7,10 +7,10 @@ export const STATUSES = ['online', 'away', 'busy', 'invisible', 'offline'];
 
 export const DEFAULT_SETTINGS = {
   theme: 'light',                 // light | dark | classic | contrast
-  accent: 'skype',                // skype | ocean | forest | sunset | grape | rose
+  accent: 'skip',                // skip | ocean | forest | sunset | grape | rose
   language: 'fr',
   fontSize: 'medium',             // small | medium | large
-  layout: 'default',              // default | compact | classic (Skype 7)
+  layout: 'default',              // default | compact | classic (Skip 7)
   enterToSend: true,
   showPreviews: true,
   notifications: {
@@ -62,19 +62,19 @@ const deepMerge = (base, patch) => {
 
 // ── Utilisateurs ──────────────────────────────────────────────────────────────
 
-export function createUser({ skypeName, displayName, password, email = '', avatar = null }) {
-  const normalized = String(skypeName).trim().toLowerCase();
+export function createUser({ pseudo, displayName, password, email = '', avatar = null }) {
+  const normalized = String(pseudo).trim().toLowerCase();
   if (!/^[a-z][a-z0-9._-]{2,31}$/.test(normalized)) {
-    throw httpError(400, "Le pseudo Skype doit faire 3 à 32 caractères, commencer par une lettre et n'utiliser que lettres, chiffres, point, tiret ou souligné.");
+    throw httpError(400, "Le pseudo Skip doit faire 3 à 32 caractères, commencer par une lettre et n'utiliser que lettres, chiffres, point, tiret ou souligné.");
   }
-  if (findUserByName(normalized)) throw httpError(409, 'Ce pseudo Skype est déjà pris.');
+  if (findUserByName(normalized)) throw httpError(409, 'Ce pseudo Skip est déjà pris.');
   if (String(password || '').length < 6) throw httpError(400, 'Le mot de passe doit contenir au moins 6 caractères.');
 
   const { hash, salt } = hashPassword(password);
   const user = {
     id: id('u_'),
-    skypeName: normalized,
-    displayName: String(displayName || skypeName).trim().slice(0, 60),
+    pseudo: normalized,
+    displayName: String(displayName || pseudo).trim().slice(0, 60),
     email,
     passwordHash: hash,
     passwordSalt: salt,
@@ -89,7 +89,7 @@ export function createUser({ skypeName, displayName, password, email = '', avata
     city: '',
     phone: '',
     website: '',
-    credit: 5.0,                  // Skype Crédit de démonstration (€)
+    credit: 5.0,                  // Skip Crédit de démonstration (€)
     skypeNumber: null,
     contacts: [],
     favorites: [],
@@ -112,7 +112,7 @@ export function createUser({ skypeName, displayName, password, email = '', avata
 //
 // Contact spécial, permanent, identifié par un identifiant fixe : « appeler
 // echo123 » pour tester son micro et ses haut-parleurs est une fonctionnalité
-// historique de Skype. L'appel lui-même ne passe jamais par la signalisation
+// historique de Skip. L'appel lui-même ne passe jamais par la signalisation
 // WebRTC normale — il est traité entièrement côté client (voir calls.js) — ce
 // contact n'existe ici que pour être cherchable, affiché, et pour porter un
 // message d'accueil dans sa conversation.
@@ -125,7 +125,7 @@ export function ensureEchoBot() {
 
   bot = {
     id: ECHO_BOT_ID,
-    skypeName: 'echo123',
+    pseudo: 'echo123',
     displayName: 'Echo / Test de son',
     email: '',
     passwordHash: null,
@@ -188,7 +188,7 @@ export function connectToEchoBot(user) {
 }
 
 export const findUserByName = (name) =>
-  Object.values(db.users).find((u) => u.skypeName === String(name).trim().toLowerCase());
+  Object.values(db.users).find((u) => u.pseudo === String(name).trim().toLowerCase());
 
 export const findUserByEmail = (email) =>
   email ? Object.values(db.users).find((u) => u.email && u.email.toLowerCase() === String(email).toLowerCase()) : null;
@@ -197,7 +197,7 @@ export function authenticate(identifier, password) {
   const user = findUserByName(identifier) || findUserByEmail(identifier);
   // Le service d'écho n'a pas de mot de passe : il ne se connecte jamais lui-même.
   if (!user || user.isBot || !verifyPassword(password, user.passwordHash, user.passwordSalt)) {
-    throw httpError(401, 'Pseudo Skype ou mot de passe incorrect.');
+    throw httpError(401, 'Pseudo Skip ou mot de passe incorrect.');
   }
   return user;
 }
@@ -226,7 +226,7 @@ export function publicUser(user, viewerId = null) {
   const invisible = user.status === 'invisible' || user.manualStatus === 'invisible';
   return {
     id: user.id,
-    skypeName: user.skypeName,
+    pseudo: user.pseudo,
     displayName: user.displayName,
     avatar: user.avatar,
     mood: user.mood,
@@ -254,7 +254,7 @@ export function searchUsers(query, viewerId) {
       if (u.settings?.privacy?.appearInSearch === false) return false;
       if (u.blocked.includes(viewerId)) return false;
       return (
-        u.skypeName.includes(q) ||
+        u.pseudo.includes(q) ||
         u.displayName.toLowerCase().includes(q) ||
         (u.email && u.email.toLowerCase() === q) ||
         (u.phone && u.phone.replace(/\s/g, '') === q.replace(/\s/g, ''))

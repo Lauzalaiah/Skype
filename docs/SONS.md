@@ -11,10 +11,10 @@ vidéo de celle d'un appel audio. C'était une supposition déguisée en éviden
 Trois critères, **par ordre d'autorité décroissante**. Le premier qui tranche
 l'emporte sur les suivants.
 
-1. **Le comportement réel de Skype.** Si Skype n'avait pas cet événement, le son
+1. **Le comportement réel de Skip.** Si Skip n'avait pas cet événement, le son
    n'y va pas — quel que soit son nom. C'est ce critère qui manquait pour
    `Skypevideocall.mp3` : la question n'était pas « ce son évoque-t-il la
-   vidéo ? » mais « Skype sonnait-il différemment pour un appel vidéo ? ».
+   vidéo ? » mais « Skip sonnait-il différemment pour un appel vidéo ? ».
    Non. Donc c'est une sonnerie parmi les autres.
 2. **La structure acoustique du fichier.** Mesurée, pas devinée : durée, nombre
    de salves, silence de queue, capacité à boucler proprement. Un fichier de
@@ -45,7 +45,7 @@ toujours dans une seule d'entre elles, ce qui réduit d'emblée les candidats.
 
 | Fichier d'origine | Durée | Événement — unique |
 |---|---|---|
-| `Skypelogin.mp3` | 1,99 s | connexion à Skype (ni rechargement, ni reconnexion du socket) |
+| `Skypelogin.mp3` | 1,99 s | connexion à Skip (ni rechargement, ni reconnexion du socket) |
 | `Skypecall.mp3` | 2,58 s | appel entrant — sonnerie par défaut |
 | `Skype_ringtone_.mp3` | 7,34 s | appel entrant — 2ᵉ sonnerie au choix |
 | `Sonnerieskype2.mp3` | 7,41 s | appel entrant — 3ᵉ sonnerie au choix |
@@ -122,7 +122,7 @@ fréquences normalisées, qui doivent être générées et non rejouées.
 
 Le bip du service d'écho (`sounds.beep`) reste lui aussi synthétisé
 définitivement, pour la même raison : c'est un signal utilitaire, pas une
-notification Skype à identifier parmi les fichiers d'origine.
+notification Skip à identifier parmi les fichiers d'origine.
 
 ### Deux sons qui révèlent une fonctionnalité manquante
 

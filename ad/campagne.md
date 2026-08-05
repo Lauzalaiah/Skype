@@ -3,11 +3,11 @@
 > ## À lire avant toute diffusion
 >
 > Cette campagne présente un **projet de fan, non officiel**. Aucune
-> communication ne doit laisser entendre que Microsoft relance Skype, ni qu'il
+> communication ne doit laisser entendre que Microsoft relance Skip, ni qu'il
 > s'agit d'un retour officiel du produit.
 >
 > **La formulation juste** : « un fan a reconstruit l'ancien Skype ».
-> **À proscrire** : « Skype est de retour », « Skype revient », « le retour
+> **À proscrire** : « Skip est de retour », « Skip revient », « le retour
 > officiel », tout emploi du logo Microsoft, toute mise en scène d'un
 > porte-parole de la marque.
 >
@@ -46,12 +46,12 @@
 > ce n'est pas connecté au vrai Skype. Une déception après téléchargement coûte
 > plus cher qu'un visiteur en moins.
 
-Objectif : parler aux gens qui ont quitté Skype par résignation, pas par choix,
+Objectif : parler aux gens qui ont quitté Skip par résignation, pas par choix,
 et leur montrer qu'un particulier en a reconstruit une version fidèle.
 Cible principale : 30–65 ans, particuliers, familles éclatées géographiquement, expatriés,
 indépendants. Cible secondaire : les 20–30 ans nostalgiques de leur adolescence en ligne.
 
-**Insight central** — personne n'a jamais dit « je veux abandonner Skype ». On a simplement
+**Insight central** — personne n'a jamais dit « je veux abandonner Skip ». On a simplement
 été déplacé ailleurs, vers des outils conçus pour des entreprises, pas pour des gens.
 
 **Promesse** — Retrouvez la façon la plus simple au monde de parler à quelqu'un que vous aimez.
@@ -72,7 +72,7 @@ des autres outils : on se moque gentiment de la complexité qu'on leur a imposé
 6. « Le seul outil de visio que votre grand-mère savait utiliser. Quelqu'un l'a refait. »
 7. « Ce n'est pas de la nostalgie. C'est juste que ça marchait mieux. »
 
-Chaque accroche est signée : *Skype Reborn — recréation indépendante par un fan.*
+Chaque accroche est signée : *Skip — recréation indépendante par un fan.*
 
 ---
 
@@ -87,13 +87,13 @@ Chaque accroche est signée : *Skype Reborn — recréation indépendante par un
 | 0:03–0:07 | La dame, 78 ans, chausse ses lunettes. Tape. Efface. Retape. Une fenêtre : « Réunion non trouvée ». | Frappe hésitante au clavier. |
 | 0:07–0:11 | Elle décroche son téléphone fixe. Sonnerie dans le vide. Elle repose le combiné. | Tonalité longue, puis raccroché. |
 | 0:11–0:13 | **Cut sec. Noir.** | Silence total. 1 seconde. |
-| 0:13–0:16 | Écran Skype. Une photo de sa petite-fille. Un point vert à côté. Le doigt approche. | Le tout premier « blop » de Skype. |
-| 0:16–0:19 | Elle clique. **Une seule fois.** | La sonnerie d'appel Skype — celle que tout le monde reconnaît. |
+| 0:13–0:16 | Écran Skip. Une photo de sa petite-fille. Un point vert à côté. Le doigt approche. | Le tout premier « blop » de Skip. |
+| 0:16–0:19 | Elle clique. **Une seule fois.** | La sonnerie d'appel Skip — celle que tout le monde reconnaît. |
 | 0:19–0:25 | Plein écran : le visage de sa petite-fille apparaît. « Mamie ! » — le rire de la vieille dame déborde du cadre. | Rires, voix qui se chevauchent. |
 | 0:25–0:28 | Plan large : le salon, la lumière de l'écran sur son visage. Elle sourit toute seule. | La conversation continue, étouffée. |
-| 0:28–0:30 | Fond blanc. Le mot « Skype Reborn » et, en dessous, « recréation indépendante par un fan ». | *Voix off, calme :* « Vous n'avez jamais eu besoin d'autre chose. Alors quelqu'un l'a reconstruit. » |
+| 0:28–0:30 | Fond blanc. Le mot « Skip » et, en dessous, « recréation indépendante par un fan ». | *Voix off, calme :* « Vous n'avez jamais eu besoin d'autre chose. Alors quelqu'un l'a reconstruit. » |
 
-**Carton final** : `Skype Reborn — projet de fan, non officiel. Gratuit. Essayez-le.`
+**Carton final** : `Skip — projet de fan, non officiel. Gratuit. Essayez-le.`
 
 > Mention obligatoire à l'écran pendant les 3 dernières secondes : *recréation
 > indépendante, sans lien avec Microsoft.*
@@ -125,7 +125,7 @@ une roue de chargement, une réunion à 9 participants où personne ne parle.*
 
 **0:30–0:48 — La démonstration** *(plans réels de l'application, gestes simples)*
 
-> « Skype, c'était : un pseudo. Un clic. Une voix.
+> « Skip, c'était : un pseudo. Un clic. Une voix.
 > Pas de lien. Pas de code. Pas de réunion à planifier.
 > Ça marchait. Alors quelqu'un l'a reconstruit, à l'identique. »
 
@@ -135,7 +135,7 @@ message vocal, sondage dans un groupe familial, thème sombre.*
 
 **0:48–0:60 — La chute**
 
-> « Skype est de retour.
+> « Skip est de retour.
 > Avec tout ce que vous aimiez.
 > Et le petit bruit, aussi. »
 
@@ -153,16 +153,16 @@ message vocal, sondage dans un groupe familial, thème sombre.*
 > **VOIX 2** — La pro.
 > **VOIX 1** — J'ai pas la pro sur mon téléphone.
 >
-> *(Silence net. Puis : le « blop » de Skype.)*
+> *(Silence net. Puis : le « blop » de Skip.)*
 >
 > **VOIX OFF** — Ou alors, vous cliquez sur la tête de quelqu'un, et ça sonne.
-> Skype est de retour. Gratuit, et toujours aussi simple.
+> Skip est de retour. Gratuit, et toujours aussi simple.
 
 ---
 
 ## Affichage / print
 
-**Visuel A** — Fond blanc. Au centre, minuscule, le logo Skype. En bas à droite, en petit :
+**Visuel A** — Fond blanc. Au centre, minuscule, le logo Skip. En bas à droite, en petit :
 > *« Blop. »*
 >
 > Rien d'autre. Ceux qui comprennent sont exactement la cible.
@@ -170,11 +170,11 @@ message vocal, sondage dans un groupe familial, thème sombre.*
 **Visuel B** — Photo pleine page : un grand-père et un enfant qui rient devant un écran.
 En surimpression, en bas :
 > **« Il n'a pas eu besoin d'un tutoriel. »**
-> Skype est de retour.
+> Skip est de retour.
 
-**Visuel C** — Capture d'écran réelle de l'application, thème Skype Classic. Accroche :
+**Visuel C** — Capture d'écran réelle de l'application, thème Skip Classic. Accroche :
 > **« Vous vous souvenez de quand c'était simple ? »**
-> Nous aussi. Skype est de retour.
+> Nous aussi. Skip est de retour.
 
 ---
 
@@ -183,7 +183,7 @@ En surimpression, en bas :
 **Post 1 — nostalgie active**
 > Tapez `(y)` en commentaire.
 > Si vous savez ce que ça fait, cette pub est pour vous. 💙
-> Skype est de retour → *(lien)*
+> Skip est de retour → *(lien)*
 
 **Post 2 — comparatif honnête**
 > Pour appeler quelqu'un :
@@ -195,7 +195,7 @@ En surimpression, en bas :
 >
 > ✅ Cliquer sur sa photo.
 >
-> Skype est de retour.
+> Skip est de retour.
 
 **Post 3 — son**
 > 🔊 Montez le son.
@@ -218,7 +218,7 @@ En surimpression, en bas :
 
 ## E-mail de reconquête
 
-**Objet** : `Votre pseudo Skype vous attend toujours`
+**Objet** : `Votre pseudo Skip vous attend toujours`
 **Pré-en-tête** : Il n'a jamais été supprimé. Vos contacts non plus.
 
 > Bonjour,
@@ -229,16 +229,16 @@ En surimpression, en bas :
 > Puis on vous a doucement poussé ailleurs, vers des outils faits pour des réunions
 > d'entreprise — alors que vous vouliez juste appeler votre sœur.
 >
-> Skype est de retour. Entièrement reconstruit, avec **tout** ce qu'il avait :
+> Skip est de retour. Entièrement reconstruit, avec **tout** ce qu'il avait :
 > les appels vidéo en un clic, le partage d'écran, les groupes, les émoticônes que vous
 > tapiez au clavier, les statuts de présence, et oui — le petit bruit.
 >
 > Aucun lien à envoyer. Aucun code à saisir. Aucune réunion à planifier.
 >
-> **[ Rouvrir Skype ]**
+> **[ Rouvrir Skip ]**
 >
 > À très vite,
-> L'équipe Skype
+> L'équipe Skip
 >
 > *P.-S. — Tapez `(y)` dans votre première conversation. Vous verrez.*
 

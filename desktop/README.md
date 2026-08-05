@@ -1,4 +1,4 @@
-# Skype Reborn sur PC
+# Skip sur PC
 
 Une vraie application de bureau — icône, menu Démarrer, raccourci sur le
 bureau, fenêtre à elle sans barre d'adresse de navigateur — installée avec
@@ -17,7 +17,7 @@ dans le processus de l'application**, sur un port local choisi par le système
 au lancement. Il n'y a donc rien à héberger séparément — l'application est
 autonome, fonctionne sans connexion Internet une fois installée, et range ses
 données dans le dossier utilisateur habituel de Windows
-(`%APPDATA%\Skype\data`), jamais dans le dossier d'installation.
+(`%APPDATA%\Skip\data`), jamais dans le dossier d'installation.
 
 Chaque installation a sa **propre base de données locale**, indépendante du
 site web ou d'une autre installation — comme le ferait n'importe quel
@@ -30,7 +30,7 @@ seule, hors ligne, sans rien configurer — mais **deux personnes sur deux
 machines ne se voient pas** : chacune s'adresse à son propre serveur.
 
 Pour se retrouver, elles visent le même. Sur l'écran de connexion,
-**« Changer de serveur »** demande une adresse (`https://skype.exemple.fr`),
+**« Changer de serveur »** demande une adresse (`https://skip.exemple.fr`),
 la vérifie, puis **recharge la fenêtre dessus**.
 
 Ce choix — recharger plutôt que préfixer les appels d'API — est délibéré : tout
@@ -117,7 +117,7 @@ Windows réel. Depuis l'onglet **Actions** du dépôt : **Windows** →
 ```bash
 cd desktop
 npm install
-npm run build:win      # produit desktop/dist/Skype-Reborn-Setup-*.exe
+npm run build:win      # produit desktop/dist/Skip-Setup-*.exe
 ```
 
 Fonctionne aussi bien sous Windows que sous Linux ou macOS (electron-builder
@@ -134,14 +134,14 @@ désinstallation, démarrage du serveur embarqué :
 ```bash
 export WINEPREFIX=/tmp/essai WINEARCH=win64
 wine64 wineboot --init
-wine64 dist/Skype-Reborn-Setup-*.exe /S
-ls "$WINEPREFIX/drive_c/users/$USER/AppData/Local/Programs/Skype"
+wine64 dist/Skip-Setup-*.exe /S
+ls "$WINEPREFIX/drive_c/users/$USER/AppData/Local/Programs/Skip"
 ```
 
 Deux pièges à connaître :
 
 - l'installateur est **par utilisateur** (`perMachine: false`) : il installe
-  dans `%LOCALAPPDATA%\Programs\Skype`, **jamais** dans `Program Files` — y
+  dans `%LOCALAPPDATA%\Programs\Skip`, **jamais** dans `Program Files` — y
   chercher les fichiers donne l'impression que l'installation a échoué ;
 - il faut un préfixe **64 bits** (`WINEARCH=win64`) et donc `wine64`, sinon
   l'application x64 ne peut pas se lancer.

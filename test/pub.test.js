@@ -1,6 +1,6 @@
 /**
  * La page de campagne présente un projet de fan. Elle ne doit jamais laisser
- * croire à un retour officiel de Skype, ni afficher d'avis inventés.
+ * croire à un retour officiel de Skip, ni afficher d'avis inventés.
  * Ces règles sont vérifiées ici parce qu'une phrase malheureuse suffirait à
  * transformer une page honnête en usurpation.
  */
@@ -32,10 +32,10 @@ describe('Page de campagne', () => {
       'l’usage nominatif de la marque doit être précisé');
   });
 
-  test('la page n’annonce pas un retour officiel de Skype', () => {
+  test('la page n’annonce pas un retour officiel de Skip', () => {
     const interdits = [
-      /Skype est de retour/i,
-      /Skype revient/i,
+      /Skip est de retour/i,
+      /Skip revient/i,
       /le retour officiel/i,
       /Microsoft relance/i,
       /officiellement de retour/i,
@@ -70,13 +70,13 @@ describe('Les données de démonstration ne mentent pas non plus', () => {
   /**
    * Les comptes de démonstration finissent en captures d'écran, sur le dépôt
    * et sur les forums. Une phrase de conversation qui laisse croire à un
-   * retour officiel de Skype y serait aussi trompeuse que sur la page de
+   * retour officiel de Skip y serait aussi trompeuse que sur la page de
    * campagne — et bien plus difficile à rattraper une fois diffusée.
    */
   const seed = lire('server/seed.js');
 
   test('aucune conversation ne laisse croire à un retour officiel', () => {
-    for (const motif of [/Skype (est )?(de retour|revenu|revient)/i, /le retour officiel/i]) {
+    for (const motif of [/Skip (est )?(de retour|revenu|revient)/i, /le retour officiel/i]) {
       assert.doesNotMatch(seed, motif, `formulation trompeuse dans les démos : ${motif}`);
     }
   });

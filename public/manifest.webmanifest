@@ -1,11 +1,11 @@
 {
-  "name": "Skype Reborn",
-  "short_name": "Skype",
-  "description": "Recréation indépendante de Skype par un fan : messagerie, appels audio et vidéo, partage d'écran.",
+  "name": "Skip",
+  "short_name": "Skip",
+  "description": "Recréation indépendante de Skip par un fan : messagerie, appels audio et vidéo, partage d'écran.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0078D4",
-  "theme_color": "#00AFF0",
+  "theme_color": "#5A4FE0",
   "orientation": "any",
   "categories": [
     "social",

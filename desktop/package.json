@@ -1,13 +1,13 @@
 {
-  "name": "skype-reborn-desktop",
+  "name": "skip-desktop",
   "private": true,
-  "version": "8.138.0",
-  "description": "Skype Reborn — application de bureau. Recréation indépendante, faite par un fan, sans lien avec Microsoft.",
+  "version": "8.139.0",
+  "description": "Skip — application de bureau. Recréation indépendante, faite par un fan, sans lien avec Microsoft.",
   "homepage": "https://lauzalaiah.github.io/Skype/",
   "license": "MIT",
-  "author": "Skype Reborn",
+  "author": "Skip",
   "main": "main.js",
-  "desktopName": "skype-reborn-desktop.desktop",
+  "desktopName": "skip-desktop.desktop",
   "type": "module",
   "scripts": {
     "start": "electron .",
@@ -23,14 +23,14 @@
     "electron-builder": "^26.15.3"
   },
   "build": {
-    "appId": "app.skypereborn.fan",
-    "productName": "Skype",
-    "copyright": "Skype Reborn — recréation indépendante par un fan, sans lien avec Microsoft.",
+    "appId": "app.skip.fan",
+    "productName": "Skip",
+    "copyright": "Skip — recréation indépendante par un fan, sans lien avec Microsoft.",
     "publish": [
       {
         "provider": "github",
         "owner": "Lauzalaiah",
-        "repo": "Skype"
+        "repo": "Skip"
       }
     ],
     "directories": {
@@ -76,7 +76,7 @@
         }
       ],
       "icon": "build/icon.ico",
-      "artifactName": "Skype-Reborn-Setup-${version}.${ext}"
+      "artifactName": "Skip-Setup-${version}.${ext}"
     },
     "nsis": {
       "oneClick": false,
@@ -84,8 +84,8 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Skype",
-      "artifactName": "Skype-Reborn-Setup-${version}.${ext}"
+      "shortcutName": "Skip",
+      "artifactName": "Skip-Setup-${version}.${ext}"
     },
     "linux": {
       "target": [
@@ -95,18 +95,18 @@
       ],
       "icon": "build/icons",
       "category": "Network;InstantMessaging;VideoConference",
-      "maintainer": "Skype Reborn <skype-reborn@users.noreply.github.com>",
+      "maintainer": "Skip <skip@users.noreply.github.com>",
       "synopsis": "Recréation indépendante de l'ancien Skype",
       "description": "Messagerie et appels audio/vidéo. Recréation indépendante faite par un fan, sans lien avec Microsoft.",
       "desktop": {
         "entry": {
-          "Name": "Skype",
+          "Name": "Skip",
           "GenericName": "Messagerie et appels",
-          "Keywords": "chat;messagerie;appel;visio;video;skype;",
-          "StartupWMClass": "Skype"
+          "Keywords": "chat;messagerie;appel;visio;video;skip;",
+          "StartupWMClass": "Skip"
         }
       },
-      "artifactName": "Skype-Reborn-${version}.${ext}",
+      "artifactName": "Skip-${version}.${ext}",
       "syncDesktopName": true
     },
     "deb": {
@@ -128,10 +128,10 @@
       ],
       "icon": "build/icon.png",
       "category": "public.app-category.social-networking",
-      "artifactName": "Skype-Reborn-${version}.${ext}",
+      "artifactName": "Skip-${version}.${ext}",
       "extendInfo": {
-        "NSCameraUsageDescription": "Skype a besoin de la caméra pour les appels vidéo.",
-        "NSMicrophoneUsageDescription": "Skype a besoin du micro pour les appels et les messages vocaux."
+        "NSCameraUsageDescription": "Skip a besoin de la caméra pour les appels vidéo.",
+        "NSMicrophoneUsageDescription": "Skip a besoin du micro pour les appels et les messages vocaux."
       }
     }
   }

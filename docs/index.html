@@ -3,26 +3,26 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Télécharger Skype Reborn — l'ancien Skype, reconstruit par un fan</title>
-<meta name="description" content="Téléchargez Skype Reborn pour Windows, macOS et Linux. Recréation indépendante de l'ancien Skype, sans aucun lien avec Microsoft. Gratuit, sans publicité, code source ouvert." />
-<meta name="theme-color" content="#00AFF0" />
-<meta property="og:title" content="Télécharger Skype Reborn" />
+<title>Télécharger Skip — l'ancien Skype, reconstruit par un fan</title>
+<meta name="description" content="Téléchargez Skip pour Windows, macOS et Linux. Recréation indépendante de l'ancien Skype, sans aucun lien avec Microsoft. Gratuit, sans publicité, code source ouvert." />
+<meta name="theme-color" content="#5A4FE0" />
+<meta property="og:title" content="Télécharger Skip" />
 <meta property="og:description" content="L'ancien Skype, reconstruit de zéro par un fan. Windows, macOS, Linux. Projet indépendant, sans lien avec Microsoft." />
 <meta property="og:type" content="website" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%2300AFF0'/%3E%3Ctext x='16' y='23' font-family='Segoe UI,Arial' font-size='19' font-weight='700' fill='white' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http%3A//www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%235A4FE0'/%3E%3Cpath%20d='M9%208%20L17%2016%20L9%2024%20Z'%20fill='white'/%3E%3Cpath%20d='M16%208%20L24%2016%20L16%2024%20Z'%20fill='white'/%3E%3C/svg%3E" />
 
 <style>
   *, *::before, *::after { box-sizing: border-box; }
 
   :root {
-    --blue: #00AFF0;
-    --blue-dark: #0078A8;
-    --blue-deep: #003C55;
+    --blue: #5A4FE0;
+    --blue-dark: #3B2CA8;
+    --blue-deep: #241A6B;
     --ink: #0F1C24;
     --ink-soft: #47606E;
     --paper: #ffffff;
     --mist: #F2FAFE;
-    --line: rgba(0, 60, 85, .13);
+    --line: rgba(36, 26, 107, .13);
     --green: #6BB700;
     --amber: #B26B00;
     --radius: 18px;
@@ -65,8 +65,8 @@
     text-decoration: none; cursor: pointer;
     transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
   }
-  .btn--primary { background: var(--blue); color: #fff; box-shadow: 0 10px 30px rgba(0, 175, 240, .36); }
-  .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0, 175, 240, .48); }
+  .btn--primary { background: var(--blue); color: #fff; box-shadow: 0 10px 30px rgba(90, 79, 224, .36); }
+  .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(90, 79, 224, .48); }
   .btn--dark { background: var(--ink); color: #fff; }
   .btn--dark:hover { transform: translateY(-2px); }
   .btn--line { border-color: var(--line); color: var(--ink); background: #fff; }
@@ -91,7 +91,7 @@
   .nav { display: flex; align-items: center; gap: 14px; padding: 13px 0; }
   .logo { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 300; text-decoration: none; }
   .logo__mark {
-    width: 33px; height: 33px; border-radius: 50%;
+    width: 33px; height: 33px; border-radius: 9px;
     background: linear-gradient(135deg, var(--blue), var(--blue-dark));
     color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 17px;
   }
@@ -105,8 +105,8 @@
   .hero {
     padding: 76px 0 84px;
     background:
-      radial-gradient(1000px 520px at 12% -10%, rgba(0, 175, 240, .28), transparent 62%),
-      radial-gradient(760px 440px at 104% 10%, rgba(0, 175, 240, .16), transparent 60%),
+      radial-gradient(1000px 520px at 12% -10%, rgba(90, 79, 224, .28), transparent 62%),
+      radial-gradient(760px 440px at 104% 10%, rgba(90, 79, 224, .16), transparent 60%),
       linear-gradient(180deg, #fff 0%, var(--mist) 100%);
   }
   .hero__grid { display: grid; grid-template-columns: 1.02fr .98fr; gap: 54px; align-items: center; }
@@ -115,7 +115,7 @@
   .eyebrow {
     display: inline-flex; align-items: center; gap: 9px;
     padding: 7px 16px; border-radius: 999px;
-    background: rgba(0, 175, 240, .12); color: var(--blue-dark);
+    background: rgba(90, 79, 224, .12); color: var(--blue-dark);
     font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em;
     margin-bottom: 20px;
   }
@@ -143,8 +143,8 @@
   /* ── Fenêtre illustrée ───────────────────────────────────────────── */
   .mock {
     border-radius: 14px; overflow: hidden;
-    box-shadow: 0 34px 80px rgba(0, 60, 85, .26);
-    border: 1px solid rgba(0, 60, 85, .13);
+    box-shadow: 0 34px 80px rgba(36, 26, 107, .26);
+    border: 1px solid rgba(36, 26, 107, .13);
     background: #fff;
   }
   .mock__bar { display: flex; align-items: center; gap: 7px; padding: 10px 13px; background: #F6F8FA; border-bottom: 1px solid var(--line); }
@@ -168,7 +168,7 @@
     padding: 26px 24px; display: flex; flex-direction: column; gap: 11px;
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
   }
-  .plateforme:hover { transform: translateY(-3px); box-shadow: 0 18px 44px rgba(0, 60, 85, .11); border-color: rgba(0, 175, 240, .4); }
+  .plateforme:hover { transform: translateY(-3px); box-shadow: 0 18px 44px rgba(36, 26, 107, .11); border-color: rgba(90, 79, 224, .4); }
   .plateforme__icone { font-size: 1.9rem; line-height: 1; }
   .plateforme h3 { font-size: 1.18rem; }
   .plateforme__desc { color: var(--ink-soft); font-size: .92rem; flex: 1; }
@@ -177,11 +177,11 @@
   .plateforme__autres a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
   .plateforme__autres a:hover { color: var(--blue); }
   .plateforme .btn { width: 100%; padding: 12px 18px; font-size: .95rem; }
-  .plateforme--vedette { border-color: var(--blue); box-shadow: 0 14px 40px rgba(0, 175, 240, .16); }
+  .plateforme--vedette { border-color: var(--blue); box-shadow: 0 14px 40px rgba(90, 79, 224, .16); }
   .badge {
     align-self: flex-start; padding: 4px 11px; border-radius: 999px;
     font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
-    background: rgba(0, 175, 240, .13); color: var(--blue-dark);
+    background: rgba(90, 79, 224, .13); color: var(--blue-dark);
   }
   .badge--gris { background: rgba(71, 96, 110, .12); color: var(--ink-soft); }
 
@@ -235,7 +235,7 @@
     background: #fff; border: 1px solid var(--line); border-radius: 13px;
     padding: 17px 22px;
   }
-  details[open] { border-color: rgba(0, 175, 240, .45); }
+  details[open] { border-color: rgba(90, 79, 224, .45); }
   summary { cursor: pointer; font-weight: 700; font-size: 1.02rem; list-style: none; }
   summary::-webkit-details-marker { display: none; }
   summary::after { content: '+'; float: right; color: var(--blue); font-size: 1.3rem; line-height: 1; }
@@ -258,15 +258,15 @@
 <div class="avis">
   <div class="wrap avis__inner">
     <strong>Projet de fan, non officiel.</strong>
-    Skype Reborn est une recréation indépendante réalisée par passion. Aucun lien
-    avec Microsoft ni avec les équipes de Skype, et aucune affiliation. « Skype »
+    Skip est une recréation indépendante réalisée par passion. Aucun lien
+    avec Microsoft ni avec les équipes de Skype, et aucune affiliation. « Skip »
     est une marque de Microsoft, citée ici pour désigner le logiciel d'origine.
   </div>
 </div>
 
 <header>
   <div class="wrap nav">
-    <a class="logo" href="#top"><span class="logo__mark">S</span> Skype <em>Reborn</em></a>
+    <a class="logo" href="#top"><span class="logo__mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="17" height="17"><path d="M9 8 L17 16 L9 24 Z" fill="currentColor"/><path d="M16 8 L24 16 L16 24 Z" fill="currentColor"/></svg></span> Skip</a>
     <nav class="nav__links">
       <a href="#plateformes">Plateformes</a>
       <a href="#installer">Installation</a>
@@ -283,7 +283,7 @@
 <div class="hero" id="top">
   <div class="wrap hero__grid">
     <div>
-      <span class="eyebrow"><span class="eyebrow__dot"></span> Version <span id="etiquetteVersion">8.138.0</span> · gratuit</span>
+      <span class="eyebrow"><span class="eyebrow__dot"></span> Version <span id="etiquetteVersion">8.139.0</span> · gratuit</span>
       <h1>Téléchargez <em>l'ancien Skype</em>.</h1>
       <p class="hero__lead">
         Celui d'avant : un pseudo, une liste de contacts, un bouton vert.
@@ -322,7 +322,7 @@
         <span class="mock__dot" style="background:#FF5F57"></span>
         <span class="mock__dot" style="background:#FEBC2E"></span>
         <span class="mock__dot" style="background:#28C840"></span>
-        <span class="mock__title">Skype</span>
+        <span class="mock__title">Skip</span>
       </div>
       <div class="mock__body">
         <div class="mock__side">
@@ -360,7 +360,7 @@
           crée le raccourci du bureau et l'entrée du menu Démarrer, et s'ajoute
           à la liste des programmes installés.
         </p>
-        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-Setup-8.138.0.exe · 64 bits</p>
+        <p class="plateforme__fichier" data-role="fichier">Skip-Setup-8.139.0.exe · 64 bits</p>
         <a class="btn btn--primary" data-role="lien" href="https://github.com/Lauzalaiah/Skype/releases/latest">Télécharger le .exe</a>
       </div>
 
@@ -374,7 +374,7 @@
           Réglages Système › Confidentialité et sécurité — et les mises à jour
           y restent manuelles, pour la même raison.
         </p>
-        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-8.138.0.dmg</p>
+        <p class="plateforme__fichier" data-role="fichier">Skip-8.139.0.dmg</p>
         <a class="btn btn--line" data-role="lien" href="https://github.com/Lauzalaiah/Skype/releases/latest">Télécharger le .dmg</a>
       </div>
 
@@ -389,7 +389,7 @@
           entrée dans le menu, icône, désinstallation par le gestionnaire de
           paquets.
         </p>
-        <p class="plateforme__fichier" data-role="fichier">Skype-Reborn-8.138.0.AppImage</p>
+        <p class="plateforme__fichier" data-role="fichier">Skip-8.139.0.AppImage</p>
         <a class="btn btn--line" data-role="lien" href="https://github.com/Lauzalaiah/Skype/releases/latest">Télécharger l'AppImage</a>
         <p class="plateforme__autres">
           Ou installer :
@@ -422,7 +422,7 @@
         appels vidéo et le partage d'écran.
       </p>
       <p>
-        <code>git clone https://github.com/Lauzalaiah/Skype &amp;&amp; cd Skype &amp;&amp; node server/index.js</code>
+        <code>git clone https://github.com/Lauzalaiah/Skype &amp;&amp; cd Skip &amp;&amp; node server/index.js</code>
         — puis <code>http://localhost:3000</code>. Aucune dépendance à installer :
         Node.js 18 suffit.
       </p>
@@ -448,7 +448,7 @@
         <p>L'assistant s'ouvre. Choisissez le dossier si vous le souhaitez, laissez cocher les raccourcis, cliquez sur Installer.</p>
       </div>
       <div class="etape">
-        <h3>Lancez Skype</h3>
+        <h3>Lancez Skip</h3>
         <p>L'icône est sur le bureau et dans le menu Démarrer. Créez votre compte à la première ouverture, et vous y êtes.</p>
       </div>
     </div>
@@ -506,10 +506,10 @@
       <div class="point"><span class="point__tick">✓</span><div><h3>Le service d'écho</h3><p><code>echo123</code> répond immédiatement, enregistre votre voix et vous la rejoue — pour tester le micro avant d'appeler quelqu'un.</p></div></div>
       <div class="point"><span class="point__tick">✓</span><div><h3>Groupes et sondages</h3><p>Administrateurs, photo de groupe, lien d'invitation, ajout et retrait de membres, sondages intégrés.</p></div></div>
       <div class="point"><span class="point__tick">✓</span><div><h3>Fichiers et messages vocaux</h3><p>Glisser-déposer jusqu'à 64 Mo, galerie d'images, messages vocaux avec forme d'onde, messagerie vocale en cas d'absence.</p></div></div>
-      <div class="point"><span class="point__tick">✓</span><div><h3>Pavé numérique international</h3><p>77 destinations avec leur tarif, crédit Skype, tonalités DTMF réelles.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Pavé numérique international</h3><p>77 destinations avec leur tarif, crédit Skip, tonalités DTMF réelles.</p></div></div>
       <div class="point"><span class="point__tick">✓</span><div><h3>Émoticônes d'époque</h3><p><code>(y)</code>, <code>(rofl)</code>, <code>(cool)</code>… plus de 80 classiques, et les émojis modernes.</p></div></div>
       <div class="point"><span class="point__tick">✓</span><div><h3>Statuts de présence</h3><p>En ligne, Absent, Ne pas déranger, Invisible. Le petit point vert, retrouvé.</p></div></div>
-      <div class="point"><span class="point__tick">✓</span><div><h3>Thème Skype Classic</h3><p>Le bleu d'origine, plus les thèmes clair, sombre et contraste élevé.</p></div></div>
+      <div class="point"><span class="point__tick">✓</span><div><h3>Thème Skip Classic</h3><p>Le bleu d'origine, plus les thèmes clair, sombre et contraste élevé.</p></div></div>
       <div class="point"><span class="point__tick">✓</span><div><h3>Fonctionne hors ligne</h3><p>L'application de bureau embarque son propre serveur : elle démarre et s'utilise sans connexion Internet.</p></div></div>
       <div class="point"><span class="point__tick">✓</span><div><h3>Se met à jour toute seule</h3><p>Sous Windows et Linux, l'application vérifie discrètement, télécharge en arrière-plan et propose « Redémarrer maintenant ». Vous ne retéléchargerez plus rien.</p></div></div>
     </div>
@@ -539,7 +539,7 @@
       <div class="empreintes__ligne" id="empreintesEtat"><b>SHA-256</b> — publiées avec chaque version, dans le fichier <b>SHA256SUMS.txt</b>.</div>
     </div>
     <p class="center" style="margin-top: 16px; font-size: .86rem; color: var(--ink-soft);">
-      Sous Windows : <code>certutil -hashfile Skype-Reborn-Setup-8.138.0.exe SHA256</code> —
+      Sous Windows : <code>certutil -hashfile Skip-Setup-8.139.0.exe SHA256</code> —
       sous macOS et Linux : <code>shasum -a 256 &lt;fichier&gt;</code>
     </p>
   </div>
@@ -556,10 +556,10 @@
       <details open>
         <summary>Est-ce le vrai Skype ? Microsoft est-il derrière ?</summary>
         <p>
-          Non, et c'est important. Skype Reborn est une <strong>recréation
+          Non, et c'est important. Skip est une <strong>recréation
           indépendante, faite par un fan</strong>, écrite de zéro. Il n'y a aucun
           lien, aucune affiliation et aucun partenariat avec Microsoft ni avec les
-          équipes de Skype. Le nom « Skype » est une marque de Microsoft, employée
+          équipes de Skip. Le nom « Skype » est une marque de Microsoft, employée
           ici uniquement pour désigner le logiciel d'origine dont ce projet
           s'inspire.
         </p>
@@ -588,10 +588,10 @@
       <details>
         <summary>Où sont stockées mes conversations ?</summary>
         <p>
-          Dans votre dossier utilisateur — <code>%APPDATA%\Skype\data</code> sous
-          Windows, <code>~/Library/Application Support/Skype</code> sous macOS,
-          <code>~/.config/Skype</code> sous Linux. Ce dossier contient tout :
-          sauvegardez-le, et vous avez sauvegardé votre Skype.
+          Dans votre dossier utilisateur — <code>%APPDATA%\Skip\data</code> sous
+          Windows, <code>~/Library/Application Support/Skip</code> sous macOS,
+          <code>~/.config/Skip</code> sous Linux. Ce dossier contient tout :
+          sauvegardez-le, et vous avez sauvegardé votre Skip.
         </p>
       </details>
 
@@ -599,7 +599,7 @@
         <summary>Faut-il payer quelque chose ?</summary>
         <p>
           Non. Le logiciel est gratuit, sans publicité et sans abonnement. Le
-          « crédit Skype » reconstruit dans l'application est une reproduction de
+          « crédit Skip » reconstruit dans l'application est une reproduction de
           l'interface d'origine : aucun paiement réel n'a lieu, et aucun appel
           n'est réellement passé vers le réseau téléphonique.
         </p>
@@ -665,7 +665,7 @@
   <div class="wrap">
     <div class="footer__grid">
       <div>
-        <a class="logo" href="#top" style="color:#fff"><span class="logo__mark">S</span> Skype <em>Reborn</em></a>
+        <a class="logo" href="#top" style="color:#fff"><span class="logo__mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="17" height="17"><path d="M9 8 L17 16 L9 24 Z" fill="currentColor"/><path d="M16 8 L24 16 L16 24 Z" fill="currentColor"/></svg></span> Skip</a>
         <p style="margin-top: 12px; max-width: 40ch; opacity: .78;">
           L'ancien Skype, reconstruit de zéro par nostalgie. Gratuit, ouvert,
           sans publicité.
@@ -682,9 +682,9 @@
     </div>
 
     <p class="footer__legal">
-      Skype Reborn est un projet de fan, non officiel et sans but lucratif. Il n'est
-      ni développé, ni soutenu, ni approuvé par Microsoft Corporation. « Skype » et
-      le logo Skype sont des marques déposées de Microsoft ; elles sont citées ici
+      Skip est un projet de fan, non officiel et sans but lucratif. Il n'est
+      ni développé, ni soutenu, ni approuvé par Microsoft Corporation. « Skip » et
+      le logo Skip sont des marques déposées de Microsoft ; elles sont citées ici
       de façon strictement nominative, pour désigner le logiciel d'origine que ce
       projet cherche à recréer. Aucun service de Microsoft n'est utilisé, contacté
       ni imité techniquement. Les conversations montrées sur cette page proviennent
@@ -699,7 +699,7 @@
   // Le dépôt est la seule source de vérité : les fichiers proposés ici
   // sont ceux que GitHub Actions a publiés, jamais des liens écrits à la main.
   const DEPOT = 'Lauzalaiah/Skype';
-  const VERSION = '8.138.0';
+  const VERSION = '8.139.0';
   const PAGE_VERSIONS = `https://github.com/${DEPOT}/releases`;
 
   // Comment reconnaître le fichier de chaque système parmi ceux publiés.

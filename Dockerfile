@@ -1,4 +1,4 @@
-# Skype Reborn — serveur.
+# Skip — serveur.
 #
 # Le projet n'a aucune dépendance npm : il n'y a donc ni « npm install », ni
 # étape de construction, ni couche d'outillage. On copie le code, et on lance.
@@ -15,7 +15,7 @@ COPY public ./public
 
 # Les conversations et les fichiers envoyés vivent ici, hors de l'image :
 # c'est le seul dossier à sauvegarder.
-ENV SKYPE_DATA_DIR=/données \
+ENV SKIP_DATA_DIR=/données \
     HOST=0.0.0.0 \
     PORT=3000
 

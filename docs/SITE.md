@@ -18,7 +18,7 @@ et elle prend dix secondes :
 
 1. **Settings** › **Pages** ;
 2. *Build and deployment* › **Source : Deploy from a branch** ;
-3. Branche : **`claude/recreer-skype-complet-1qvll5`** — c'est la branche par
+3. Branche : **`claude/recreer-skip-complet-1qvll5`** — c'est la branche par
    défaut du dépôt — et dossier : **`/docs`** ;
 4. **Save**.
 
@@ -48,7 +48,7 @@ Pour publier une version, il faut donc lancer le workflow
 `.github/workflows/release.yml` :
 
 - **Actions** › **Publier une version** › **Run workflow** ;
-- ou en poussant une étiquette : `git tag v8.138.0 && git push origin v8.138.0`.
+- ou en poussant une étiquette : `git tag v8.139.0 && git push origin v8.139.0`.
 
 Il exécute la suite de tests, construit l'application sur un vrai exécuteur
 Windows, macOS et Linux, calcule les empreintes SHA-256, puis crée la
@@ -56,9 +56,9 @@ Windows, macOS et Linux, calcule les empreintes SHA-256, puis crée la
 
 | Fichier | Système |
 | --- | --- |
-| `Skype-Reborn-Setup-<version>.exe` | Windows 10 / 11 |
-| `Skype-Reborn-<version>.dmg` | macOS |
-| `Skype-Reborn-<version>.AppImage` | Linux |
+| `Skip-Setup-<version>.exe` | Windows 10 / 11 |
+| `Skip-<version>.dmg` | macOS |
+| `Skip-<version>.AppImage` | Linux |
 | `SHA256SUMS.txt` | vérification des trois précédents |
 | `latest.yml`, `latest-mac.yml`, `latest-linux.yml` | **mise à jour automatique** |
 
@@ -106,7 +106,7 @@ refuse quoi que ce soit.
 
 ## 3. Ce que le site ne fait pas
 
-- **Il n'héberge pas le serveur de Skype Reborn.** GitHub Pages ne sert que des
+- **Il n'héberge pas le serveur de Skip.** GitHub Pages ne sert que des
   fichiers statiques : il distribue l'application, il ne la fait pas tourner.
   Pour que deux personnes se parlent, il faut un serveur — voir
   [HEBERGEMENT.md](HEBERGEMENT.md).
@@ -124,7 +124,7 @@ phrase malheureuse suffirait à transformer une page honnête en usurpation :
 - la mention **« Projet de fan, non officiel »** apparaît avant tout le reste ;
 - l'absence de lien avec Microsoft est écrite explicitement, et l'usage
   nominatif de la marque est précisé ;
-- aucune formulation ne laisse croire à un retour officiel de Skype ;
+- aucune formulation ne laisse croire à un retour officiel de Skip ;
 - aucun avis, témoignage ni compteur de téléchargements inventé ;
 - l'absence de signature du code est annoncée, pas dissimulée ;
 - tout lien vers le dépôt vise bien `Lauzalaiah/Skype`, et tout fichier lié
@@ -138,6 +138,6 @@ phrase malheureuse suffirait à transformer une page honnête en usurpation :
 ## 5. Une adresse à soi
 
 Pour servir le site sur un nom de domaine personnel, ajoutez un fichier
-`docs/CNAME` contenant ce seul nom (par exemple `skype-reborn.fr`), faites
+`docs/CNAME` contenant ce seul nom (par exemple `skip.fr`), faites
 pointer un enregistrement DNS `CNAME` vers `lauzalaiah.github.io`, puis cochez
 *Enforce HTTPS* dans Settings › Pages. Rien d'autre ne change.

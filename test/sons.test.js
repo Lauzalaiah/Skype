@@ -124,7 +124,7 @@ describe('Correspondance son ↔ événement', () => {
   });
 
   test('la sonnerie est celle choisie dans les réglages, audio comme vidéo', () => {
-    // Skype ne distingue pas la sonnerie d'un appel audio de celle d'un appel
+    // Skip ne distingue pas la sonnerie d'un appel audio de celle d'un appel
     // vidéo : les quatre sonneries sont interchangeables et au choix.
     assert.match(sons, /export function startRinging\(\) \{[\s\S]*?ringHandle = sound\(ringtone, \{ loop: true \}\);/,
       'la sonnerie ne doit pas dépendre du type d’appel');
@@ -207,7 +207,7 @@ describe('Correspondance son ↔ événement', () => {
 
   test('la tonalité d’appel ne sert qu’aux appels sortants', () => {
     const points = [...appels.matchAll(/sounds\.startDialing\(\)/g)];
-    assert.equal(points.length, 2, 'attendu : appel Skype sortant + appel téléphonique sortant');
+    assert.equal(points.length, 2, 'attendu : appel Skip sortant + appel téléphonique sortant');
   });
 
   test('le son « fichier reçu » ne sert qu’aux messages avec pièce jointe', () => {

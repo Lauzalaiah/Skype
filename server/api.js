@@ -1,5 +1,5 @@
 /**
- * API REST de Skype Reborn.
+ * API REST de Skip.
  */
 import fs from 'node:fs';
 import { PROTOCOLE } from './protocole.js';
@@ -540,7 +540,7 @@ export function createApi(hub) {
     const rate = tarifDuNumero(number);
     const pays = paysDuNumero(number);
     const cost = Number((rate * minutes).toFixed(3));
-    if (user.credit < cost) throw httpError(402, 'Crédit Skype insuffisant. Rechargez pour appeler ce numéro.');
+    if (user.credit < cost) throw httpError(402, 'Crédit Skip insuffisant. Rechargez pour appeler ce numéro.');
     user.credit = Number((user.credit - cost).toFixed(3));
     const call = M.recordCall({
       chatId: null,
@@ -566,7 +566,7 @@ export function createApi(hub) {
     return { credit: user.credit };
   });
 
-  router.post('/api/skype-number', async (ctx) => {
+  router.post('/api/skip-number', async (ctx) => {
     const user = requireUser(ctx);
     const { country = 'FR' } = await readJson(ctx.req);
     const prefixes = { FR: '+33 9 70', BE: '+32 2', CH: '+41 22', CA: '+1 514', US: '+1 415', UK: '+44 20' };
@@ -630,16 +630,16 @@ export function createApi(hub) {
   router.post('/api/translate', async (ctx) => {
     requireUser(ctx);
     const { text, to = 'en' } = await readJson(ctx.req);
-    // Traducteur local de démonstration (Skype Translator sans service externe).
-    return { translation: pseudoTranslate(text, to), to, engine: 'skype-translator-local' };
+    // Traducteur local de démonstration (Skip Translator sans service externe).
+    return { translation: pseudoTranslate(text, to), to, engine: 'skip-translator-local' };
   });
 
   // Point d'entrée public : il sert à un client distant (application native)
-  // pour vérifier qu'il parle bien à un serveur Skype avant de mémoriser son
+  // pour vérifier qu'il parle bien à un serveur Skip avant de mémoriser son
   // adresse. Volontairement avare — le nombre d'utilisateurs et de
   // conversations n'a pas à être lisible sans authentification.
   router.get('/api/health', () => ({
-    service: 'skype',
+    service: 'skip',
     ok: true,
     version: VERSION,
     // Ce que le client interroge pour savoir s'il peut parler à ce serveur.
@@ -733,7 +733,7 @@ export const EMOTICON_CATALOG = {
     { code: '(car)', emoji: '🚗', name: 'Voiture', tags: [] },
     { code: '(plane)', emoji: '✈️', name: 'Avion', tags: [] },
     { code: '(football)', emoji: '⚽', name: 'Football', tags: [] },
-    { code: '(skype)', emoji: '🇸', name: 'Skype', tags: [] },
+    { code: '(skip)', emoji: '🇸', name: 'Skip', tags: [] },
   ],
   animaux: [
     { code: '(cat)', emoji: '🐱', name: 'Chat', tags: [] },
@@ -745,7 +745,7 @@ export const EMOTICON_CATALOG = {
   ],
 };
 
-/** Traducteur local : suffisant pour la démo hors-ligne de Skype Translator. */
+/** Traducteur local : suffisant pour la démo hors-ligne de Skip Translator. */
 function pseudoTranslate(text, to) {
   const dictionaries = {
     en: { bonjour: 'hello', salut: 'hi', 'merci': 'thanks', oui: 'yes', non: 'no', 'ça va': 'how are you', 'à bientôt': 'see you soon', appel: 'call', message: 'message', 'demain': 'tomorrow', 'aujourd’hui': 'today' },

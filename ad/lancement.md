@@ -3,7 +3,7 @@
 > ## À lire avant de poster
 >
 > Les règles de `campagne.md` s'appliquent ici aussi : **projet de fan, non
-> officiel**, aucune formulation laissant croire à un retour officiel de Skype,
+> officiel**, aucune formulation laissant croire à un retour officiel de Skip,
 > aucun faux témoignage, aucun chiffre inventé.
 >
 > Un point supplémentaire, propre aux forums : **répondez à tout, y compris aux
@@ -56,7 +56,7 @@ improviser.
 | **r/selfhosted** | Docker, sauvegarde, ressources, licence | Une commande, zéro dépendance, vos données chez vous |
 | **r/opensource** | Licence, lisibilité du code, gouvernance | MIT, aucune dépendance npm, tout est lisible |
 | **Hacker News** (Show HN) | La contrainte technique intéressante | WebSocket RFC 6455 écrit à la main, zéro dépendance |
-| **r/france**, forums FR | L'histoire, l'utilité concrète | La famille, les grands-parents, la fermeture de Skype |
+| **r/france**, forums FR | L'histoire, l'utilité concrète | La famille, les grands-parents, la fermeture de Skip |
 | **r/nostalgia** | L'émotion | Les sons d'origine, les émoticônes |
 
 Ne postez pas partout le même jour. Un endroit, une semaine, en tenant compte
@@ -68,9 +68,9 @@ de ce qu'on vous répond avant de recommencer ailleurs.
 
 ### Pour un forum d'auto-hébergement
 
-> **Skype Reborn — l'ancien Skype, reconstruit, que vous hébergez vous-même**
+> **Skip — l'ancien Skype, reconstruit, que vous hébergez vous-même**
 >
-> Microsoft a fermé Skype. Je n'ai pas trouvé d'équivalent que ma famille sache
+> Microsoft a fermé Skip. Je n'ai pas trouvé d'équivalent que ma famille sache
 > utiliser : Discord et les autres sont faits pour des communautés, pas pour
 > appeler sa grand-mère. Alors je l'ai reconstruit.
 >

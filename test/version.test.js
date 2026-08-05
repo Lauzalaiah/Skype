@@ -23,14 +23,14 @@ const VERSION = JSON.parse(lire('package.json')).version;
 const ENDROITS = [
   ['desktop/package.json', /"version":\s*"([^"]+)"/],
   ['server/index.js', /S k y p e   R e b o r n   ·   v(\S+)/],
-  ['public/js/ui/modals.js', /text: 'Version ([\d.]+) · Skype Reborn'/],
+  ['public/js/ui/modals.js', /text: 'Version ([\d.]+) · Skip'/],
   ['public/pub/index.html', /Version ([\d.]+)<\/a>/],
   ['docs/index.html', /const VERSION = '([^']+)'/],
   ['docs/index.html', /id="etiquetteVersion">([\d.]+)</],
   ['README.md', /^Version ([\d.]+) · Zéro dépendance/m],
   // Le nom du cache du service worker : c'est lui qui décide si une version
   // web repart d'un cache vide ou hérite de celui de la précédente.
-  ['public/sw.js', /const VERSION = 'skype-([\d.]+)'/],
+  ['public/sw.js', /const VERSION = 'skip-([\d.]+)'/],
 ];
 
 describe('Numéro de version', () => {
@@ -47,7 +47,7 @@ describe('Numéro de version', () => {
     // Ces noms sont remplacés par ceux de la version publiée dès que l'API
     // répond ; mais avant, ce sont eux que le visiteur lit.
     const site = lire('docs/index.html');
-    const exemples = site.match(/Skype-Reborn[^\s`<·]*\d+\.\d+\.\d+[^\s`<·]*/g) || [];
+    const exemples = site.match(/Skip-[^\s`<·]*\d+\.\d+\.\d+[^\s`<·]*/g) || [];
     assert.ok(exemples.length >= 3, 'les noms de fichiers d’exemple ont disparu du site');
     for (const exemple of exemples) {
       assert.ok(exemple.includes(VERSION), `nom de fichier périmé sur le site : ${exemple}`);

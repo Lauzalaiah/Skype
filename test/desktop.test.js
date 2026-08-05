@@ -20,19 +20,19 @@ const index = lire('server/index.js');
 
 describe('Les données ne vont jamais dans le dossier d’installation', () => {
   test('store.js accepte une base de données surchargée par variable d’environnement', () => {
-    assert.match(store, /process\.env\.SKYPE_DATA_DIR/,
+    assert.match(store, /process\.env\.SKIP_DATA_DIR/,
       'sans ça, l’application écrirait sous « Program Files », refusé sans droits admin');
   });
 
-  test('main.js pointe SKYPE_DATA_DIR vers le dossier utilisateur d’Electron', () => {
-    assert.match(main, /process\.env\.SKYPE_DATA_DIR = path\.join\(app\.getPath\('userData'\), 'data'\);/);
+  test('main.js pointe SKIP_DATA_DIR vers le dossier utilisateur d’Electron', () => {
+    assert.match(main, /process\.env\.SKIP_DATA_DIR = path\.join\(app\.getPath\('userData'\), 'data'\);/);
   });
 
   test('le dossier de données porte le nom du produit, pas celui du paquet npm', () => {
     // Vérifié en conditions réelles : app.setName() seul ne suffit pas —
     // Electron a déjà figé le chemin quand main.js s'exécute, et les données
-    // atterrissaient dans « skype-reborn-desktop ». Le chemin doit être imposé.
-    assert.match(main, /app\.setPath\('userData', path\.join\(app\.getPath\('appData'\), 'Skype'\)\);/,
+    // atterrissaient dans « skip-desktop ». Le chemin doit être imposé.
+    assert.match(main, /app\.setPath\('userData', path\.join\(app\.getPath\('appData'\), 'Skip'\)\);/,
       'sans setPath explicite, le dossier reprend le nom du paquet npm');
     const posSetPath = main.indexOf("app.setPath('userData'");
     const posLecture = main.indexOf("app.getPath('userData')");

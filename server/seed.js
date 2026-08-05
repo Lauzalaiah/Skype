@@ -30,12 +30,12 @@ const avatar = (initials, color) =>
   );
 
 const PEOPLE = [
-  { skypeName: 'camille.durand', displayName: 'Camille Durand', mood: 'De retour sur Skype 💙', color: '#00AFF0', city: 'Lyon', country: 'France' },
-  { skypeName: 'thomas.leroy', displayName: 'Thomas Leroy', mood: 'En télétravail', color: '#7B68EE', city: 'Nantes', country: 'France' },
-  { skypeName: 'aicha.benali', displayName: 'Aïcha Benali', mood: 'Dispo pour un appel', color: '#FF6B6B', city: 'Marseille', country: 'France' },
-  { skypeName: 'lucas.martin', displayName: 'Lucas Martin', mood: '🎧 Musique', color: '#20C997', city: 'Bruxelles', country: 'Belgique' },
-  { skypeName: 'mamie.jeanne', displayName: 'Mamie Jeanne', mood: 'Appelez-moi le dimanche !', color: '#F59E0B', city: 'Quimper', country: 'France' },
-  { skypeName: 'sofia.rossi', displayName: 'Sofia Rossi', mood: 'Ciao !', color: '#EC4899', city: 'Milan', country: 'Italie' },
+  { pseudo: 'camille.durand', displayName: 'Camille Durand', mood: 'De retour sur Skip 💙', color: '#5A4FE0', city: 'Lyon', country: 'France' },
+  { pseudo: 'thomas.leroy', displayName: 'Thomas Leroy', mood: 'En télétravail', color: '#7B68EE', city: 'Nantes', country: 'France' },
+  { pseudo: 'aicha.benali', displayName: 'Aïcha Benali', mood: 'Dispo pour un appel', color: '#FF6B6B', city: 'Marseille', country: 'France' },
+  { pseudo: 'lucas.martin', displayName: 'Lucas Martin', mood: '🎧 Musique', color: '#20C997', city: 'Bruxelles', country: 'Belgique' },
+  { pseudo: 'mamie.jeanne', displayName: 'Mamie Jeanne', mood: 'Appelez-moi le dimanche !', color: '#F59E0B', city: 'Quimper', country: 'France' },
+  { pseudo: 'sofia.rossi', displayName: 'Sofia Rossi', mood: 'Ciao !', color: '#EC4899', city: 'Milan', country: 'Italie' },
 ];
 
 console.log('Création des comptes de démonstration…');
@@ -49,16 +49,16 @@ for (const person of PEOPLE) {
     .slice(0, 2)
     .toUpperCase();
   const user = M.createUser({
-    skypeName: person.skypeName,
+    pseudo: person.pseudo,
     displayName: person.displayName,
     password: 'skype123',
-    email: `${person.skypeName}@example.com`,
+    email: `${person.pseudo}@example.com`,
     avatar: avatar(initials, person.color),
   });
   user.mood = person.mood;
   user.city = person.city;
   user.country = person.country;
-  users[person.skypeName] = user;
+  users[person.pseudo] = user;
 }
 
 // Tout le monde se connaît.
@@ -101,7 +101,7 @@ seedChat(chatMamie, [
 
 const chatThomas = M.getOrCreateDirectChat(users['camille.durand'].id, users['thomas.leroy'].id);
 seedChat(chatThomas, [
-  ['thomas.leroy', 'Salut ! Tu as vu le nouveau Skype ?', 180],
+  ['thomas.leroy', 'Salut ! Tu as vu le nouveau Skip ?', 180],
   ['camille.durand', 'Oui !! Le vrai, avec les émoticônes animées et tout 🎉', 178],
   ['thomas.leroy', 'Le partage d’écran marche nickel aussi', 176],
   ['camille.durand', 'On teste un appel tout à l’heure ?', 60],
@@ -123,7 +123,7 @@ const groupe = M.createGroupChat(users['camille.durand'], {
 groupe.createdAt = ago(320);
 db.messages[groupe.id][0].createdAt = groupe.createdAt;
 seedChat(groupe, [
-  ['lucas.martin', 'Bon, qui est chaud pour un apéro Skype vendredi ?', 300],
+  ['lucas.martin', 'Bon, qui est chaud pour un apéro Skip vendredi ?', 300],
   ['sofia.rossi', 'Moi !! 🍾', 298],
   ['aicha.benali', 'Présente 🙌', 295],
   ['thomas.leroy', 'Je ramène la playlist (music)', 290],
@@ -172,7 +172,7 @@ M.recordCall({
 
 // Une demande de contact en attente pour montrer le flux.
 const demandeur = M.createUser({
-  skypeName: 'julien.petit',
+  pseudo: 'julien.petit',
   displayName: 'Julien Petit',
   password: 'skype123',
   email: 'julien.petit@example.com',

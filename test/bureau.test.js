@@ -1,7 +1,7 @@
 /**
  * Serveur partagé de l'application de bureau.
  *
- * Sans ce réglage, deux personnes qui installent Skype ne peuvent pas se
+ * Sans ce réglage, deux personnes qui installent Skip ne peuvent pas se
  * parler : chacune s'adresse au serveur que sa propre installation embarque.
  * Le téléchargement produit alors autant d'îles que d'installations.
  *

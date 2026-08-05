@@ -352,7 +352,7 @@ export function renderConversation(chatId) {
   messagesNode.addEventListener('click', (e) => {
     const mention = e.target.closest('.mention');
     if (!mention) return;
-    const member = chatMembers(chat).find((m) => m.skypeName === mention.dataset.mention);
+    const member = chatMembers(chat).find((m) => m.pseudo === mention.dataset.mention);
     if (member) openProfileCard(member.id);
   });
 

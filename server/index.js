@@ -1,5 +1,5 @@
 /**
- * Skype Reborn — serveur HTTP + WebSocket, sans aucune dépendance externe.
+ * Skip — serveur HTTP + WebSocket, sans aucune dépendance externe.
  *   node server/index.js            (port 3000 par défaut)
  *   PORT=8080 node server/index.js
  */
@@ -179,7 +179,7 @@ server.listen(PORT, HOST, () => {
   const port = server.address().port;
   console.log(`
   ╭──────────────────────────────────────────────╮
-  │   S k y p e   R e b o r n   ·   v8.138.0     │
+  │   S k y p e   R e b o r n   ·   v8.139.0     │
   ╰──────────────────────────────────────────────╯
 
   ▸ Application : http://localhost:${port}

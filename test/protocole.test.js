@@ -40,7 +40,7 @@ describe('Compatibilité entre versions', () => {
 
   test('un serveur plus récent demande de mettre à jour l’application', () => {
     const message = incompatibilite(2, 1);
-    assert.match(message, /Mettez à jour Skype/,
+    assert.match(message, /Mettez à jour Skip/,
       'c’est à l’utilisateur d’agir, et le message doit le lui dire');
     assert.doesNotMatch(message, /administrateur/);
   });
@@ -49,7 +49,7 @@ describe('Compatibilité entre versions', () => {
     const message = incompatibilite(1, 2);
     assert.match(message, /administrateur/,
       'l’utilisateur ne peut rien faire : inutile de lui demander de chercher');
-    assert.doesNotMatch(message, /Mettez à jour Skype/);
+    assert.doesNotMatch(message, /Mettez à jour Skip/);
   });
 
   test('le protocole est exposé par le contrôle de santé', () => {
@@ -78,5 +78,34 @@ describe('Compatibilité entre versions', () => {
       assert.match(source, new RegExp(`^\\s*\\*\\s+${n}\\s`, 'm'),
         `le protocole ${n} n’est pas documenté dans l’historique`);
     }
+  });
+});
+
+describe('Le changement de nom ne coupe rien', () => {
+  const serveur = fs.readFileSync(path.join(ROOT, 'public/js/lib/serveur.js'), 'utf8');
+  const store = fs.readFileSync(path.join(ROOT, 'server/store.js'), 'utf8');
+
+  test('un serveur pas encore renommé reste joignable', () => {
+    // Il annonce encore « skype ». Le refuser rendrait l'application incapable
+    // de se connecter à tout le parc existant, pour un mot que personne ne voit.
+    assert.match(serveur, /info\.service !== 'skip' && info\.service !== 'skype'/,
+      'l’ancien identifiant de service doit rester accepté');
+  });
+
+  test('l’ancienne variable d’environnement est encore lue', () => {
+    // Un serveur installé la définit dans son unité systemd ou sa composition.
+    // Sans elle, il repartirait sur une base vide sans le moindre message.
+    assert.match(store, /process\.env\.SKIP_DATA_DIR\s*\n?\s*\|\| process\.env\.SKYPE_DATA_DIR/,
+      'SKYPE_DATA_DIR doit rester un repli');
+  });
+
+  test('la base de données est reprise sous son nouveau nom', () => {
+    // Sans reprise, le serveur conclurait qu'il démarre pour la première fois
+    // et créerait une base vide à côté de l'ancienne : comptes et
+    // conversations toujours sur le disque, mais plus personne ne peut se
+    // connecter, et rien dans le journal ne dit pourquoi.
+    assert.match(store, /skype\.json/, 'l’ancien chemin doit rester connu');
+    assert.match(store, /fs\.renameSync\(ANCIEN_DB_PATH, DB_PATH\)/,
+      'la reprise doit renommer, pas copier : deux bases vivantes divergeraient');
   });
 });

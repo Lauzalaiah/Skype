@@ -1,5 +1,5 @@
 /**
- * Adresse du serveur Skype.
+ * Adresse du serveur Skip.
  *
  * Sur le web et en application installée depuis Safari, la page vient du
  * serveur lui-même : les chemins relatifs suffisent, et rien ne change.
@@ -13,7 +13,7 @@
  *   3. à défaut, de l'origine de la page — le cas normal sur le web.
  */
 
-const CLE = 'skype.server';
+const CLE = 'skip.server';
 
 /**
  * L'application de bureau, elle, ne se contente pas de préfixer les chemins :
@@ -109,7 +109,7 @@ export function urlSocket(chemin) {
   return base.replace(/^http/i, 'ws') + chemin;
 }
 
-/** Vérifie qu'une adresse répond bien comme un serveur Skype. */
+/** Vérifie qu'une adresse répond bien comme un serveur Skip. */
 export async function tester(adresse) {
   const base = nettoyer(adresse);
   if (!/^https?:\/\//i.test(base)) {
@@ -123,8 +123,12 @@ export async function tester(adresse) {
   }
   if (!reponse.ok) throw new Error(`Le serveur a répondu ${reponse.status}.`);
   const info = await reponse.json().catch(() => null);
-  if (!info || info.service !== 'skype') {
-    throw new Error('Cette adresse ne répond pas comme un serveur Skype.');
+  // « skype » est l'ancien identifiant, d'avant le changement de nom. Un
+  // serveur déjà installé le renvoie encore, et le refuser rendrait
+  // l'application incapable de se connecter à tout le parc existant — pour
+  // un mot que personne ne voit.
+  if (!info || (info.service !== 'skip' && info.service !== 'skype')) {
+    throw new Error('Cette adresse ne répond pas comme un serveur Skip.');
   }
 
   const probleme = incompatibilite(info.protocole);
@@ -156,7 +160,7 @@ export function incompatibilite(protocoleDuServeur, attendu = PROTOCOLE_ATTENDU)
   if (!Number.isFinite(serveur)) return null;
 
   if (serveur > attendu) {
-    return 'Ce serveur est plus récent que cette application. Mettez à jour Skype pour vous y connecter.';
+    return 'Ce serveur est plus récent que cette application. Mettez à jour Skip pour vous y connecter.';
   }
   if (serveur < attendu) {
     return 'Ce serveur est trop ancien pour cette application. Son administrateur doit le mettre à jour.';

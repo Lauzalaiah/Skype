@@ -392,7 +392,7 @@ export const personRow = (user, { sub = '', trailing = null, onClick = null, sel
     avatar(user, { size: 'md' }),
     el('div.person-row__body', {}, [
       el('div.person-row__name.truncate', { text: user.displayName }),
-      el('div.person-row__sub.truncate', { text: sub || user.mood || `@${user.skypeName}` }),
+      el('div.person-row__sub.truncate', { text: sub || user.mood || `@${user.pseudo}` }),
     ]),
     trailing,
   ]);

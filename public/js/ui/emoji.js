@@ -1,10 +1,10 @@
-/** Sélecteur d'émoticônes — les classiques de Skype d'abord, puis les émojis. */
+/** Sélecteur d'émoticônes — les classiques de Skip d'abord, puis les émojis. */
 import { el, clear, debounce } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
 
-const RECENT_KEY = 'skype.emoji.recent';
+const RECENT_KEY = 'skip.emoji.recent';
 
-/** Émoticônes Skype historiques, avec leur raccourci texte. */
+/** Émoticônes Skip historiques, avec leur raccourci texte. */
 export const SKYPE_CLASSICS = [
   ['🙂', 'Sourire', ':)'], ['😃', 'Grand sourire', ':D'], ['🙁', 'Triste', ':('],
   ['😉', 'Clin d’œil', ';)'], ['😛', 'Langue', ':P'], ['😮', 'Surpris', ':O'],
@@ -22,7 +22,7 @@ export const SKYPE_CLASSICS = [
   ['🙏', 'Prière', '(pray)'], ['🙌', 'Tope là', '(highfive)'], ['👌', 'OK', '(ok)'],
   ['🤝', 'Poignée de main', '(handshake)'], ['🤞', 'Doigts croisés', '(fingerscrossed)'],
   ['❤️', 'Cœur', '(h)'], ['💔', 'Cœur brisé', '(brokenheart)'], ['💖', 'Cœur scintillant', '(sparklingheart)'],
-  ['🤗', 'Câlin', '(hug)'], ['🌹', 'Rose', '(rose)'], ['💙', 'Skype', '(skype)'],
+  ['🤗', 'Câlin', '(hug)'], ['🌹', 'Rose', '(rose)'], ['💙', 'Skip', '(skip)'],
   ['🎉', 'Fête', '(party)'], ['🎂', 'Gâteau', '(cake)'], ['🎁', 'Cadeau', '(gift)'],
   ['🍾', 'Champagne', '(champagne)'], ['🍺', 'Bière', '(beer)'], ['🍸', 'Cocktail', '(drink)'],
   ['☕', 'Café', '(coffee)'], ['🍕', 'Pizza', '(pizza)'], ['🎄', 'Sapin', '(xmas)'],
@@ -44,8 +44,8 @@ const CATEGORIES = [
     emojis: [],
   },
   {
-    id: 'skype',
-    label: 'Émoticônes Skype',
+    id: 'skip',
+    label: 'Émoticônes Skip',
     tab: '💙',
     emojis: SKYPE_CLASSICS.map(([emoji, name, code]) => ({ emoji, name, code })),
   },
@@ -115,7 +115,7 @@ export function rememberEmoji(emoji) {
 export function openEmojiPicker(anchor, onPick, { closeOnPick = false } = {}) {
   document.querySelector('.emoji-panel')?.remove();
 
-  let category = 'skype';
+  let category = 'skip';
   let query = '';
 
   const grid = el('div.emoji-panel__grid');

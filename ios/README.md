@@ -1,4 +1,4 @@
-# Skype Reborn sur iPhone
+# Skip sur iPhone
 
 Deux façons de l'avoir sur votre téléphone. La première marche **tout de
 suite**, sans compte développeur ni Mac. La seconde produit un vrai `.ipa`.
@@ -42,7 +42,7 @@ l'affaire (`cloudflared tunnel --url http://localhost:3000`, `ngrok http 3000`).
 | Messagerie, historique, pièces jointes | ✅ |
 | Appels audio et vidéo (WebRTC) | ✅ Safari 15+ |
 | Messages vocaux, messagerie vocale | ✅ |
-| Sons Skype | ✅ après un premier geste sur l'écran (règle d'autoplay d'iOS) |
+| Sons Skip | ✅ après un premier geste sur l'écran (règle d'autoplay d'iOS) |
 | Installation sur l'écran d'accueil | ✅ |
 | Ouverture hors ligne | ✅ (coquille uniquement) |
 | **Partage d'écran** | ❌ iOS ne l'expose à aucun navigateur |
@@ -102,13 +102,13 @@ C'est **le point qui décide si l'application fonctionne**. La page vient du
 paquet embarqué : elle ne peut pas deviner à quel serveur parler.
 
 **Par défaut**, l'application le demande au premier lancement, vérifie que
-l'adresse répond bien comme un serveur Skype (`/api/health`), puis la mémorise.
+l'adresse répond bien comme un serveur Skip (`/api/health`), puis la mémorise.
 On peut en changer depuis l'écran de connexion.
 
 **Pour figer l'adresse**, renseignez `server.url` dans `capacitor.config.json` :
 
 ```json
-"server": { "url": "https://skype.exemple.fr" }
+"server": { "url": "https://skip.exemple.fr" }
 ```
 
 Dans les deux cas, il faut un serveur joignable en HTTPS. Voir

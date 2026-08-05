@@ -37,6 +37,6 @@ jobs:
 
       - uses: actions/upload-artifact@v6
         with:
-          name: skype-reborn-windows
+          name: skip-windows
           path: desktop/dist/*.exe
           if-no-files-found: error

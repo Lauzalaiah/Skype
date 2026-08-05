@@ -11,7 +11,7 @@ import { initials, colorFor } from '../lib/format.js';
 
 export function openNewChatDialog() {
   const results = el('div.stack');
-  const info = el('p.dim', { style: { fontSize: '0.85em', marginBottom: '10px' }, text: 'Choisissez un contact ou recherchez un pseudo Skype.' });
+  const info = el('p.dim', { style: { fontSize: '0.85em', marginBottom: '10px' }, text: 'Choisissez un contact ou recherchez un pseudo Skip.' });
 
   const render = (people) => {
     clear(results);
@@ -22,7 +22,7 @@ export function openNewChatDialog() {
     for (const person of people) {
       results.append(
         personRow(person, {
-          sub: person.mood || `@${person.skypeName}`,
+          sub: person.mood || `@${person.pseudo}`,
           onClick: async () => {
             instance.close();
             const { openDirectChat } = await import('./sidebar.js');
@@ -107,7 +107,7 @@ export function openNewGroupDialog(preselected = []) {
       results.append(
         personRow(person, {
           selected: isSelected,
-          sub: `@${person.skypeName}`,
+          sub: `@${person.pseudo}`,
           trailing: isSelected ? icon('check', 'icon icon--sm') : null,
           onClick: () => {
             if (isSelected) selected.delete(person.id);
@@ -190,7 +190,7 @@ export function openAddMembers(chat) {
       results.append(
         personRow(person, {
           selected: isSelected,
-          sub: `@${person.skypeName}`,
+          sub: `@${person.pseudo}`,
           trailing: isSelected ? icon('check', 'icon icon--sm') : null,
           onClick: () => {
             if (isSelected) selected.delete(person.id);
@@ -240,7 +240,7 @@ export function openAddMembers(chat) {
 
 export function openAddContactDialog() {
   const results = el('div.stack', { style: { minHeight: '120px' } });
-  const hint = el('p.dim', { style: { fontSize: '0.85em' }, text: 'Recherchez par pseudo Skype, nom complet ou adresse e-mail.' });
+  const hint = el('p.dim', { style: { fontSize: '0.85em' }, text: 'Recherchez par pseudo Skip, nom complet ou adresse e-mail.' });
 
   const render = (people) => {
     clear(results);
@@ -253,7 +253,7 @@ export function openAddContactDialog() {
       const isPending = state.requests.outgoing.some((r) => r.toId === person.id);
       results.append(
         personRow(person, {
-          sub: `@${person.skypeName}${person.city ? ` · ${person.city}` : ''}`,
+          sub: `@${person.pseudo}${person.city ? ` · ${person.city}` : ''}`,
           onClick: () => openProfileCard(person.id, person),
           trailing: isContact
             ? el('span.dim', { style: { fontSize: '0.8em' }, text: 'Déjà contact' })
@@ -265,7 +265,7 @@ export function openAddContactDialog() {
                   onclick: async (e) => {
                     e.stopPropagation();
                     try {
-                      await api.addContact(person.id, `Bonjour ! C’est ${state.user.displayName}, ajoutons-nous sur Skype.`);
+                      await api.addContact(person.id, `Bonjour ! C’est ${state.user.displayName}, ajoutons-nous sur Skip.`);
                       toast('Demande de contact envoyée');
                       const { refreshContacts } = await import('./sidebar.js');
                       await refreshContacts();
@@ -283,7 +283,7 @@ export function openAddContactDialog() {
   const instance = modal({
     title: 'Ajouter un contact',
     body: [
-      searchBox('Pseudo Skype, nom ou e-mail…', debounce(async (value) => {
+      searchBox('Pseudo Skip, nom ou e-mail…', debounce(async (value) => {
         if (value.trim().length < 2) {
           clear(results);
           return;
@@ -302,13 +302,13 @@ export function openAddContactDialog() {
       hint,
       results,
       el('div', { style: { marginTop: '16px', padding: '12px', borderRadius: '8px', background: 'var(--accent-soft)', fontSize: '0.85em' } }, [
-        el('strong', { text: 'Votre pseudo Skype : ' }),
-        el('code', { text: state.user.skypeName }),
+        el('strong', { text: 'Votre pseudo Skip : ' }),
+        el('code', { text: state.user.pseudo }),
         el('button.btn.btn--sm.btn--ghost', {
           text: 'Copier',
           style: { marginLeft: '8px' },
           onclick: () => {
-            copyToClipboard(state.user.skypeName);
+            copyToClipboard(state.user.pseudo);
             toast('Pseudo copié — partagez-le pour qu’on vous ajoute');
           },
         }),
@@ -321,7 +321,7 @@ export function openAddContactDialog() {
 
 export async function openProfileCard(userId, preloaded = null) {
   let user = preloaded || getUser(userId);
-  if (!user || !user.skypeName) {
+  if (!user || !user.pseudo) {
     try {
       const data = await api.user(userId);
       user = data.user;
@@ -352,7 +352,7 @@ export async function openProfileCard(userId, preloaded = null) {
       el('div.details__hero', {}, [
         avatar(user, { size: 'xxl', presence: false }),
         el('div.details__name', { text: user.displayName }),
-        el('div.dim', { style: { fontSize: '0.85em' }, text: `@${user.skypeName}` }),
+        el('div.dim', { style: { fontSize: '0.85em' }, text: `@${user.pseudo}` }),
         user.mood ? el('div.details__mood', { text: user.mood }) : null,
         el('div.row.gap-8', { style: { justifyContent: 'center', marginTop: '6px' } }, [
           el('span.status-dot', { dataset: { status: user.status || 'offline' } }),
@@ -396,11 +396,11 @@ export async function openProfileCard(userId, preloaded = null) {
 
       el('div.details__section', {}, [
         el('div.details__section-title', { text: 'Informations' }),
-        detail('Pseudo Skype', user.skypeName),
+        detail('Pseudo Skip', user.pseudo),
         detail('Statut', presenceLabel(user.status, user.lastSeen)),
         detail('Lieu', [user.city, user.country].filter(Boolean).join(', ')),
         detail('Anniversaire', user.birthday ? dateOf(new Date(user.birthday).getTime()) : ''),
-        detail('Numéro Skype', user.skypeNumber),
+        detail('Numéro Skip', user.skypeNumber),
         detail('Site web', user.website),
         user.about ? el('p', { style: { fontSize: '0.9em', lineHeight: '1.5', marginTop: '8px', color: 'var(--text-secondary)' }, text: user.about }) : null,
       ]),
@@ -409,7 +409,7 @@ export async function openProfileCard(userId, preloaded = null) {
         ? el('div', {}, [
             el('button.details__action', {
               onclick: () => {
-                copyToClipboard(`${location.origin}/?add=${user.skypeName}`);
+                copyToClipboard(`${location.origin}/?add=${user.pseudo}`);
                 toast('Lien de profil copié');
               },
             }, [icon('link'), 'Copier le lien du profil']),
@@ -730,19 +730,19 @@ export function openShortcutsDialog() {
 
 export function openAboutDialog() {
   const instance = modal({
-    title: 'À propos de Skype',
+    title: 'À propos de Skip',
     size: 'narrow',
     body: el('div.center', {}, [
       el('div', {
         style: {
           width: '72px', height: '72px', borderRadius: '50%', margin: '0 auto 16px',
-          background: 'linear-gradient(135deg, #00AFF0, #0078A8)', color: '#fff',
+          background: 'linear-gradient(135deg, #5A4FE0, #3B2CA8)', color: '#fff',
           display: 'grid', placeItems: 'center', fontSize: '36px', fontWeight: '700',
         },
         text: 'S',
       }),
-      el('h3', { style: { fontSize: '1.3em' }, text: 'Skype' }),
-      el('p.dim', { text: 'Version 8.138.0 · Skype Reborn' }),
+      el('h3', { style: { fontSize: '1.3em' }, text: 'Skip' }),
+      el('p.dim', { text: 'Version 8.139.0 · Skip' }),
       el('p', {
         style: { marginTop: '16px', lineHeight: '1.6', fontSize: '0.9em', color: 'var(--text-secondary)' },
         text: 'Messagerie, appels audio et vidéo, partage d’écran, groupes, sondages et bien plus. Toutes vos conversations restent sur votre serveur.',

@@ -1,7 +1,7 @@
 {
-  "name": "skype-reborn",
-  "version": "8.138.0",
-  "description": "Skype, recréé de A à Z — messagerie, appels audio/vidéo, partage d'écran, groupes, sondages, Skype Credit, et tout le reste. Zéro dépendance.",
+  "name": "skip",
+  "version": "8.139.0",
+  "description": "Skip, recréé de A à Z — messagerie, appels audio/vidéo, partage d'écran, groupes, sondages, Skip Credit, et tout le reste. Zéro dépendance.",
   "type": "module",
   "main": "server/index.js",
   "scripts": {
@@ -14,7 +14,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": ["skype", "chat", "voip", "webrtc", "messaging", "video-call"],
+  "keywords": ["skip", "chat", "voip", "webrtc", "messaging", "video-call"],
   "license": "MIT",
   "private": true
 }

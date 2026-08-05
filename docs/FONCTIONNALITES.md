@@ -1,13 +1,13 @@
 # Liste exhaustive des fonctionnalités
 
 Inventaire complet de ce qui a été reconstruit, dans l'esprit des dernières versions de
-Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
+Skip (8.x). Chaque ligne est implémentée et fonctionnelle.
 
 ---
 
 ## 1. Compte et identité
 
-- Création de compte avec pseudo Skype, nom affiché, e-mail facultatif
+- Création de compte avec pseudo Skip, nom affiché, e-mail facultatif
 - Validation du pseudo (3 à 32 caractères, commence par une lettre)
 - Proposition automatique d'un pseudo à partir du nom saisi
 - Connexion par pseudo **ou** par e-mail
@@ -96,7 +96,7 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 - 80 émoticônes historiques de Skype avec leurs raccourcis d'origine
   (`(y)`, `(n)`, `(h)`, `(rofl)`, `(cool)`, `(party)`, `(inlove)`, `(facepalm)`, `(ninja)`…)
 - Conversion automatique à la frappe, y compris `:)`, `:D`, `;)`, `:P`, `xD`, `8)`
-- Sélecteur à 9 catégories, dont un onglet « Émoticônes Skype » dédié
+- Sélecteur à 9 catégories, dont un onglet « Émoticônes Skip » dédié
 - Environ 1 800 émojis modernes
 - Recherche par nom ou par raccourci
 - Émoticônes récemment utilisées, conservées localement
@@ -107,7 +107,7 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 
 - **Service d'écho — test du micro** : le contact « echo123 » est proposé dès
   l'inscription, avec un message d'accueil. L'appeler décroche instantanément,
-  dit : « Bienvenue au service de test d'appel Skype. Après le bip, parlez,
+  dit : « Bienvenue au service de test d'appel Skip. Après le bip, parlez,
   votre message sera enregistré puis rejoué. » (synthèse vocale locale), fait
   entendre un bip, enregistre dix secondes, puis rejoue l'enregistrement — de
   quoi vérifier micro et haut-parleurs avant un vrai appel, exactement comme
@@ -117,7 +117,7 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
   avec le service d'écho
 - Appels audio et vidéo en tête-à-tête
 - Appels de groupe (maillage WebRTC complet)
-- Sonnerie entrante avec la mélodie caractéristique de Skype
+- Sonnerie entrante avec la mélodie caractéristique de Skip
 - Tonalité d'appel sortant
 - Fenêtre d'appel entrant : répondre en audio, répondre en vidéo, refuser
 - Réponses rapides au refus (« Je te rappelle », « Je suis en réunion »…)
@@ -151,7 +151,7 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 - Avertissement avant de fermer l'onglet pendant un appel
 - Raccrochage propre de toutes les sessions à la déconnexion
 
-## 8. Téléphonie et crédit Skype
+## 8. Téléphonie et crédit Skip
 
 - Pavé numérique avec vraies tonalités DTMF
 - **Composition vers n'importe quel pays** : 77 destinations, sélecteur de pays
@@ -166,9 +166,9 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 - Indicatif non reconnu : tarif international par défaut, jamais de gratuité
 - **Achat de crédit** (5 €, 10 €, 25 €, 50 €), chaque montant indiquant combien
   de minutes il représente vers la destination composée
-- Solde de crédit Skype visible sur le pavé et dans les réglages
+- Solde de crédit Skip visible sur le pavé et dans les réglages
 - Grille tarifaire
-- Attribution d'un numéro Skype (France, Belgique, Suisse, Canada, Royaume-Uni, États-Unis)
+- Attribution d'un numéro Skip (France, Belgique, Suisse, Canada, Royaume-Uni, États-Unis)
 - Les appels téléphoniques apparaissent dans l'historique
 
 ## 9. Groupes
@@ -211,13 +211,13 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 ## 12. Notifications
 
 - Notifications système du navigateur, cliquables
-- Bandeau interne façon Skype
-- **Sons d'origine de Skype** — chaque fichier est rattaché à un événement
+- Bandeau interne façon Skip
+- **Sons d'origine de Skip** — chaque fichier est rattaché à un événement
   précis, et à un seul :
 
   | Fichier d'origine | Se déclenche sur |
   |---|---|
-  | `Skypelogin.mp3` | connexion à Skype, et rien d'autre |
+  | `Skypelogin.mp3` | connexion à Skip, et rien d'autre |
   | `Skypecall.mp3` | appel entrant (sonnerie par défaut) |
   | `Skype_ringtone_.mp3` | appel entrant (sonnerie alternative, au choix) |
   | `Skypecallbipbip.mp3` | appel sortant, pendant que ça sonne |
@@ -268,7 +268,7 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 
 - Thème Clair
 - Thème Sombre
-- Thème **Skype Classic** (le bleu d'origine, rail bleu, bulles bleues)
+- Thème **Skip Classic** (le bleu d'origine, rail bleu, bulles bleues)
 - Thème Contraste élevé (accessibilité)
 - Suivi automatique du thème du système
 - Six couleurs d'accentuation
@@ -289,7 +289,7 @@ Skype (8.x). Chaque ligne est implémentée et fonctionnelle.
 ## 15. Réglages
 
 Onze sections : Profil, Apparence, Audio et vidéo, Appels, Messagerie, Notifications,
-Contacts, Confidentialité, Crédit Skype, Général, Aide et retours.
+Contacts, Confidentialité, Crédit Skip, Général, Aide et retours.
 
 - Test du micro et de la caméra avec aperçu vidéo et niveau sonore en direct
 - Liste des périphériques audio et vidéo

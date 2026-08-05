@@ -12,8 +12,8 @@ import { icon } from './icons.js';
 
 const LIBELLES = {
   telechargement: (v) => `Téléchargement de la version ${v}…`,
-  prete: (v) => `Skype ${v} est prêt à être installé.`,
-  manuel: (v) => `Skype ${v} est disponible.`,
+  prete: (v) => `Skip ${v} est prêt à être installé.`,
+  manuel: (v) => `Skip ${v} est disponible.`,
 };
 
 let bandeau = null;

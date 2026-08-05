@@ -18,7 +18,7 @@ const SECTIONS = [
   ['notifications', 'Notifications', 'bell'],
   ['contacts', 'Contacts', 'people'],
   ['privacy', 'Confidentialité', 'shield'],
-  ['credit', 'Crédit Skype', 'wallet'],
+  ['credit', 'Crédit Skip', 'wallet'],
   ['general', 'Général', 'settings'],
   ['help', 'Aide et retours', 'info'],
 ];
@@ -210,12 +210,12 @@ export function openSettings(section = 'profile') {
       ]),
 
       group('Coordonnées', [
-        settingRow('Pseudo Skype', 'Partagez-le pour qu’on vous ajoute', el('div.row.gap-8', {}, [
-          el('code', { text: user.skypeName }),
+        settingRow('Pseudo Skip', 'Partagez-le pour qu’on vous ajoute', el('div.row.gap-8', {}, [
+          el('code', { text: user.pseudo }),
           el('button.btn.btn--sm.btn--ghost', {
             text: 'Copier',
             onclick: () => {
-              copyToClipboard(user.skypeName);
+              copyToClipboard(user.pseudo);
               toast('Pseudo copié');
             },
           }),
@@ -278,9 +278,9 @@ export function openSettings(section = 'profile') {
 
   function appearanceSection() {
     const themes = [
-      ['light', 'Clair', ['#ffffff', '#f0f0f0', '#00aff0']],
+      ['light', 'Clair', ['#ffffff', '#f0f0f0', '#5a4fe0']],
       ['dark', 'Sombre', ['#201f1e', '#323130', '#29b6f6']],
-      ['classic', 'Skype Classic', ['#ffffff', '#00aff0', '#0078a8']],
+      ['classic', 'Skip Classic', ['#ffffff', '#5a4fe0', '#3b2ca8']],
       ['contrast', 'Contraste élevé', ['#000000', '#ffff00', '#1aebff']],
     ];
 
@@ -302,7 +302,7 @@ export function openSettings(section = 'profile') {
     }
 
     const accents = [
-      ['skype', '#00aff0'], ['ocean', '#0078d4'], ['forest', '#107c10'],
+      ['skip', '#5a4fe0'], ['ocean', '#0078d4'], ['forest', '#107c10'],
       ['sunset', '#ca5010'], ['grape', '#8764b8'], ['rose', '#e3008c'],
     ];
     const swatches = el('div.accent-swatches');
@@ -438,7 +438,7 @@ export function openSettings(section = 'profile') {
         settingRow('Appels entrants', 'Limitez les appels à vos contacts', select('privacy.whoCanCall', [['anyone', 'Tout le monde'], ['contacts', 'Mes contacts uniquement']])),
       ]),
       group('Appels téléphoniques', [
-        settingRow('Numéro Skype', state.user.skypeNumber || 'Recevez des appels sur un vrai numéro',
+        settingRow('Numéro Skip', state.user.skypeNumber || 'Recevez des appels sur un vrai numéro',
           state.user.skypeNumber
             ? el('code', { text: state.user.skypeNumber })
             : el('button.btn.btn--sm', {
@@ -447,7 +447,7 @@ export function openSettings(section = 'profile') {
                   const { skypeNumber } = await api.getSkypeNumber('FR');
                   state.user.skypeNumber = skypeNumber;
                   renderPanel();
-                  toast(`Votre numéro Skype : ${skypeNumber}`);
+                  toast(`Votre numéro Skip : ${skypeNumber}`);
                 },
               })
         ),
@@ -543,7 +543,7 @@ export function openSettings(section = 'profile') {
       ]),
 
       group('Bibliothèque de sons', [
-        el('p.dim', { style: { fontSize: '0.84em', marginBottom: '10px' }, text: 'Les sons d’origine de Skype. Survolez pour voir quand ils se déclenchent, cliquez pour les écouter.' }),
+        el('p.dim', { style: { fontSize: '0.84em', marginBottom: '10px' }, text: 'Les sons d’origine de Skip. Survolez pour voir quand ils se déclenchent, cliquez pour les écouter.' }),
         el('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '8px' } },
           Object.entries(sounds.BIBLIOTHEQUE)
             .filter(([, entry]) => !entry.orphelin)
@@ -676,13 +676,13 @@ export function openSettings(section = 'profile') {
       })),
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const link = el('a', { href: URL.createObjectURL(blob), download: `skype-export-${new Date().toISOString().slice(0, 10)}.json` });
+    const link = el('a', { href: URL.createObjectURL(blob), download: `skip-export-${new Date().toISOString().slice(0, 10)}.json` });
     link.click();
     URL.revokeObjectURL(link.href);
     toast('Export téléchargé');
   }
 
-  // ── Crédit Skype ───────────────────────────────────────────────────────────
+  // ── Crédit Skip ───────────────────────────────────────────────────────────
 
   function creditSection() {
     return el('div', {}, [
@@ -712,7 +712,7 @@ export function openSettings(section = 'profile') {
         settingRow('Europe', '0,024 €/min', el('span.dim', { text: '0,024 €' })),
         settingRow('International', 'à partir de 0,04 €/min', el('span.dim', { text: '0,040 €' })),
       ]),
-      group('Numéro Skype', [
+      group('Numéro Skip', [
         settingRow('Recevoir des appels sur un numéro', state.user.skypeNumber || 'Aucun numéro attribué',
           el('button.btn.btn--sm', {
             text: state.user.skypeNumber ? 'Changer' : 'Obtenir',
@@ -744,7 +744,7 @@ export function openSettings(section = 'profile') {
           select('language', [['fr', 'Français'], ['en', 'English'], ['es', 'Español'], ['de', 'Deutsch']])),
       ]),
       group('Démarrage', [
-        settingRow('Statut au démarrage', 'Votre présence à l’ouverture de Skype',
+        settingRow('Statut au démarrage', 'Votre présence à l’ouverture de Skip',
           el('select.select', { style: { width: 'auto' }, onchange: (e) => setStatus(e.target.value) },
             [['online', 'En ligne'], ['away', 'Absent'], ['busy', 'Ne pas déranger'], ['invisible', 'Invisible']].map(([id, label]) =>
               el('option', { value: id, selected: state.user.manualStatus === id || state.user.status === id, text: label })
@@ -757,7 +757,7 @@ export function openSettings(section = 'profile') {
             text: 'Vider',
             onclick: () => {
               state.messages.clear();
-              localStorage.removeItem('skype.emoji.recent');
+              localStorage.removeItem('skip.emoji.recent');
               toast('Cache vidé');
             },
           })),
@@ -775,7 +775,7 @@ export function openSettings(section = 'profile') {
         settingRow('Guide de démarrage', 'Comment retrouver vos contacts et lancer un appel',
           el('button.btn.btn--sm', { text: 'Ouvrir', onclick: () => window.open('/pub', '_blank') })),
         settingRow('Raccourcis clavier', '', el('button.btn.btn--sm', { text: 'Afficher', onclick: openShortcutsDialog })),
-        settingRow('À propos de Skype', 'Version et informations', el('button.btn.btn--sm', { text: 'Voir', onclick: openAboutDialog })),
+        settingRow('À propos de Skip', 'Version et informations', el('button.btn.btn--sm', { text: 'Voir', onclick: openAboutDialog })),
       ]),
       group('Diagnostic', [
         settingRow('État de la connexion', state.connection === 'online' ? 'Connecté au serveur' : 'Reconnexion en cours…',

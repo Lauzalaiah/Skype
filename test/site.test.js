@@ -2,7 +2,7 @@
  * Le site de téléchargement est la première chose que verra quelqu'un qui
  * cherche « revenir sur Skype ». Deux catégories d'erreurs y seraient graves :
  *
- *  - laisser croire à un retour officiel de Skype (c'est un projet de fan) ;
+ *  - laisser croire à un retour officiel de Skip (c'est un projet de fan) ;
  *  - proposer un bouton de téléchargement qui ne mène nulle part.
  *
  * Ces tests verrouillent les deux, plus la cohérence entre ce que le workflow
@@ -39,10 +39,10 @@ describe('Site de téléchargement — honnêteté', () => {
       'la mention légale du pied de page a disparu');
   });
 
-  test('la page n’annonce pas un retour officiel de Skype', () => {
+  test('la page n’annonce pas un retour officiel de Skip', () => {
     const interdits = [
-      /Skype est de retour/i,
-      /Skype revient/i,
+      /Skip est de retour/i,
+      /Skip revient/i,
       /le retour officiel/i,
       /Microsoft relance/i,
       /officiellement de retour/i,
