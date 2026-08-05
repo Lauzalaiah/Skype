@@ -1,202 +1,302 @@
-# Mettre Skype Reborn en service
+# Héberger Skype Reborn
 
-L'application est un **client**. Sur un téléphone, elle ne sert à rien tant
-qu'un serveur ne tourne pas quelque part de joignable. C'est l'étape que tout
-le monde saute, et c'est celle qui décide si l'application fonctionne ou non.
+L'application est un **client**. Tant qu'aucun serveur ne tourne quelque part
+de joignable, elle ne sert à rien à plusieurs. C'est l'étape que tout le monde
+saute, et c'est celle qui décide si l'application fonctionne ou non.
 
-Trois choses, dans cet ordre :
-
-1. faire tourner le serveur quelque part ;
-2. le rendre accessible en **HTTPS** ;
-3. dire à l'application où il est.
+Ce document contient le chemin exact, de la machine nue à deux personnes qui
+s'appellent, puis la liste complète des paramètres.
 
 ---
 
-## 1. Le serveur
+## Choisir où
 
-### Le chemin court : Docker, et un domaine
+| Situation | Ce qu'il faut | Ce que vous obtenez |
+| --- | --- | --- |
+| **Essayer seul** | votre ordinateur | tout fonctionne, micro et caméra compris |
+| **Essayer à deux, aujourd'hui** | votre ordinateur + un tunnel | une adresse `https://` publique, temporaire |
+| **Pour de bon** | une machine allumée + un domaine | une adresse à vous, un certificat renouvelé seul |
 
-Si vous avez déjà un nom de domaine pointé sur la machine, les trois étapes de
-cette page se font en une seule commande, certificat compris :
+Les navigateurs refusent le micro et la caméra sur une page en `http`. Sans
+certificat, il n'y a **ni appel ni message vocal**. `localhost` fait exception,
+mais pas l'adresse IP de votre machine sur le réseau local : deux personnes sur
+le même wifi pourront s'écrire, pas s'appeler.
 
-```bash
-git clone <votre-dépôt> skype && cd skype
-DOMAINE=skype.exemple.fr docker compose --profile https up -d
-```
+---
 
-Caddy obtient le certificat Let's Encrypt tout seul, laisse passer le
-WebSocket sans configuration, et le renouvelle sans qu'on y repense. Les
-données restent dans `./donnees` sur la machine hôte — c'est ce dossier qu'il
-faut sauvegarder.
+## 1. Essayer seul, en une commande
 
-Sans domaine, pour essayer sur le réseau local :
-
-```bash
-docker compose up -d          # écoute sur le port 3000
-```
-
-Le reste de cette page décrit la même chose **à la main**, pour qui préfère se
-passer de Docker ou intégrer le serveur à une machine déjà configurée.
-
-### À la main
-
-Aucune dépendance à installer. Node 18 ou plus suffit pour le serveur (la
-suite de tests, elle, demande Node 22).
+Docker installé, puis :
 
 ```bash
-git clone <votre-dépôt> skype && cd skype
-node server/seed.js          # comptes de démonstration (facultatif)
-PORT=3000 node server/index.js
+git clone https://github.com/Lauzalaiah/Skype && cd Skype
+docker compose up -d
 ```
 
-Les données vivent dans `data/skype.json` et les fichiers envoyés dans
-`data/files/`. **Sauvegardez ce dossier** : il contient tout.
+L'application répond sur **http://localhost:3000**. Micro et caméra
+fonctionnent : `localhost` est l'exception des navigateurs.
 
-Pour qu'il redémarre tout seul, sur une machine Linux avec systemd :
-
-```ini
-# /etc/systemd/system/skype.service
-[Unit]
-Description=Skype Reborn
-After=network.target
-
-[Service]
-Type=simple
-User=skype
-WorkingDirectory=/opt/skype
-Environment=PORT=3000
-ExecStart=/usr/bin/node server/index.js
-Restart=always
-RestartSec=3
-
-[Install]
-WantedBy=multi-user.target
-```
+Pour voir une conversation à deux, créez deux comptes et ouvrez-les dans deux
+fenêtres, dont une en navigation privée.
 
 ```bash
-sudo systemctl enable --now skype
+docker compose logs -f      # suivre ce que fait le serveur
+docker compose down         # arrêter (les données restent)
 ```
 
 ---
 
-## 2. HTTPS — non négociable
+## 2. Essayer à deux, sans rien louer
 
-iOS **refuse** le micro, la caméra et l'installation sur l'écran d'accueil si
-la page n'est pas servie en HTTPS. Sans certificat, il n'y aura ni appel ni
-message vocal. `localhost` fait exception, mais pas l'adresse IP de votre
-machine sur le réseau local.
-
-### Pour essayer, en une commande
+Une adresse publique en `https`, le temps d'un essai, pendant que la commande
+ci-dessus tourne :
 
 ```bash
-npx localtunnel --port 3000
-# ou
 cloudflared tunnel --url http://localhost:3000
 ```
 
-Vous obtenez une adresse `https://…` utilisable immédiatement depuis
-l'iPhone. Elle change à chaque lancement : pratique pour voir à quoi ça
-ressemble, insuffisant pour un usage durable.
+Vous obtenez une adresse `https://…` à envoyer à quelqu'un. Vous pourrez vous
+appeler pour de vrai. Elle change à chaque lancement et disparaît quand vous
+fermez la commande.
 
-### Pour de bon
-
-Un nom de domaine, un certificat Let's Encrypt, et un reverse proxy devant le
-serveur. Avec Caddy, c'est tout le fichier de configuration :
-
-```
-skype.exemple.fr {
-    reverse_proxy localhost:3000
-}
-```
-
-Caddy obtient et renouvelle le certificat seul. Avec nginx, il faut penser à
-**laisser passer le WebSocket**, faute de quoi les messages n'arriveront jamais
-en temps réel :
-
-```nginx
-server {
-    server_name skype.exemple.fr;
-    listen 443 ssl;
-    # ssl_certificate … (certbot)
-
-    client_max_body_size 64M;          # les pièces jointes vont jusqu'à 64 Mo
-
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;      # ← indispensable
-        proxy_set_header Connection "upgrade";       # ← indispensable
-        proxy_set_header Host $host;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_read_timeout 3600s;                    # un appel dure longtemps
-    }
-}
-```
-
-### Les appels derrière un pare-feu
-
-Les appels sont en pair-à-pair : l'audio et la vidéo ne transitent pas par le
-serveur, qui ne fait que relayer la mise en relation. Deux personnes sur des
-réseaux ordinaires se joignent grâce aux serveurs STUN publics déjà
-configurés. En revanche, derrière certains réseaux d'entreprise ou mobiles
-stricts, il faut un serveur TURN — sans lui, l'appel sonne mais reste muet.
-
-À ajouter dans `ICE_SERVERS`, en tête de `public/js/ui/calls.js` :
-
-```js
-{ urls: 'turn:turn.exemple.fr:3478', username: '…', credential: '…' }
-```
-
-`coturn` fait très bien l'affaire.
+**C'est la façon la moins chère de répondre à la vraie question** — est-ce que
+ça marche entre deux personnes ? — avant de dépenser un euro.
 
 ---
 
-## 3. Dire à l'application où est le serveur
+## 3. Pour de bon, sur une machine à vous
 
-### Depuis un navigateur, ou installée depuis Safari
+### 3.1 La machine
 
-Rien à faire. La page vient du serveur : l'application lui parle
-naturellement.
+N'importe quel serveur Linux avec 1 Go de mémoire suffit : l'application n'a
+aucune dépendance et le serveur tient dans quelques dizaines de mégaoctets. Un
+ordinateur qui reste allumé chez vous fait l'affaire, à condition que votre
+box laisse passer les ports 80 et 443.
 
-### Dans l'application native
+### 3.2 Le nom de domaine
 
-La page vient du paquet embarqué : elle ne peut pas deviner l'adresse. Deux
-possibilités.
+Créez un enregistrement DNS **A** pointant vers l'adresse IP de la machine :
 
-**a. La demander au premier lancement** *(comportement par défaut)*
-L'application affiche un écran « À quel serveur cette application doit-elle se
-connecter ? ». L'adresse est vérifiée — le serveur doit répondre à
-`/api/health` — puis mémorisée. On peut en changer depuis l'écran de connexion.
-
-**b. La figer à la construction**
-Renseignez `server.url` dans `ios/capacitor.config.json` : Capacitor charge
-alors toute l'interface depuis votre serveur, et l'écran d'adresse ne
-s'affiche plus.
-
-```json
-"server": { "url": "https://skype.exemple.fr" }
+```
+skype.exemple.fr.   A   203.0.113.42
 ```
 
-C'est la voie à choisir pour distribuer l'application à des gens qui ne doivent
-pas avoir à saisir une adresse.
+Vérifiez qu'il est propagé avant d'aller plus loin — sans quoi Caddy
+demandera un certificat pour un nom qui ne mène pas à lui, et échouera :
 
----
+```bash
+dig +short skype.exemple.fr
+```
 
-## Vérifier que tout est en place
+### 3.3 L'installation
+
+```bash
+# Docker, si absent
+curl -fsSL https://get.docker.com | sh
+
+# Les ports du web
+sudo ufw allow 80/tcp && sudo ufw allow 443/tcp
+
+# Le projet
+git clone https://github.com/Lauzalaiah/Skype && cd Skype
+
+# En service, avec certificat automatique
+DOMAINE=skype.exemple.fr docker compose --profile https up -d
+```
+
+Caddy obtient le certificat Let's Encrypt seul, laisse passer le WebSocket sans
+configuration, et renouvelle sans qu'on y repense.
+
+### 3.4 Vérifier
 
 ```bash
 curl https://skype.exemple.fr/api/health
 # {"service":"skype","ok":true,"version":"…","uptime":…}
 ```
 
-Puis, depuis l'iPhone, en HTTPS :
+Puis, depuis un téléphone :
 
 | À vérifier | Comment |
-|---|---|
+| --- | --- |
 | L'interface se charge | l'écran de connexion apparaît |
 | Le temps réel fonctionne | un message envoyé depuis un autre appareil arrive sans recharger |
 | Le micro est autorisé | démarrer un appel ne déclenche pas « micro inaccessible » |
 | L'installation marche | Partager → « Sur l'écran d'accueil » est proposé |
 
-Si le message n'arrive qu'après rechargement, c'est le WebSocket qui est
-bloqué par le proxy — revoyez les en-têtes `Upgrade` et `Connection`.
+Si un message n'arrive qu'après rechargement, c'est le WebSocket qui est bloqué
+par un proxy placé devant Caddy.
+
+### 3.5 Redémarrer tout seul
+
+`restart: unless-stopped` est déjà dans la composition : les conteneurs
+repartent après un redémarrage de la machine, sans rien faire.
+
+---
+
+## 4. Tous les paramètres
+
+### 4.1 Le serveur
+
+Trois variables, c'est tout.
+
+| Variable | Défaut | Ce qu'elle fait |
+| --- | --- | --- |
+| `PORT` | `3000` | Port d'écoute. **`PORT=0` demande au système un port libre** — utilisé par l'application de bureau pour ne jamais entrer en conflit. |
+| `HOST` | `0.0.0.0` | Interface d'écoute. `127.0.0.1` rend le serveur injoignable de l'extérieur : à utiliser quand un reverse proxy est devant. |
+| `SKYPE_DATA_DIR` | `./data` | Où vivent les données. **C'est le seul dossier à sauvegarder.** |
+
+Dans l'image Docker, ces trois valeurs sont déjà `0.0.0.0`, `3000` et
+`/données`.
+
+### 4.2 La composition
+
+| Paramètre | Défaut | Ce qu'il fait |
+| --- | --- | --- |
+| `DOMAINE` | `localhost` | Nom de domaine servi par Caddy. Sans domaine réel, Caddy signe lui-même un certificat pour `localhost` : le navigateur avertit, mais micro et caméra fonctionnent. |
+| profil `https` | inactif | Ajoute Caddy. Sans lui, seul le serveur démarre, en clair sur le port 3000. |
+| `./donnees` | — | Le dossier de données, monté depuis la machine hôte. |
+| ports | `3000`, puis `80` et `443` | Avec le profil `https`, vous pouvez commenter `"3000:3000"` pour que le serveur ne soit plus joignable en clair. |
+
+```bash
+docker compose up -d                                     # local, port 3000
+DOMAINE=skype.exemple.fr docker compose --profile https up -d   # public, HTTPS
+```
+
+### 4.3 L'image
+
+| Réglage | Valeur | Pourquoi |
+| --- | --- | --- |
+| Base | `node:22-alpine` | Aucune dépendance npm à installer : l'image tient en quelques mégaoctets au-dessus de Node. |
+| Point d'entrée | `entree.sh` | Corrige les droits du dossier de données, puis **abandonne les privilèges**. Le serveur ne tourne jamais en root. |
+| Contrôle de santé | 30 s, 5 s de délai, 10 s de grâce, 3 essais | Docker redémarre le conteneur s'il cesse de répondre. |
+| Port exposé | `3000` | — |
+
+### 4.4 Les appels derrière un pare-feu
+
+Les appels sont en pair-à-pair : l'audio et la vidéo ne passent pas par le
+serveur, qui ne relaie que la mise en relation. Deux personnes sur des réseaux
+ordinaires se joignent grâce aux serveurs STUN publics déjà configurés.
+
+Derrière certains réseaux d'entreprise ou mobiles stricts, il faut un serveur
+**TURN** — sans lui, l'appel sonne mais reste muet. À ajouter dans
+`ICE_SERVERS`, en tête de `public/js/ui/calls.js` :
+
+```js
+const ICE_SERVERS = [
+  { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] },
+  { urls: 'turn:turn.exemple.fr:3478', username: '…', credential: '…' },
+];
+```
+
+`coturn` fait très bien l'affaire.
+
+### 4.5 Les limites du serveur
+
+| Limite | Valeur | Où |
+| --- | --- | --- |
+| Taille d'un fichier envoyé | 64 Mo | `server/api.js` |
+| Messages chargés d'un coup | 60, 300 au maximum | `server/api.js` |
+
+Avec **nginx** devant plutôt que Caddy, pensez à `client_max_body_size 64M;` —
+sinon les pièces jointes échoueront à 1 Mo sans message clair.
+
+### 4.6 Dire à l'application native où est le serveur
+
+**Depuis un navigateur** : rien à faire, la page vient du serveur.
+
+**Application de bureau** : elle demande l'adresse au premier lancement, la
+vérifie (`/api/health` doit répondre), puis la mémorise dans `serveur.json`.
+On peut en changer depuis l'écran de connexion.
+
+**iOS** : renseignez `server.url` dans `ios/capacitor.config.json` pour figer
+l'adresse à la construction et supprimer l'écran de saisie.
+
+```json
+"server": { "url": "https://skype.exemple.fr" }
+```
+
+| Variable | Effet |
+| --- | --- |
+| `SKYPE_MAJ_DEBUG=1` | Affiche le détail de la mise à jour automatique, normalement silencieuse. |
+
+---
+
+## 5. Sauvegarder
+
+Tout est dans un seul dossier : comptes, conversations, fichiers envoyés.
+
+```bash
+# Sauvegarde
+tar czf skype-$(date +%F).tar.gz donnees/
+
+# Restauration
+docker compose down
+rm -rf donnees && tar xzf skype-2026-08-05.tar.gz
+docker compose up -d
+```
+
+`donnees/skype.json` contient les comptes et les messages, `donnees/files/`
+les pièces jointes.
+
+> `docker compose down -v` supprime les volumes nommés (ceux de Caddy), **pas**
+> le dossier `donnees/`, qui est monté depuis la machine. Vos données survivent
+> à un `down -v` — mais pas à un `rm -rf`.
+
+---
+
+## 6. Mettre à jour
+
+```bash
+cd Skype && git pull
+docker compose up -d --build
+```
+
+Les données ne sont pas touchées : elles vivent hors de l'image.
+
+---
+
+## 7. Ce qu'il faut savoir avant d'ouvrir au public
+
+**L'inscription est ouverte.** Quiconque connaît l'adresse peut créer un
+compte. Il n'y a ni invitation, ni validation, ni liste d'attente. Pour un
+serveur de famille, gardez l'adresse privée — ou placez une authentification
+devant, dans Caddy :
+
+```
+skype.exemple.fr {
+    basic_auth {
+        famille <empreinte>
+    }
+    reverse_proxy skype:3000
+}
+```
+
+L'empreinte se génère avec `docker compose exec caddy caddy hash-password`.
+Sur une version de Caddy antérieure à la 2.8, la directive s'appelle
+`basicauth`, sans le tiret bas.
+
+**Les messages ne sont pas chiffrés de bout en bout.** Le serveur les voit.
+C'est le vôtre, donc c'est vous qui les voyez — mais il faut le savoir, et ne
+jamais prétendre le contraire.
+
+**Sauvegardez.** Il n'y a pas de deuxième copie ailleurs.
+
+---
+
+## 8. Quand quelque chose ne marche pas
+
+| Symptôme | Cause la plus fréquente |
+| --- | --- |
+| `docker compose up` s'arrête aussitôt | Regardez `docker compose logs` : le port 3000 est peut-être déjà pris. |
+| Caddy n'obtient pas de certificat | Le DNS ne pointe pas encore sur la machine, ou le port 80 est fermé. |
+| Les messages n'arrivent qu'au rechargement | Le WebSocket est bloqué par un proxy devant Caddy. |
+| « Micro inaccessible » | La page est en `http`. Seul `localhost` fait exception. |
+| L'appel sonne mais reste muet | Un réseau strict des deux côtés : il faut un serveur TURN (§ 4.4). |
+| Les pièces jointes échouent | Un reverse proxy limite la taille du corps (§ 4.5). |
+
+Le contrôle de santé répond toujours à la même adresse, et c'est le premier
+endroit où regarder :
+
+```bash
+curl https://skype.exemple.fr/api/health
+```
