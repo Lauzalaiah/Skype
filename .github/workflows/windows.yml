@@ -35,7 +35,7 @@ jobs:
         working-directory: desktop
         run: npm run build:win
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: skype-reborn-windows
           path: desktop/dist/*.exe

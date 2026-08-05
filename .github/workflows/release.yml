@@ -150,7 +150,7 @@ jobs:
           echo "l'application démarre, sert son interface et ses sons en $SERVIE"
           pkill -f skype-reborn-desktop || true
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: skype-reborn-${{ matrix.systeme }}
           path: ${{ matrix.fichiers }}
@@ -166,7 +166,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v7
         with:
           path: recolte
 

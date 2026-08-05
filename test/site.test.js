@@ -200,20 +200,33 @@ describe('Publication des fichiers téléchargeables', () => {
     }
   });
 
-  test('aucune action officielle n’est restée sur une version dépréciée', () => {
-    // Les actions en v4 tournent sur Node 20, que GitHub a déprécié : chaque
-    // exécution portait un avertissement, sur les jobs réussis comme sur les
-    // autres. Ce n'est pas une panne, mais du bruit permanent — et du bruit
-    // permanent finit par masquer un vrai problème le jour où il arrive.
+  test('aucune action officielle n’est restée sur Node 20', () => {
+    // GitHub a déprécié Node 20 : chaque exécution portait un avertissement,
+    // sur les jobs réussis comme sur les autres. Ce n'est pas une panne, mais
+    // du bruit permanent — et du bruit permanent finit par masquer un vrai
+    // problème le jour où il arrive.
+    //
+    // Le numéro à partir duquel une action bascule sur Node 24 n'est pas le
+    // même pour toutes : une montée uniforme en v5 laissait upload-artifact
+    // en Node 20, et l'avertissement persistait. Ces seuils ont été relevés
+    // dans le « runs.using » de chaque action, pas devinés.
+    const PREMIERE_EN_NODE_24 = {
+      checkout: 5,
+      'setup-node': 5,
+      'upload-artifact': 6,
+      'download-artifact': 7,
+    };
     const dossier = path.join(ROOT, '.github/workflows');
     const retards = [];
     for (const nom of fs.readdirSync(dossier)) {
       const contenu = fs.readFileSync(path.join(dossier, nom), 'utf8');
       for (const [, action, version] of contenu.matchAll(/uses: actions\/([\w-]+)@v(\d+)/g)) {
-        if (Number(version) < 5) retards.push(`${nom} : actions/${action}@v${version}`);
+        const seuil = PREMIERE_EN_NODE_24[action];
+        assert.ok(seuil, `${nom} utilise actions/${action}, dont le seuil Node 24 est inconnu ici`);
+        if (Number(version) < seuil) retards.push(`${nom} : actions/${action}@v${version} (il faut v${seuil})`);
       }
     }
-    assert.deepEqual(retards, [], `actions dépréciées : ${retards.join(', ')}`);
+    assert.deepEqual(retards, [], `actions encore en Node 20 : ${retards.join(', ')}`);
   });
 
   test('une nouvelle publication remplace les fichiers au lieu d’échouer', () => {
