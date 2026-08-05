@@ -5,7 +5,7 @@
 **La messagerie, les appels audio et vidéo et le partage d'écran que vous aimiez.
 Recréés de A à Z, sans rien oublier.**
 
-Version 8.136.0 · Zéro dépendance · Node.js ≥ 18
+Version 8.136.1 · Zéro dépendance · Node.js ≥ 18
 
 **[Télécharger](https://lauzalaiah.github.io/Skype/)** ·
 **[Pourquoi ce projet](https://lauzalaiah.github.io/Skype/pub/)** ·
