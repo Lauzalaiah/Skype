@@ -75,13 +75,26 @@ describe('Essayer en une commande', () => {
     const dockerfile = lire('Dockerfile');
     assert.match(dockerfile, /ENV SKYPE_DATA_DIR=/,
       'sans cela, tout serait perdu à chaque reconstruction');
-    assert.match(dockerfile, /VOLUME/);
+    assert.doesNotMatch(dockerfile, /^VOLUME/m,
+      'VOLUME crée un volume anonyme dès qu’aucun montage n’est donné : ils s’accumulent sans nom');
     assert.match(lire('docker-compose.yml'), /- \.\/donnees:/,
       'le dossier à sauvegarder doit être visible depuis la machine hôte');
   });
 
-  test('le conteneur ne tourne pas en root', () => {
-    assert.match(lire('Dockerfile'), /^USER node$/m);
+  test('le serveur ne tourne pas en root', () => {
+    // « USER node » ne suffisait pas, et le faire échouait même complètement :
+    // le dossier de données est monté depuis l'hôte, où Docker le crée au nom
+    // de root quand il n'existe pas — et « node » ne pouvait alors rien y
+    // écrire. Le conteneur démarre donc en root le temps de corriger les
+    // droits, puis abandonne ses privilèges. C'est ce dernier point qui compte.
+    const dockerfile = lire('Dockerfile');
+    const entree = lire('entree.sh');
+    assert.match(dockerfile, /ENTRYPOINT \["\/usr\/local\/bin\/entree\.sh"\]/,
+      'le point d’entrée doit être celui qui abandonne les privilèges');
+    assert.match(entree, /exec su-exec node "\$@"/,
+      'sans « exec », Node ne recevrait pas les signaux d’arrêt de Docker');
+    assert.match(dockerfile, /apk add --no-cache su-exec/,
+      'su-exec doit être installé, sinon le point d’entrée échoue au démarrage');
   });
 
   test('le conteneur sait dire s’il est en panne', () => {
