@@ -90,7 +90,7 @@ La publicité de lancement est servie sur **http://localhost:3000/pub**.
 ```bash
 npm run dev       # démarrage avec rechargement automatique
 npm run reset     # remet la base à zéro et recrée les comptes de démonstration
-npm test          # 250 tests de bout en bout (API, temps réel, sécurité, sons) — Node 22+
+npm test          # 251 tests de bout en bout (API, temps réel, sécurité, sons) — Node 22+
 PORT=8080 npm start
 ```
 
@@ -216,7 +216,7 @@ votre machine. Aucun traceur, aucun service tiers, aucune police ni script dista
 npm test
 ```
 
-250 tests couvrent l'inscription et la connexion, le rejet des identifiants invalides,
+251 tests couvrent l'inscription et la connexion, le rejet des identifiants invalides,
 les demandes de contact, les permissions de conversation, l'édition et la suppression
 de messages, les réactions, les sondages, les rôles d'administrateur, les liens
 d'invitation, le blocage, la fusion des réglages imbriqués, le crédit Skype, l'envoi

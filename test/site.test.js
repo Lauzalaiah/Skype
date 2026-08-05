@@ -200,6 +200,22 @@ describe('Publication des fichiers téléchargeables', () => {
     }
   });
 
+  test('aucune action officielle n’est restée sur une version dépréciée', () => {
+    // Les actions en v4 tournent sur Node 20, que GitHub a déprécié : chaque
+    // exécution portait un avertissement, sur les jobs réussis comme sur les
+    // autres. Ce n'est pas une panne, mais du bruit permanent — et du bruit
+    // permanent finit par masquer un vrai problème le jour où il arrive.
+    const dossier = path.join(ROOT, '.github/workflows');
+    const retards = [];
+    for (const nom of fs.readdirSync(dossier)) {
+      const contenu = fs.readFileSync(path.join(dossier, nom), 'utf8');
+      for (const [, action, version] of contenu.matchAll(/uses: actions\/([\w-]+)@v(\d+)/g)) {
+        if (Number(version) < 5) retards.push(`${nom} : actions/${action}@v${version}`);
+      }
+    }
+    assert.deepEqual(retards, [], `actions dépréciées : ${retards.join(', ')}`);
+  });
+
   test('une nouvelle publication remplace les fichiers au lieu d’échouer', () => {
     assert.match(workflow, /gh release upload "\$TAG" publication\/\* --clobber/);
   });

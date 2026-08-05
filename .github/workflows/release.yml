@@ -29,9 +29,9 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           # Node 22 au minimum : la suite de tests se connecte au serveur avec
           # le client WebSocket natif, qui n'existe pas avant. Le serveur, lui,
@@ -74,9 +74,9 @@ jobs:
               desktop/dist/latest-linux.yml
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           # Node 22 au minimum : la suite de tests se connecte au serveur avec
           # le client WebSocket natif, qui n'existe pas avant. Le serveur, lui,
@@ -150,7 +150,7 @@ jobs:
           echo "l'application démarre, sert son interface et ses sons en $SERVIE"
           pkill -f skype-reborn-desktop || true
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: skype-reborn-${{ matrix.systeme }}
           path: ${{ matrix.fichiers }}
@@ -164,9 +164,9 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       VERSION: ${{ needs.verifier.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           path: recolte
 
