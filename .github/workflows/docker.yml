@@ -46,14 +46,15 @@ jobs:
           docker image inspect skype-reborn:essai \
             --format 'Taille : {{.Size}} octets — utilisateur : {{.Config.User}}'
 
-      - name: Le conteneur ne doit pas tourner en root
+      - name: Le point d'entrée doit abandonner les privilèges
         run: |
-          # Une faille dans le serveur ne doit pas donner la machine. Le
-          # vérifier ici, parce qu'un « USER node » supprimé par mégarde ne
-          # casse rien de visible : l'image se construit, elle démarre, et
-          # personne ne s'en aperçoit.
+          # Le conteneur démarre en root, le temps de corriger les droits du
+          # dossier de données. Ce qui compte, c'est qu'il ne le reste pas.
+          # Un point d'entrée qui oublierait « su-exec » ne casserait rien de
+          # visible : l'image se construit, le serveur démarre, et il tourne
+          # en root pour toujours sans que personne s'en aperçoive.
           utilisateur=$(docker run --rm skype-reborn:essai whoami)
-          echo "L'image tourne sous : $utilisateur"
+          echo "après le point d'entrée : $utilisateur"
           test "$utilisateur" = "node"
 
       - name: Démarrer, et attendre que Docker la déclare saine
@@ -108,6 +109,17 @@ jobs:
             echo "  $son.mp3 — $taille octets"
           done
 
+      - name: Le serveur lui-même ne tourne pas en root
+        run: |
+          # « whoami » ne teste qu'une commande jetable. C'est le processus qui
+          # écoute réellement sur le réseau qu'il faut regarder.
+          # Le « ps » de BusyBox n'accepte pas les options habituelles :
+          # on lit le propriétaire du processus 1 dans /proc, ce qui marche
+          # partout.
+          proprietaire=$(docker exec skype stat -c %U /proc/1)
+          echo "le processus qui sert l'application tourne sous : $proprietaire"
+          test "$proprietaire" = "node"
+
       - name: Les données doivent survivre au conteneur
         run: |
           # Le volume est le seul dossier que l'utilisateur doit sauvegarder.
@@ -154,13 +166,44 @@ jobs:
 
       - name: La composition démarre pour de vrai
         run: |
-          docker compose up -d --wait --wait-timeout 180
+          # Rien n'est préparé : « donnees/ » n'existe pas encore, exactement
+          # comme chez quelqu'un qui vient de cloner. C'est ce cas-là qui
+          # échouait — Docker créait le dossier au nom de root, et le serveur,
+          # qui ne tourne pas en root, ne pouvait rien y écrire.
+          test ! -d donnees
+          if ! docker compose up -d --wait --wait-timeout 180; then
+            echo "::error::« docker compose up -d » ne démarre pas"
+            docker compose logs
+            exit 1
+          fi
           curl -sf http://127.0.0.1:3000/api/health
           echo
           # Le dossier annoncé au lecteur comme « le seul à sauvegarder » doit
           # exister sur la machine hôte, pas seulement dans le conteneur.
           test -f donnees/skype.json
           echo "donnees/skype.json existe sur l'hôte"
+
+      - name: Les comptes survivent à un redémarrage
+        run: |
+          # Sans cela, « le seul dossier à sauvegarder » serait un mensonge :
+          # les comptes repartiraient à zéro à chaque recréation du conteneur,
+          # et personne ne s'en apercevrait avant d'avoir perdu ses données.
+          JETON=$(curl -sf -X POST http://127.0.0.1:3000/api/auth/signup \
+            -H 'Content-Type: application/json' \
+            -d '{"skypeName":"essai.docker","password":"motdepasse42","displayName":"Essai"}' \
+            | node -p "JSON.parse(require('fs').readFileSync(0,'utf8')).token")
+          test -n "$JETON"
+          echo "compte créé"
+
+          docker compose down          # sans -v : le montage doit persister
+          docker compose up -d --wait --wait-timeout 180
+
+          # Le même jeton doit encore désigner le même compte après le
+          # redémarrage.
+          NOM=$(curl -sf http://127.0.0.1:3000/api/auth/me -H "Authorization: Bearer $JETON" \
+            | node -p "JSON.parse(require('fs').readFileSync(0,'utf8')).user.skypeName")
+          echo "après redémarrage, le compte retrouvé est : $NOM"
+          test "$NOM" = "essai.docker"
 
       - name: Arrêter proprement
         if: always()

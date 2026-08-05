@@ -20,10 +20,28 @@ ENV SKYPE_DATA_DIR=/données \
     PORT=3000
 
 RUN mkdir -p /données && chown -R node:node /données /app
-VOLUME /données
 
-# Jamais en root : une faille dans le serveur ne doit pas donner la machine.
-USER node
+# Le dossier de données est monté depuis l'hôte. Quand Docker doit le créer,
+# il le crée au nom de root — et le serveur, qui ne tourne pas en root, ne
+# peut alors rien y écrire. Le point d'entrée corrige ces droits au démarrage,
+# puis abandonne les privilèges.
+#
+# « su-exec » remplace le processus au lieu d'en lancer un second : Node reçoit
+# donc directement les signaux d'arrêt de Docker, et enregistre avant de
+# quitter.
+RUN apk add --no-cache su-exec
+COPY entree.sh /usr/local/bin/entree.sh
+RUN chmod +x /usr/local/bin/entree.sh
+
+# Pas de « VOLUME » ici : la directive crée un volume anonyme dès qu'aucun
+# montage n'est donné, et ces volumes s'accumulent sans nom, oubliés, à chaque
+# recréation du conteneur. La composition monte « ./donnees » explicitement,
+# ce qui est à la fois plus clair et sauvegardable.
+
+# Le conteneur démarre en root le temps de corriger les droits ; le serveur,
+# lui, tourne sous « node ». C'est le processus qui écoute sur le réseau qui
+# compte, et il n'est jamais privilégié.
+ENTRYPOINT ["/usr/local/bin/entree.sh"]
 
 EXPOSE 3000
 

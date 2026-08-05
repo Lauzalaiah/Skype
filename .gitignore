@@ -6,3 +6,4 @@ desktop/dist/
 .env
 *.tmp
 *.corrupt-*
+donnees/
