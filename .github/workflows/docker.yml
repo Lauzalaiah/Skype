@@ -1,0 +1,167 @@
+# Construit l'image Docker et vérifie qu'elle tourne vraiment.
+#
+# Pourquoi un workflow plutôt qu'une construction sur le poste de travail :
+# une image qui se construit chez son auteur ne prouve rien. Le README met
+# « docker compose up -d » en toute première commande — c'est ce que tape un
+# inconnu qui découvre le projet, et c'est la seule occasion de le convaincre.
+# Si cette commande échoue chez lui, il ne le signale pas : il ferme l'onglet.
+#
+# Chaque modification du Dockerfile, de la composition, du serveur ou de
+# l'interface repasse donc ici, sur une machine neuve qui n'a rien en cache.
+#
+# Construire ne suffit pas non plus. Une image peut se construire et ne pas
+# démarrer : mauvais chemin, module manquant, dossier de données appartenant à
+# root alors que le conteneur tourne sous « node ». On la démarre donc pour de
+# bon, on attend que Docker la déclare saine par son propre HEALTHCHECK, et on
+# lui demande une page, un son, et le contenu du volume.
+
+name: Docker
+
+on:
+  push:
+    paths:
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - 'Caddyfile'
+      - 'server/**'
+      - 'public/**'
+      - 'package.json'
+      - '.github/workflows/docker.yml'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Construire l'image
+        run: docker build -t skype-reborn:essai .
+
+      - name: Ce que pèse l'image
+        run: |
+          docker image inspect skype-reborn:essai \
+            --format 'Taille : {{.Size}} octets — utilisateur : {{.Config.User}}'
+
+      - name: Le conteneur ne doit pas tourner en root
+        run: |
+          # Une faille dans le serveur ne doit pas donner la machine. Le
+          # vérifier ici, parce qu'un « USER node » supprimé par mégarde ne
+          # casse rien de visible : l'image se construit, elle démarre, et
+          # personne ne s'en aperçoit.
+          utilisateur=$(docker run --rm skype-reborn:essai whoami)
+          echo "L'image tourne sous : $utilisateur"
+          test "$utilisateur" = "node"
+
+      - name: Démarrer, et attendre que Docker la déclare saine
+        run: |
+          docker run -d --name skype -p 3000:3000 skype-reborn:essai
+          # C'est le HEALTHCHECK de l'image qui décide, pas un curl à nous :
+          # on vérifie ainsi la sonde elle-même en même temps que le serveur.
+          for i in $(seq 1 60); do
+            etat=$(docker inspect --format '{{.State.Health.Status}}' skype)
+            [ "$etat" = "healthy" ] && echo "sain au bout de ${i}s" && exit 0
+            if [ "$etat" = "unhealthy" ]; then
+              echo "::error::le conteneur se déclare en panne"
+              docker logs skype
+              exit 1
+            fi
+            sleep 1
+          done
+          echo "::error::toujours pas sain au bout de 60 s (état : $etat)"
+          docker logs skype
+          exit 1
+
+      - name: Ce que le conteneur sert réellement
+        run: |
+          set -e
+          echo "── santé ──"
+          curl -sf http://127.0.0.1:3000/api/health
+          echo
+          echo "── l'application ──"
+          curl -sf http://127.0.0.1:3000/ | grep -q '<title>Skype</title>'
+          echo "  la page de connexion est servie"
+          echo "── la page de présentation ──"
+          curl -sf -o /dev/null http://127.0.0.1:3000/pub/
+          echo "  /pub/ répond"
+          echo "── les sons ──"
+          # Les sons sont ce qui fait reconnaître Skype. Oubliés à
+          # l'empaquetage, l'application marche et ne ressemble plus à rien.
+          #
+          # Attention au piège : le serveur est une application monopage, donc
+          # une route inconnue renvoie index.html avec un code 200. Un fichier
+          # absent répond « 200 » comme un fichier présent — c'est le type de
+          # contenu qui fait la différence, pas le code.
+          for son in skype-message skype-ring skype-dialing skype-login; do
+            entetes=$(curl -sf -D - -o /dev/null -w '%{size_download}' \
+              "http://127.0.0.1:3000/assets/sounds/$son.mp3")
+            taille=$(printf '%s' "$entetes" | tail -1)
+            if ! printf '%s' "$entetes" | grep -qi '^content-type: *audio/mpeg'; then
+              echo "::error::$son.mp3 n'est pas servi comme un son (fichier absent ?)"
+              printf '%s\n' "$entetes" | head -5
+              exit 1
+            fi
+            test "$taille" -gt 1000 || { echo "::error::son vide : $son"; exit 1; }
+            echo "  $son.mp3 — $taille octets"
+          done
+
+      - name: Les données doivent survivre au conteneur
+        run: |
+          # Le volume est le seul dossier que l'utilisateur doit sauvegarder.
+          # Si les comptes s'écrivaient dans la couche de l'image, ils
+          # disparaîtraient au premier redémarrage — sans message d'erreur.
+          docker exec skype ls -l /données
+          docker exec skype test -f /données/skype.json
+          echo "les comptes sont bien écrits dans le volume"
+
+      - name: Arrêter proprement
+        if: always()
+        run: docker rm -f skype || true
+
+  composition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: « docker compose up -d » ne doit rien réclamer
+        run: |
+          # La commande de la première page du README. Elle exigeait autrefois
+          # une variable DOMAINE dont elle n'avait pas l'usage, parce que
+          # Compose interprète tous les services avant de regarder les profils.
+          docker compose config > /dev/null
+          echo "services démarrés sans profil : $(docker compose config --services | tr '\n' ' ')"
+          docker compose config --services | grep -qx skype
+          # « grep -v » ne conviendrait pas : avec « skype » dans la liste, il
+          # réussirait que caddy soit présent ou non. C'est l'absence qu'on veut.
+          if docker compose config --services | grep -qx caddy; then
+            echo "::error::caddy démarre sans qu'on ait demandé le profil https"
+            exit 1
+          fi
+
+      - name: Le profil https ajoute Caddy
+        run: |
+          DOMAINE=skype.exemple.fr docker compose --profile https config --services \
+            | tr '\n' ' '
+          echo
+          DOMAINE=skype.exemple.fr docker compose --profile https config \
+            | grep -q 'DOMAINE: skype.exemple.fr'
+          echo "le domaine est bien transmis à Caddy"
+
+      - name: La composition démarre pour de vrai
+        run: |
+          docker compose up -d --wait --wait-timeout 180
+          curl -sf http://127.0.0.1:3000/api/health
+          echo
+          # Le dossier annoncé au lecteur comme « le seul à sauvegarder » doit
+          # exister sur la machine hôte, pas seulement dans le conteneur.
+          test -f donnees/skype.json
+          echo "donnees/skype.json existe sur l'hôte"
+
+      - name: Arrêter proprement
+        if: always()
+        run: docker compose down -v || true

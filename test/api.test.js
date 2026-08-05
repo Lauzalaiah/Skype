@@ -521,6 +521,25 @@ describe('Cache des fichiers servis', () => {
     const { cache } = await entete('/assets/sounds/skype-message.mp3');
     assert.match(cache, /max-age=\d{4,}/, 'ce qui ne change pas doit rester en cache');
   });
+
+  test('un fichier absent répond 200 : seul le type de contenu le trahit', async () => {
+    // Application monopage : toute route inconnue renvoie index.html, y
+    // compris « /assets/sounds/inexistant.mp3 ». Deux vérifications qui
+    // croyaient contrôler la présence des sons — dans le workflow de
+    // publication et dans celui de l'image Docker — ne pouvaient donc rien
+    // détecter : elles se contentaient du code 200.
+    //
+    // Ce test fixe la règle : pour prouver qu'une ressource existe, il faut
+    // regarder son type, jamais son code.
+    const absent = await fetch(`${BASE}/assets/sounds/ce-son-n-existe-pas.mp3`);
+    assert.equal(absent.status, 200, 'le repli monopage est volontaire');
+    assert.match(absent.headers.get('content-type'), /text\/html/,
+      'un chemin inconnu doit rester reconnaissable à son type');
+
+    const present = await fetch(`${BASE}/assets/sounds/skype-message.mp3`);
+    assert.match(present.headers.get('content-type'), /^audio\/mpeg/,
+      'un son réellement servi s’annonce comme un son');
+  });
 });
 
 describe('Fichiers', () => {

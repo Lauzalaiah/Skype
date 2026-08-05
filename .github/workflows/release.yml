@@ -130,7 +130,23 @@ jobs:
 
           # Les sons sont dans extraResources : leur absence ne se voit pas
           # autrement qu'en les demandant.
-          curl -fsS --max-time 10 -o /dev/null "http://127.0.0.1:$PORT/assets/sounds/skype-ring.mp3"
+          #
+          # Mais les demander ne suffit pas. Le serveur est une application
+          # monopage : une route inconnue renvoie index.html avec un code 200.
+          # Un son absent répondait donc « 200 » exactement comme un son
+          # présent, et cette vérification ne pouvait rien détecter. C'est le
+          # type de contenu qui tranche.
+          for SON in skype-ring skype-message skype-login; do
+            TYPE=$(curl -fsS --max-time 10 -o /dev/null -w '%{content_type}' \
+              "http://127.0.0.1:$PORT/assets/sounds/$SON.mp3")
+            case "$TYPE" in
+              audio/*) ;;
+              *)
+                echo "::error::$SON.mp3 manque à l'empaquetage (servi en « $TYPE »)"
+                exit 1
+                ;;
+            esac
+          done
           echo "l'application démarre, sert son interface et ses sons en $SERVIE"
           pkill -f skype-reborn-desktop || true
 
