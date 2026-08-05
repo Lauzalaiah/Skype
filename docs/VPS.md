@@ -36,6 +36,39 @@ Le serveur n'a aucune dépendance : c'est le plus petit forfait de n'importe
 quel fournisseur qui convient. Ce qui coûte, c'est la bande passante des
 fichiers échangés — les appels, eux, ne passent pas par le serveur.
 
+### Le piège : un hébergement web n'est pas un VPS
+
+C'est l'erreur qui coûte un abonnement entier, et elle est facile à faire,
+parce que les deux sont vendus côte à côte sur les mêmes pages.
+
+Un **hébergement mutualisé** — celui qui sert à poser un site WordPress —
+**ne peut pas faire tourner ce projet**, quel que soit son prix. Il n'y a ni
+accès root, ni Docker, ni droit de laisser un programme tourner en
+permanence, ni possibilité d'ouvrir un port. Aucune de ces limites ne se
+contourne : ce n'est pas une question de taille, mais de nature.
+
+Trois questions avant de payer, et il faut trois « oui » :
+
+| Question | Pourquoi |
+| --- | --- |
+| Ai-je un accès **root** en SSH ? | Sans lui, rien de ce guide ne s'exécute |
+| Puis-je installer **Docker** ? | C'est la seule dépendance du projet |
+| Les ports **80 et 443** sont-ils libres ? | Un panneau préinstallé (cPanel, Plesk) les occupe déjà, et Caddy ne pourra pas démarrer |
+
+Si un panneau d'administration est fourni avec l'offre, prévoyez de
+réinstaller le système « nu » depuis leur interface avant de commencer.
+
+### Le prix affiché n'est pas le prix payé
+
+Chez la plupart des hébergeurs grand public, le tarif mis en avant est
+**promotionnel la première période**, et le renouvellement coûte deux à
+quatre fois plus. Regardez toujours le prix de renouvellement, pas celui de
+la publicité — c'est celui que vous paierez pendant des années.
+
+Comparez aussi ce qui est compté : certaines offres facturent la bande
+passante au-delà d'un seuil. Ce projet en consomme peu, sauf si vos proches
+s'échangent beaucoup de fichiers.
+
 ---
 
 ## 0. Avant de payer quoi que ce soit
