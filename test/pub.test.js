@@ -28,8 +28,10 @@ describe('Page de campagne', () => {
 
   test('l’absence de lien avec Microsoft est dite explicitement', () => {
     assert.match(pub, /sans lien avec Microsoft|Aucun lien avec Microsoft/i);
-    assert.match(pub, /marque de Microsoft/i,
-      'l’usage nominatif de la marque doit être précisé');
+    assert.match(pub, /«\s*Skype\s*»\s+est une marque déposée de Microsoft/i,
+      'la marque doit être attribuée à son titulaire, nommément');
+    assert.doesNotMatch(pub, /«\s*Skip\s*»[^.]{0,40}marque[^.]{0,20}de Microsoft/i,
+      'attribuer « Skip » à Microsoft serait faux et se retournerait contre le projet');
   });
 
   test('la page n’annonce pas un retour officiel de Skip', () => {

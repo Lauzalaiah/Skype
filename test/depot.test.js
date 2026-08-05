@@ -60,7 +60,7 @@ describe('Ce que montre le README', () => {
   test('la mention de projet de fan apparaît dès le haut', () => {
     const haut = readme.slice(0, 1600);
     assert.match(haut, /sans lien avec Microsoft|Aucun lien avec Microsoft/i);
-    assert.match(haut, /marque de Microsoft/i);
+    assert.match(haut, /marque déposée de Microsoft|marque de Microsoft/i);
   });
 });
 

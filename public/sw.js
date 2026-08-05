@@ -21,7 +21,7 @@
  * d'un cache vide, et l'ancien est effacé à l'activation.
  */
 
-const VERSION = 'skip-8.139.0';
+const VERSION = 'skip-8.140.0';
 const COQUILLE = [
   '/',
   '/index.html',

@@ -26,3 +26,7 @@ SOFTWARE.
 recréation indépendante réalisée par un fan ; il n'est ni développé, ni
 soutenu, ni approuvé par Microsoft. La marque est citée de façon strictement
 nominative, pour désigner le logiciel d'origine dont ce projet s'inspire.
+
+Les sons présents dans public/assets/sounds/ sont ceux du logiciel d'origine
+et ne sont pas couverts par cette licence : voir docs/DROITS.md, qui décrit
+leur origine et la procédure de retrait.

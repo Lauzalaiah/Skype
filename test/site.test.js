@@ -32,9 +32,11 @@ describe('Site de téléchargement — honnêteté', () => {
   });
 
   test('l’absence de lien avec Microsoft est dite explicitement', () => {
-    assert.match(site, /Aucun lien\s+avec Microsoft|sans lien avec Microsoft/i);
-    assert.match(site, /marque de Microsoft/i,
-      'l’usage nominatif de la marque doit être précisé');
+    assert.match(site, /Aucun lien\s+avec\s+Microsoft|sans lien\s+avec\s+Microsoft/i);
+    assert.match(site, /«\s*Skype\s*»\s+est une marque déposée de Microsoft/i,
+      'la marque doit être attribuée à son titulaire, nommément');
+    assert.doesNotMatch(site, /«\s*Skip\s*»[^.]{0,40}marque[^.]{0,20}de Microsoft/i,
+      'attribuer « Skip » à Microsoft serait faux et se retournerait contre le projet');
     assert.match(site, /ni développé, ni soutenu, ni approuvé par Microsoft/i,
       'la mention légale du pied de page a disparu');
   });
